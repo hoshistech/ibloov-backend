@@ -1,0 +1,38 @@
+{
+  "name": "ibloov",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www"
+  },
+  "dependencies": {
+    "canvas": "^2.6.0",
+    "config": "^3.2.4",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
+    "express": "~4.16.1",
+    "faker": "^4.1.0",
+    "http-errors": "~1.6.3",
+    "jsbarcode": "^3.11.0",
+    "module-alias": "^2.2.2",
+    "moment": "^2.24.0",
+    "mongoose": "^5.7.5",
+    "morgan": "~1.9.1",
+    "nodemon": "^1.19.4",
+    "passport": "^0.4.0",
+    "passport-facebook": "^3.0.0",
+    "pug": "2.0.0-beta11",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {},
+  "_moduleAliases": {
+    "@controllers": "app/controllers",
+    "@models": "app/models",
+    "@routes": "routes",
+    "@seeders": "app/seeders",
+    "@helpers": "app/helpers",
+    "@config": "config"
+  }
+}
