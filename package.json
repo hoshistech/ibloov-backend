@@ -33,6 +33,7 @@
     "@routes": "routes",
     "@seeders": "app/seeders",
     "@helpers": "app/helpers",
-    "@config": "config"
+    "@config": "config",
+    "@services": "app/services"
   }
 }

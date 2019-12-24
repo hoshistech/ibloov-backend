@@ -61,10 +61,10 @@ var EventSchema = new Schema({
         description: String
     }], //should have a maximum of x possible generations
 
-    hashTags: {
-        type: Array,
-        default : []
-    },
+    // hashTags: {
+    //     type: Array,
+    //     default : []
+    // },
 
     sponsors: [{
         name: String,
@@ -79,7 +79,6 @@ var EventSchema = new Schema({
     }],
 
     invitees: [{
-
         name: String,
         email: String,
         id: String //optional. for people on the platform
@@ -90,11 +89,33 @@ var EventSchema = new Schema({
         comment: String,
         userId: String,
         createdAt: String
-    }]
+    }],
+
+    deletedAt: {
+        type: Date,
+        default: null
+    }, 
+    
+    deletedBy: {
+        type: String
+    },
+
+    wishList: {
+        type: String //maybe this should be an objectId type
+    }
 
     //sponsors, event date, type
 
 });
+
+// EventSchema.pre('save', function(next) {
+
+//     console.log("trying to convert!");
+//     console.log(this._id, typeof this._id)
+//     console.log(this._id.toString(), typeof this._id.toString() )
+//     this._id = this._id.toString();
+//     next();
+// });
 
 let Events = mongoose.model('events', EventSchema);
 

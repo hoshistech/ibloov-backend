@@ -5,20 +5,23 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var passport = require("passport");
 
 //env
 const dotenv = require('dotenv');
 dotenv.config();
 
+
+//routes
 const EventRouter = require("@routes/events.route");
 const indexRouter = require('@routes/index');
-const usersRouter = require('@routes/users.route');
-const authRouter = require('@routes/auth.route');
+const UsersRouter = require('@routes/users.route');
+const AuthRouter = require('@routes/auth.route');
+const WishListRouter = require("@routes/wishlists.route")
 
 //seeders
-
 const eventsSeederRouter = require('@routes/seeders/events.route');
-//const usersSeederRouter = require('@routes/seeders/events.route');
+const wishlistSeederRouter = require('@routes/seeders/wishlists.route');
 
 var app = express();
 
@@ -35,13 +38,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(passport.initialize());
+
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/events', EventRouter);
-app.use('/auth', authRouter);
+app.use('/v1/users', UsersRouter);
+app.use('/v1/event', EventRouter);
+app.use('/v1/wishlist', WishListRouter);
+app.use('/auth', AuthRouter);
 
 //seeders
-app.use('/seeders', eventsSeederRouter );
+app.use('/seeders/event', eventsSeederRouter );
+app.use('/seeders/wishlist', wishlistSeederRouter );
 
 
 // catch 404 and forward to error handler
