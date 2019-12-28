@@ -91,6 +91,36 @@ module.exports = {
 
     },
 
+    
+    /**
+     * check if a user is followiig an event
+     * 
+     * @param eventId string
+     * @param userId string
+     * 
+     * @return boolean
+     */
+    isFollowingEvent: async (eventId, userId) => {
+
+        let event = await Event.findOne({ _id: eventId, 'followers.userId': userId });
+        return event ? true : false;
+    },
+
+
+    /**
+     * unsubsribes a user from an event
+     * the user no longer gets notifications of happenings on that event. 
+     * @param eventId string
+     * @param userId string
+     */
+    unfollowEvent: async (eventId, userId) => {
+
+        let update =  await Event.findByIdAndUpdate( eventId, { $pull: { 'followers':  {"userId": userId }  } }, 
+        { new: true} );
+        console.log(update);
+        return update;
+    },
+
     /**
      * adds an event to a user's google calendar
      * when a user creates an event | likes an event | follows an event - the event gets added to their google calendar

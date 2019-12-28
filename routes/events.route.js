@@ -18,5 +18,7 @@ router.get('/code/:eventCode', EventController.generateEventCode );
 
 router.patch('/follow/:eventId', EventController.follow );
 
+router.patch('/unfollow/:eventId', EventController.unfollow );
+
 
 module.exports = router; 

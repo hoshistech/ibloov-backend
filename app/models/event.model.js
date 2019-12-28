@@ -98,6 +98,10 @@ var EventSchema = new Schema({
         date: {
             type: Date,
             default: Date.now()
+        },
+        allowNoifications: {
+            type: Boolean,
+            default: true
         }
     }],
 
@@ -107,6 +111,10 @@ var EventSchema = new Schema({
         date: {
             type: Date,
             default: Date.now()
+        },
+        allowNoifications: {
+            type: Boolean,
+            default: true
         }
     }],
 
