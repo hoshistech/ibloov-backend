@@ -2,7 +2,6 @@ const Event = require('@models/event.model');
 
 module.exports = {
 
-
     /**
      * returns al evetns given certain parameters
      * @param query object 
@@ -49,6 +48,17 @@ module.exports = {
     },
 
     /**
+     * update a set of a single event model
+     * @param eventId String 
+     * @param update object
+     * 
+     */
+    updateEventSet: async (eventId, setData) => {
+
+        return await Event.findByIdAndUpdate( { _id: eventId } , { '$addToSet': setData });
+    },
+
+    /**
      * performs a softDelete operation on a single instance of a model
      * @param eventId integer
      *
@@ -60,8 +70,6 @@ module.exports = {
         
     },
 
-
-    //helpers
     /**
      * updates an event instance -  addsa a new audit history to the event document
      * @param eventId String - the unique identifier of the event.
@@ -69,14 +77,26 @@ module.exports = {
      */
     addEventHistory: async (eventId, event) => {
 
-        data = {
+        let history  = {
             event,
             createdAt: new Date(),
             comment: "new event history",
             userId: "o098uyhjk"
-        }
+        };
 
-        return await Event.findByIdAndUpdate( { _id: eventId } , { '$addToSet': { 'history': data } });
+        let set = { 'history': history };
+
+        return await module.exports.updateEventSet(eventId, updateData);
+        // return await Event.findByIdAndUpdate( { _id: eventId } , { '$addToSet': { 'history': data } });
+
+    },
+
+    /**
+     * adds an event to a user's google calendar
+     * when a user creates an event | likes an event | follows an event - the event gets added to their google calendar
+     * @param eventId
+     */
+    googleCalendarIntegration: async( eventId ) => {
 
     }
 }

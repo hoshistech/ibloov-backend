@@ -2,6 +2,14 @@ const mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
+var items = new Schema({
+
+    name: String, 
+    quantity: Number,
+    externalLink: String //if you saw the item on a different store for sale, you can add it here. 
+    //users can then click oand go straight to the that page
+})
+
 var WishListSchema = new Schema({
 
     name: {
@@ -10,30 +18,21 @@ var WishListSchema = new Schema({
         required: true
     },
 
-    items: [{
-
-        name: String, 
-        quantity: Number,
-        externalLink: String //if you saw the item on a different store for sale, you can add it here. 
-        //users can then click oand go straight to the that page
-
-    }],
+    items: {
+        type: [ items ],
+        required: true
+    },
 
     uuid: {
         type: String,
         unique: true,
         required: true
-    },
-
-    // isPrivate: {
-    //     type: Boolean,
-    //     default: false,
-    //     enum: [true, false]
-    // },
+    },       
 
     createdAt: {
         type: Date,
-        required: true
+        required: true,
+        default: Date.now()
     },
 
     createdBy: {
@@ -48,15 +47,6 @@ var WishListSchema = new Schema({
     updatedAt: {
         type: Date,
     },
-
-    // status: {
-    //     type: String,
-    //     default: "ONGOING",
-    //     allowedValues: ["CANCELLED", "LIVE", "UPCOMING", "SUSPENDED"],
-    //     required: true
-    // },
-
-
 
     history: [{
         event: String,

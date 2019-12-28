@@ -91,6 +91,25 @@ var EventSchema = new Schema({
         createdAt: String
     }],
 
+    followers: [{
+        email: String, //maybe
+        telephone: String, //maybe
+        userId: String,
+        date: {
+            type: Date,
+            default: Date.now()
+        }
+    }],
+
+    likes: [{
+        email: String,
+        userId: String,
+        date: {
+            type: Date,
+            default: Date.now()
+        }
+    }],
+
     deletedAt: {
         type: Date,
         default: null

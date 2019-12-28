@@ -2,6 +2,7 @@ const Event = require('@models/event.model');
 var JsBarcode = require('jsbarcode');
 var Canvas = require("canvas");
 const eventService = require('@services/event.service');
+const uuidv4 = require('uuid/v4')
 
 
 /**
@@ -36,6 +37,7 @@ create = async (req, res) => {
 
     let event = req.body;
     event.createdBy = "76trfguiolk";
+    event.uuid = uuidv4();
 
     try{
         await eventService.createEvent(event);
@@ -116,6 +118,14 @@ view = async (req, res) => {
     try {
         let event = await eventService.viewEvent(eventId);
 
+        if( ! event){
+
+            return res.status(404).json({
+                success: true,
+                message: "Event not found!."
+            });
+        }
+
         return res.status(200).json({
             success: true,
             message: "Event retreived successfully.",
@@ -134,7 +144,7 @@ view = async (req, res) => {
 
 /**
  * softDeletes a single event instance.
- * @authLevel - authenticated| isEventAdmin | isEventCreator
+ * @authLevel - authenticated | isEventAdmin | isEventCreator
  */
 softdelete = async (req, res) => { 
 
@@ -194,9 +204,60 @@ generateEventCode = (req, res) => {
 }
 
 
+/**
+ * updates the followers of an event.
+ * @authlevel authenticated
+ */
+follow = async (req, res) => {
+
+    let eventId = req.params.eventId;
+
+    if( ! eventId){
+        return res.status(400).json({
+            success: false,
+            message: "required event id missing."
+        });
+    }
+    
+    try{
+        let event = await eventService.viewEvent(eventId);
+
+        if( ! event ){
+            return res.status(404).json({
+                success: false,
+                message: "invalid event."
+            });
+        }
+
+        let follower = {
+            userid: "98765tguik",
+            email: "test@test.com",
+            telephone: "09039015531"
+        }
+
+        let resp = eventService.updateEventSet(eventId, {"followers":  follower });
+
+        return res.status(200).json({
+            success: true,
+            message: "Operation successful",
+            data: resp
+        });
+    }
+    catch(e){
+
+        return res.status(400).json({
+            success: false,
+            message: "There was an error performing this operation",
+            data: e.toString()
+        });
+    }
+    
+}
+
+
 generateCode = () => {
 
     return Math.random().toString(36).slice(3);
 }
 
-module.exports = {index, create, view, update, softdelete, generateEventCode}
+module.exports = {index, create, view, update, softdelete, generateEventCode, follow}
