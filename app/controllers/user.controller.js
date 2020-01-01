@@ -1,6 +1,5 @@
-const eventService = require('@services/event.service');
+const userService = require('@services/user.service');
 const uuidv4 = require('uuid/v4');
-const {sendAccountConfirmationNotification} = require('@services/mail.service');
 
 // const Event = require('@models/event.model');
 // var JsBarcode = require('jsbarcode');
@@ -8,98 +7,61 @@ const {sendAccountConfirmationNotification} = require('@services/mail.service');
 
 
 /**
- * get events
+ * get users
+ * @authlevel authenticated | admin
  */
 index = async (req, res) => {
-
-    try{
-        let events = await eventService.all();
-        res.status(200).send({
-            success: true,
-            message: "events retreived succesfully",
-            data: events
-        });
-    }
-    catch(e){
-
-        res.status(400).send({
-            success: false,
-            message: "error performing this operation",
-            data: e.toString()
-        });
-    }
     
 },
 
 
 /**
- * create a new event.
+ * create a new user.
  */
 create = async (req, res) => {
 
-    let event = req.body;
-    event.createdBy = "76trfguiolk";
-    event.uuid = uuidv4();
-
-    try{
-        await eventService.createEvent(event);
-        sendAccountConfirmationNotification();
-        res.status(200).send({
-            success: true,
-            message: "Event created successfully",
-            data: event
-        });
-    }
-    catch(e){
-
-        res.status(400).send({
-            success: false,
-            message: "Error performing this operation",
-            data: e
-        });
-    }
 };
 
 
 /**
- * update a single event model
+ * update a single user model
  * 
  */
 update = async (req, res) => {
 
-    let eventId = req.params.eventId;
-    let eventData = req.body;
+    let userId = req.params.userId;
+    let userData = req.body;
 
-    if( ! eventId){
+    if( ! userId){
         return res.status(400).json({
             success: false,
-            message: "required event id missing."
+            message: "required User id missing."
         });
     }
 
-    let event = await eventService.viewEvent(eventId);
+    let user = await userService.viewUser(userId);
     
-    if( !event ){
+    if( ! user ){
         return res.status(404).json({
             success: false,
-            message: "invalid event."
+            message: "invalid user."
         });
     }
 
     try {
         
-        let resp = await eventService.updateEvent(eventId, eventData);
-        eventService.addEventHistory(eventId, "EVENT_UPDATE")
+        let resp = await userService.updateUser(userId, userData);
+        // userService.addEventHistory( userId, "USER_UPDATE")
         return res.status(200).json({
             success: true,
-            message: "Event information has been updated successfully.",
+            message: "User information has been updated successfully.",
             data: resp
         });
     } catch (e) {
         
         return res.status(400).json({
             success: false,
-            message: "Error occured while trying to update this event.",
+            message: "Error occured while trying to update this user.",
             data: e
         });
     }
@@ -119,7 +81,7 @@ view = async (req, res) => {
     }
 
     try {
-        let event = await eventService.viewEvent(eventId);
+        let event = await userService.viewEvent(eventId);
 
         if( ! event){
 
@@ -162,7 +124,7 @@ softdelete = async (req, res) => {
         });
     }
 
-    let event = await eventService.viewEvent(eventId);
+    let event = await userService.viewEvent(eventId);
     if( ! event ){
         return res.status(404).json({
             success: false,
@@ -172,7 +134,7 @@ softdelete = async (req, res) => {
 
     try {
         
-        let resp = await eventService.softDeleteEvent(eventId, eventData);
+        let resp = await userService.softDeleteEvent(eventId, eventData);
         return res.status(200).json({
             success: true,
             message: "Event information has been deleted successfully.",
@@ -224,7 +186,7 @@ follow = async (req, res) => {
     }
     
     try{
-        let event = await eventService.viewEvent(eventId);
+        let event = await userService.viewEvent(eventId);
 
         if( ! event ){
             return res.status(404).json({
@@ -239,10 +201,10 @@ follow = async (req, res) => {
             telephone: "09039015531"
         }
 
-        let isFollowing = await eventService.isFollowingEvent(eventId, follower.userId);
+        let isFollowing = await userService.isFollowingEvent(eventId, follower.userId);
 
         if( ! isFollowing){
-            eventService.updateEventSet(eventId, {"followers": follower }); 
+            userService.updateEventSet(eventId, {"followers": follower }); 
         }
 
         return res.status(200).json({
@@ -282,7 +244,7 @@ unfollow = async (req, res) => {
     }
     
     try{
-        let event = await eventService.viewEvent(eventId);
+        let event = await userService.viewEvent(eventId);
 
         if( ! event ){
             return res.status(404).json({
@@ -298,7 +260,7 @@ unfollow = async (req, res) => {
             telephone: "09039015531"
         }
 
-        let isFollowing = await eventService.isFollowingEvent(eventId, follower.userId);
+        let isFollowing = await userService.isFollowingEvent(eventId, follower.userId);
 
         if( ! isFollowing ){
 
@@ -308,7 +270,7 @@ unfollow = async (req, res) => {
             });
         }
 
-        await eventService.unfollowEvent(eventId, follower.userId); 
+        await userService.unfollowEvent(eventId, follower.userId); 
 
         return res.status(200).json({
 
@@ -326,54 +288,6 @@ unfollow = async (req, res) => {
         });
     }
     
-},
-
-
-confirmAttendance = async (req, res) => {
-
-    const eventId = req.params.eventId;
-    const status = req.body.status.toUpperCase();
-    const userId = "1234561"
-
-    if( ! eventId ){
-        return res.status(400).json({
-            success: false,
-            message: "required event id missing."
-        });
-    }
-
-    if( ! status ){
-        return res.status(400).json({
-            success: false,
-            message: "required status missing."
-        });
-    }
-
-
-    try{
-
-        let event = await eventService.viewEvent(eventId);
-        if( ! event ){
-            return res.status(404).json({
-                success: false,
-                message: "invalid event."
-            });
-        }
-
-        await eventService.confirmEventAttendance( eventId, userId, status );
-        
-        return res.status(200).json({
-            success: true,
-            message: "Event invitation accepted successfully!."
-        });
-    }
-    catch(e){
-        return res.status(400).json({
-            success: false,
-            message: "Error performing this operation.",
-            data: e.toString()
-        });
-    }
 }
 
 
@@ -382,4 +296,4 @@ generateCode = () => {
     return Math.random().toString(36).slice(3);
 }
 
-module.exports = {index, create, view, update, softdelete, generateEventCode, follow, unfollow, confirmAttendance}
+module.exports = {index, create, view, update, softdelete, generateEventCode, follow, unfollow}

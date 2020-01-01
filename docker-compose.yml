@@ -1,7 +1,7 @@
 version: "2"
 services:
   app:
-    container_name: ibloov-mongo
+    container_name: ibloov-current
     restart: always
     build: .
     ports:

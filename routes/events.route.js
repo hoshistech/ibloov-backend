@@ -20,5 +20,7 @@ router.patch('/follow/:eventId', EventController.follow );
 
 router.patch('/unfollow/:eventId', EventController.unfollow );
 
+router.post('/invite/setattendingstatus/:eventId', EventController.confirmAttendance );
+
 
 module.exports = router; 

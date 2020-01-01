@@ -75,13 +75,18 @@ var EventSchema = new Schema({
         
         name: String,
         email: String,
-        id: String //optional. for people on the platform
+        userId: String //optional. for people on the platform
     }],
 
     invitees: [{
         name: String,
         email: String,
-        id: String //optional. for people on the platform
+        userId: String, //optional. for people on the platform
+        accepted: {
+            type: String,
+            enum: ["YES", "NO", "MAYBE", "NULL"],
+            default: "NULL",
+        }
     }], 
 
     history: [{

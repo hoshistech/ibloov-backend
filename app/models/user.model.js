@@ -4,12 +4,12 @@ var Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
 
-    firstname: {
+    firstName: {
         type: String,
         required: true
     },
 
-    lastname: {
+    lastName: {
         type: String,
         required: true
     },
@@ -22,12 +22,22 @@ var UserSchema = new Schema({
         type: String
     },
 
-    phonenumber: {
+    isEmailVerified: {
+        type: Boolean,
+        default: false
+    },
+
+    phoneNumber: {
         type: String
     },
 
+    isPhoneNumberVerified: {
+        type: Boolean,
+        default: false
+    },
+
     dob: {
-        type: String
+        type: Date
     },
 
     address: {
