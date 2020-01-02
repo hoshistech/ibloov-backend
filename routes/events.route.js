@@ -22,5 +22,6 @@ router.patch('/unfollow/:eventId', EventController.unfollow );
 
 router.post('/invite/setattendingstatus/:eventId', EventController.confirmAttendance );
 
+router.patch('/notifications/mute/:eventId', EventController.muteNotifications );
 
 module.exports = router; 

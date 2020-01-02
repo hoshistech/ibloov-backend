@@ -22,6 +22,7 @@ const WishListRouter = require("@routes/wishlists.route")
 //seeders
 const eventsSeederRouter = require('@routes/seeders/events.route');
 const wishlistSeederRouter = require('@routes/seeders/wishlists.route');
+const userSeederRouter = require('@routes/seeders/users.route');
 
 var app = express();
 
@@ -49,6 +50,7 @@ app.use('/auth', AuthRouter);
 //seeders
 app.use('/seeders/event', eventsSeederRouter );
 app.use('/seeders/wishlist', wishlistSeederRouter );
+app.use('/seeders/user', userSeederRouter );
 
 
 // catch 404 and forward to error handler

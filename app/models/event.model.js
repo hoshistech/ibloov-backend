@@ -61,11 +61,6 @@ var EventSchema = new Schema({
         description: String
     }], //should have a maximum of x possible generations
 
-    // hashTags: {
-    //     type: Array,
-    //     default : []
-    // },
-
     sponsors: [{
         name: String,
         logo: String,
@@ -93,7 +88,13 @@ var EventSchema = new Schema({
         event: String,
         comment: String,
         userId: String,
-        createdAt: String
+        createdAt: Date
+    }],
+
+    controls: [{
+        name: String,
+        createdAt: Date,
+        createdBy: String
     }],
 
     followers: [{

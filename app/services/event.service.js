@@ -73,7 +73,7 @@ module.exports = {
         const updateData = {deletedAt: Date.now(), deletedBy: '1edfhuio3ifj'};
         return await module.exports.updateEvent(eventId, updateData);  
     },
-    
+
 
     /**
      * updates an event instance -  addsa a new audit history to the event document
@@ -91,8 +91,27 @@ module.exports = {
 
         let set = { 'history': history };
 
-        return await module.exports.updateEventSet(eventId, updateData);
-        // return await Event.findByIdAndUpdate( { _id: eventId } , { '$addToSet': { 'history': data } });
+        return await module.exports.updateEventSet(eventId, set);
+    },
+
+
+    /**
+     * updates an event controls - controls are like dos/donts of an event (bad explanation, but you get the point)
+     * e.g "no-pets" could be an event control - if the owners of an event do not want pets at their event
+     * @param eventId String - the unique identifier of the event.
+     * @param controlName string - the name of the event e.g create, delete etc.
+     */
+    addEventControl: async (eventId, controlName) => {
+
+        let control  = {
+            name: controlName,
+            createdAt: new Date(),
+            createdBy: "kgmkgmgkg"
+        };
+
+        let set = { 'controls': control };
+
+        return await module.exports.updateEventSet(eventId, set);
 
     },
 
@@ -123,6 +142,19 @@ module.exports = {
         let update = await Event.findByIdAndUpdate( eventId, { $pull: { 'followers':  {"userId": userId }  } }, 
         { new: true} );
         return update;
+    },
+
+
+    /**
+     * disables a users from getting notifications about an event
+     * even if the user is following the event
+     * 
+     * @param eventId String
+     * @param userId String
+     */
+    muteEventNotification: async ( eventId, userId ) => {
+
+        return await Event.findOneAndUpdate( { _id: eventId, "followers.userId": userId }, { $set : { 'followers.$.allowNoifications' : false }}, { runValidators: true } );  
     },
 
 

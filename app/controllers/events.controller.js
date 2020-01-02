@@ -265,6 +265,55 @@ follow = async (req, res) => {
 
 
 /**
+ * Disables notifications for an event
+ * user would no longer receive event notifications even if they are the creators, following the event etc..
+ * 
+ * @authlevel authenticated 
+ */
+muteNotifications = async (req, res) => {
+
+    const eventId = req.params.eventId;
+    const userId = "98765tguif";
+
+    if( ! eventId){
+        return res.status(400).json({
+            success: false,
+            message: "required event id missing."
+        });
+    }
+    
+    try{
+        let event = await eventService.viewEvent(eventId);
+
+        if( ! event ){
+            return res.status(404).json({
+                success: false,
+                message: "Event not found!."
+            });
+        }
+
+        eventService.muteEventNotification(eventId, userId ); 
+
+        return res.status(200).json({
+
+            success: true,
+            message: "Operation successful",
+            data: event
+        });
+    }
+    catch(e){
+
+        return res.status(400).json({
+            success: false,
+            message: "There was an error performing this operation",
+            data: e.toString()
+        });
+    }
+    
+},
+
+
+/**
  * unsubscribes a user from an event.
  * user no longer gets event notification/updates
  * 
@@ -332,7 +381,7 @@ unfollow = async (req, res) => {
 confirmAttendance = async (req, res) => {
 
     const eventId = req.params.eventId;
-    const status = req.body.status.toUpperCase();
+    const status = req.body.status;
     const userId = "1234561"
 
     if( ! eventId ){
@@ -360,7 +409,7 @@ confirmAttendance = async (req, res) => {
             });
         }
 
-        await eventService.confirmEventAttendance( eventId, userId, status );
+        await eventService.confirmEventAttendance( eventId, userId, status.toUpperCase() );
         
         return res.status(200).json({
             success: true,
@@ -382,4 +431,4 @@ generateCode = () => {
     return Math.random().toString(36).slice(3);
 }
 
-module.exports = {index, create, view, update, softdelete, generateEventCode, follow, unfollow, confirmAttendance}
+module.exports = {index, create, view, update, softdelete, generateEventCode, follow, unfollow, confirmAttendance, muteNotifications}
