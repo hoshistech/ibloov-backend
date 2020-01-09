@@ -9,7 +9,6 @@ module.exports = {
 
 connect : function(){
 
-    console.log('it is ', mongoDB);
     console.log("connecting to server....");
     mongoose.connect(mongoDB, { useNewUrlParser: true, useCreateIndex: true,  useUnifiedTopology: true  });
 
