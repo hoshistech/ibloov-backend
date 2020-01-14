@@ -1,7 +1,5 @@
-<<<<<<< HEAD
 # ibloov
 ibloov
-=======
-# ibloov-backend
 
->>>>>>> c478631987ce5f25db708f0b264f793566048132
+#Generate API Doc
+`apidoc -i app/controllers -o public/doc`
