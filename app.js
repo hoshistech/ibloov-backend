@@ -11,17 +11,18 @@ var passport = require("passport");
 const dotenv = require('dotenv');
 dotenv.config();
 
-
 //routes
 const EventRouter = require("@routes/events.route");
 const indexRouter = require('@routes/index');
 const UsersRouter = require('@routes/users.route');
 const AuthRouter = require('@routes/auth.route');
-const WishListRouter = require("@routes/wishlists.route")
+const WishListRouter = require("@routes/wishlists.route");
+const CrowdFundingRouter = require("@routes/crowdfunding.route");
 
 //seeders
 const eventsSeederRouter = require('@routes/seeders/events.route');
 const wishlistSeederRouter = require('@routes/seeders/wishlists.route');
+const crowdfundingSeederRouter = require('@routes/seeders/crowdfunding.route');
 const userSeederRouter = require('@routes/seeders/users.route');
 
 var app = express();
@@ -45,11 +46,13 @@ app.use('/', indexRouter);
 app.use('/v1/users', UsersRouter);
 app.use('/v1/event', EventRouter);
 app.use('/v1/wishlist', WishListRouter);
+app.use('/v1/crowdfunding', CrowdFundingRouter);
 app.use('/auth', AuthRouter);
 
 //seeders
 app.use('/seeders/event', eventsSeederRouter );
 app.use('/seeders/wishlist', wishlistSeederRouter );
+app.use('/seeders/crowdfunding', crowdfundingSeederRouter );
 app.use('/seeders/user', userSeederRouter );
 
 

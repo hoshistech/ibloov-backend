@@ -20,7 +20,12 @@ var EventSchema = new Schema({
         required: true
     },
 
-    eventDate: {
+    eventStartDate: {
+        type: Date,
+        required: true
+    },
+
+    eventEndDate: {
         type: Date,
         required: true
     },
@@ -130,11 +135,26 @@ var EventSchema = new Schema({
     }, 
     
     deletedBy: {
-        type: String
+        type: String,
+        default: null
     },
 
     wishList: {
         type: String //maybe this should be an objectId type
+    },
+
+    isRecurring: {
+        type: Boolean,
+        default: false
+    },
+
+    frequency: {
+        type: String
+    }, 
+
+    publish: {
+        type: Boolean,
+        default: false
     }
 
     //sponsors, event date, type

@@ -24,7 +24,6 @@ const seedWishlists = async (req, res) => {
                 message: "error generating and saving events",
                 data: err
             });
-
         } 
         else {
             res.status(201).json({

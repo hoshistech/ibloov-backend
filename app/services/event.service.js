@@ -64,7 +64,7 @@ module.exports = {
 
 
     /**
-     * performs a softDelete operation on a single instance of a model
+     * performs a softDelete operation on a single instance of an event model
      * @param eventId integer
      *
      */
@@ -193,7 +193,7 @@ module.exports = {
      * updates a user attending status to 'YES' for an event
      * @param eventId String
      * @param userId String
-     * @param status String - "YES", "NO", "MAYBE" are the only allwed values
+     * @param status String - "YES", "NO", "MAYBE" are the only allowed values
      * 
      */
     confirmEventAttendance: async( eventId, userId, status ) => {
