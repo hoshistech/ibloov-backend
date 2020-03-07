@@ -33,7 +33,7 @@ var EventSchema = new Schema({
     isPrivate: {
         type: Boolean,
         default: false,
-        enum: [true, false]
+        enum: [true, false] 
     },
 
     createdBy: {
