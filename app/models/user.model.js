@@ -27,6 +27,15 @@ var UserSchema = new Schema({
         default: false
     },
 
+    verificationCode: [{
+        code: {
+            type: String
+        },
+        expires: {
+            type: Date
+        }
+    }],
+
     phoneNumber: {
         type: String
     },
