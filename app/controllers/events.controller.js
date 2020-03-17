@@ -268,6 +268,8 @@ follow = async (req, res) => {
  * Disables notifications for an event
  * user would no longer receive event notifications even if they are the creators, following the event etc..
  * 
+ * We should consider if we want event notification mutable for event creators/coordinators
+ * 
  * @authlevel authenticated 
  */
 muteNotifications = async (req, res) => {
@@ -377,7 +379,9 @@ unfollow = async (req, res) => {
     
 },
 
-
+/**
+ * sets the status of a user's attendance for an event based on the user's response
+ */
 confirmAttendance = async (req, res) => {
 
     const eventId = req.params.eventId;
@@ -425,10 +429,33 @@ confirmAttendance = async (req, res) => {
     }
 }
 
+/**
+ * events happening right now
+ */
+live = async (req, res) => {
+
+    try{
+        let events = await eventService.liveEvents();
+        
+        return res.status(200).json({
+            success: true,
+            message: "Live events retreived successfully!.",
+            data: events
+        });
+    }
+    catch(e){
+        return res.status(400).json({
+            success: false,
+            message: "Error performing this operation.",
+            data: e.toString()
+        });
+    }
+}
+
 
 generateCode = () => {
 
     return Math.random().toString(36).slice(3);
 }
 
-module.exports = {index, create, view, update, softdelete, generateEventCode, follow, unfollow, confirmAttendance, muteNotifications}
+module.exports = {index, create, view, update, softdelete, generateEventCode, follow, unfollow, confirmAttendance, muteNotifications, live}
