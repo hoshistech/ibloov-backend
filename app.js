@@ -12,18 +12,19 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 //routes
-const EventRouter = require("@routes/events.route");
+const EventRouter = require("@routes/event.route");
 const indexRouter = require('@routes/index');
-const UsersRouter = require('@routes/users.route');
+const UsersRouter = require('@routes/user.route');
 const AuthRouter = require('@routes/auth.route');
-const WishListRouter = require("@routes/wishlists.route");
+const WishListRouter = require("@routes/wishlist.route");
 const CrowdFundingRouter = require("@routes/crowdfunding.route");
+const PaymentRouter = require("@routes/payment.route");
 
 //seeders
-const eventsSeederRouter = require('@routes/seeders/events.route');
-const wishlistSeederRouter = require('@routes/seeders/wishlists.route');
+const eventsSeederRouter = require('@routes/seeders/event.route');
+const wishlistSeederRouter = require('@routes/seeders/wishlist.route');
 const crowdfundingSeederRouter = require('@routes/seeders/crowdfunding.route');
-const userSeederRouter = require('@routes/seeders/users.route');
+const userSeederRouter = require('@routes/seeders/user.route');
 
 var app = express();
 
@@ -47,6 +48,7 @@ app.use('/v1/users', UsersRouter);
 app.use('/v1/event', EventRouter);
 app.use('/v1/wishlist', WishListRouter);
 app.use('/v1/crowdfunding', CrowdFundingRouter);
+app.use('/v1/payment', PaymentRouter);
 app.use('/auth', AuthRouter);
 
 //seeders

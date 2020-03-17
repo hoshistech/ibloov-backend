@@ -20,12 +20,12 @@ var EventSchema = new Schema({
         required: true
     },
 
-    eventStartDate: {
+    startDate: {
         type: Date,
         required: true
     },
 
-    eventEndDate: {
+    endDate: {
         type: Date,
         required: true
     },

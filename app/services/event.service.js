@@ -11,6 +11,10 @@ module.exports = {
 
         //const {limit, sort} =  options;
         query["deletedAt"] = null;
+        query["isPrivate"] = false;
+
+        console.log(query);
+
         let events = await Event.find(query);
         return events;
     },
@@ -113,6 +117,20 @@ module.exports = {
 
         return await module.exports.updateEventSet(eventId, set);
 
+    },
+
+
+    followEvent: async( eventId, user ) => {
+
+        let follower = {
+            userId: user._id,
+            name: user.fullName,
+            email: user.email,
+            createdAt: new Date(),
+        };
+
+        let set = { 'followers': follower };
+        return await module.exports.updateEventSet(eventId, set);
     },
 
     
@@ -233,6 +251,33 @@ module.exports = {
         let update = await Event.findByIdAndUpdate( eventId, { $pull: { 'invitees':  { "userId": userId }  } }, 
         { new: true} );
         return update;
+    },
+
+
+    /**
+     * Returns a list of live events
+     * Live events are events that are currently taking place.
+     * They include events that are happening right now or have been set to reoccur every year at a said datetime
+     * live events also inclusdes events that have been set to recurring events for a particular day.
+     * 
+     * @return Event Array.
+     */
+    liveEvents: async() => {
+
+        let filter = {};
+
+        let dateFilter = {};
+        dateFilter["startDate"] = { "$lte" : new Date() };
+        dateFilter["endDate"] = { "$gte" : new Date() };
+
+        let recurringFilter = {};
+        recurringFilter["isRecurring"] = true
+        recurringFilter["startDate"] = { "$lte" : new Date()}
+        recurringFilter["endDate"]  = { "$gte" : new Date() }
+
+        filter["$or"] = [ dateFilter, recurringFilter ]
+
+       return module.exports.all(filter);
     },
 
 

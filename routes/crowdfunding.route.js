@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const CrowdFundingController = require('@controllers/crowdFunding.controller');
+const CrowdFundingController = require('@controllers/crowdfundings.controller');
 
 router.get('/', CrowdFundingController.index) ;
 

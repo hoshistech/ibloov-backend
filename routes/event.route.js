@@ -6,6 +6,8 @@ router.get('/', EventController.index) ;
 
 router.post('/create', EventController.create );
 
+router.get('/live', EventController.live );
+
 router.patch('/:eventId', EventController.update );
 
 router.get('/:eventId', EventController.view );
@@ -23,5 +25,6 @@ router.patch('/unfollow/:eventId', EventController.unfollow );
 router.post('/invite/setattendingstatus/:eventId', EventController.confirmAttendance );
 
 router.patch('/notifications/mute/:eventId', EventController.muteNotifications );
+
 
 module.exports = router; 
