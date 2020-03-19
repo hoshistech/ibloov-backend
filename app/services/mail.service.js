@@ -84,6 +84,38 @@ module.exports = {
     sendventUnFollowNotificaiton: (eventId, userId) => {
 
     },
+
+
+    /**
+     * Notifies an influencer when he has a new follower
+     * @param influencer Object
+     * @param follower Object
+     */
+    sendInfluencerNewFollowerNotificaiton: async (influencer, follower) => {
+
+        const templateId = getEventTemplate("ACCOUNT_SIGNUP");
+        const emailData = {
+            "personalizations": [
+            {
+                "to": [
+                {
+                    "email": influencer.email
+                }
+                ],
+                "dynamic_template_data": {
+                    "name": follower.name
+                },
+            }
+            ],
+            "from": {
+                "email": FROM 
+            },
+            "template_id": templateId
+        };
+
+        await sgMail.sendMultiple(emailData);
+    }
+    
     
 }
 
@@ -104,6 +136,10 @@ const getEventTemplate = (event) => {
 
         case "EVENT_UPDATE":
             templateId = process.env.EVENT_UPDATE_TEMPLATE
+            break;
+        
+        case "INFLUENFER_NEW_FOLLOWER":
+            templateId = process.env.INFLUENFER_NEW_FOLLOWER_TEMPLATE
             break;
 
         default:

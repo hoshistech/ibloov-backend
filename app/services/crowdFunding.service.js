@@ -105,8 +105,8 @@ module.exports = {
 
     /**
      * allows a user to renege on a pledge.
-     * @param crowdFundingId integer
-     * @param userId integer
+     * @param crowdFundingId integer - the unique id of the crowdfuding model
+     * @param userId integer - the unique ID of the user
      */
     unPledge: async(crowdFundingId, userId) => {
         

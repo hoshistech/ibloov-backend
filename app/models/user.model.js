@@ -19,7 +19,8 @@ var UserSchema = new Schema({
     },
 
     email: {
-        type: String
+        type: String,
+        unique: true
     },
 
     isEmailVerified: {
@@ -27,8 +28,19 @@ var UserSchema = new Schema({
         default: false
     },
 
+    verificationCode: [{
+        code: {
+            type: String
+        },
+        expires: {
+            type: Date
+        }
+    }],
+
     phoneNumber: {
-        type: String
+        type: String,
+        unique: true,
+        required: false
     },
 
     isPhoneNumberVerified: {

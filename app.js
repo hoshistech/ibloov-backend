@@ -19,12 +19,14 @@ const AuthRouter = require('@routes/auth.route');
 const WishListRouter = require("@routes/wishlist.route");
 const CrowdFundingRouter = require("@routes/crowdfunding.route");
 const PaymentRouter = require("@routes/payment.route");
+const influencerRouter = require("@routes/influencer.route");
 
 //seeders
-const eventsSeederRouter = require('@routes/seeders/event.route');
+const eventSeederRouter = require('@routes/seeders/event.route');
 const wishlistSeederRouter = require('@routes/seeders/wishlist.route');
 const crowdfundingSeederRouter = require('@routes/seeders/crowdfunding.route');
 const userSeederRouter = require('@routes/seeders/user.route');
+const influencerSeederRouter = require('@routes/seeders/influencer.route');
 
 var app = express();
 
@@ -50,12 +52,15 @@ app.use('/v1/wishlist', WishListRouter);
 app.use('/v1/crowdfunding', CrowdFundingRouter);
 app.use('/v1/payment', PaymentRouter);
 app.use('/auth', AuthRouter);
+app.use('/v1/influencer', influencerRouter);
 
 //seeders
-app.use('/seeders/event', eventsSeederRouter );
+app.use('/seeders/event', eventSeederRouter );
 app.use('/seeders/wishlist', wishlistSeederRouter );
 app.use('/seeders/crowdfunding', crowdfundingSeederRouter );
 app.use('/seeders/user', userSeederRouter );
+app.use('/seeders/influencer', influencerSeederRouter );
+
 
 
 // catch 404 and forward to error handler

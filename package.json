@@ -15,6 +15,7 @@
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
     "express": "~4.16.1",
+    "express-validator": "^6.4.0",
     "faker": "^4.1.0",
     "http-errors": "~1.6.3",
     "jsbarcode": "^3.11.0",
@@ -36,6 +37,9 @@
     "@seeders": "app/seeders",
     "@helpers": "app/helpers",
     "@config": "config",
-    "@services": "app/services"
+    "@services": "app/services",
+    "@middleware": "app/middlewares",
+    "@request-middleware": "app/middlewares/requests"
+
   }
 }

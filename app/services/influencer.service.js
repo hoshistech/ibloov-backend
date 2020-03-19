@@ -79,6 +79,7 @@ module.exports = {
      * updates an influencer instance -  adds a new audit history to the influencer document
      * @param influencerId String - the unique identifier of the influencer.
      * @param influencer string - the name of the influencer e.g create, delete etc.
+     * 
      */
     addInfluencerHistory: async (influencerId, influencer) => {
 
@@ -99,12 +100,12 @@ module.exports = {
     /**
      * adds a new follower to the followers an influencer
      * 
-     * @param eventId String 
+     * @param influencerId String 
      * @param user Object 
      * 
      * @return 
      */
-    followInfluencer: async( eventId, user ) => {
+    followInfluencer: async( influencerId, user ) => {
 
         let follower = {
             userId: user._id,
@@ -114,12 +115,14 @@ module.exports = {
         };
 
         let setData = { 'followers': follower };
-        return await Event.findByIdAndUpdate( { _id: eventId } , { '$addToSet': setData });
+        return await Influencer.findOneAndUpdate( 
+            
+            {_id: influencerId, 'followers.userId' : { $ne: follower.userId }}, 
+            { $push : setData }
+        );
     },
 
         
-
-    
     /**
      * check if a user is followiig an influencer
      * 
@@ -142,21 +145,6 @@ module.exports = {
      * @param userId string
      */
     unfollowInfluencer: async (influencerId, userId) => {
-
-        let update = await Influencer.findByIdAndUpdate( influencerId, { $pull: { 'followers':  {"userId": userId }  } }, 
-        { new: true} );
-        return update;
-    },
-
-
-    /**
-     * unsubsribes a user from an influencer
-     * the user no longer gets notifications of happenings from that influencer. 
-     * @param influencerId string
-     * @param userId string
-     */
-    unfollowInfluencer: async (influencerId, user) => {
-
 
         let update = await Influencer.findByIdAndUpdate( influencerId, { $pull: { 'followers':  {"userId": userId }  } }, 
         { new: true} );

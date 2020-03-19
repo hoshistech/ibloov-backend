@@ -1,48 +1,50 @@
-var braintree = require('braintree');
-const processor = require("@config/payment.config") 
+const braintree = require('braintree');
+const processor = require("@config/payment.config");
+
+//get braintree credentials from config
+const { merchantId, publicKey, privateKey } = processor;
+
+const gateway = braintree.connect({
+  environment: braintree.Environment.Sandbox,
+  merchantId,
+  publicKey,
+  privateKey
+}); 
 
 module.exports = {
 
     checkout: async (amount, nonceFromTheClient) => {
 
-        const {merchantId, publicKey, privateKey } = processor;
-        var gateway = braintree.connect({
-
-            environment: braintree.Environment.Sandbox,
-            merchantId,
-            publicKey,
-            privateKey
-          });
-        
-          // Use the payment method nonce here
-          //var nonceFromTheClient = req.body.paymentMethodNonce;
-
-          // Create a new transaction 
-        //   var newTransaction = gateway.transaction.sale({
-        //     amount: amount,
-        //     paymentMethodNonce: nonceFromTheClient,
-        //     options: {
-        //       // This option requests the funds from the transaction
-        //       // once it has been authorized successfully
-        //       submitForSettlement: true
-        //     }
-        //   }, function(error, result) {
-        //       if (result) {
-        //         res.send(result);
-        //       } else {
-        //         res.status(500).send(error);
-        //       }
-        //   });
-
+      try {
 
         return await gateway.transaction.sale({
-            amount: amount,
-            paymentMethodNonce: nonceFromTheClient,
-            options: {
-              // This option requests the funds from the transaction
-              // once it has been authorized successfully
-              submitForSettlement: true
-            }
+          amount,
+          paymentMethodNonce: nonceFromTheClient,
+          options: {
+            submitForSettlement: true
+          }
         });
+        
+      } catch (err) {
+          throw err;
+      }
+        
+    },
+
+
+    /**
+     * Braintree requires a client token from its server SDK to validate payment processing on the client SDK
+     * this token is generated and sent to the client for validating payment processing.
+     */
+    generateClientToken: async() => {
+
+      try {
+        let response = await gateway.clientToken.generate();
+        return response.clientToken;
+
+      } catch (err) {
+        throw err;
+      }
+      
     }
 }
