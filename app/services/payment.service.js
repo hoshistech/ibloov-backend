@@ -2,13 +2,27 @@ const gateway = require("@services/payment-gateways/braintree.gateway");
 
 module.exports = {
 
-    checkout: async () => {
+
+    /**
+     * process payment checkout
+     * @param amount Number
+     * @param nonceFromTheClient String
+     */
+    checkout: async (amount, nonceFromTheClient) => {
 
         try{
-            return gateway.checkout(10);
+            return gateway.checkout(amount);
 
         } catch(e) {
             throw e;
         }
+    },
+
+    /**
+     * Generates a client token that is sent to the client side to authenticate the processing of a transaction.
+     * 
+     */
+    generateClientToken: async () => {
+        return gateway.generateClientToken();
     }
 }

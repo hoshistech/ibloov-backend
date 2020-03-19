@@ -19,7 +19,8 @@ var UserSchema = new Schema({
     },
 
     email: {
-        type: String
+        type: String,
+        unique: true
     },
 
     isEmailVerified: {
@@ -37,7 +38,9 @@ var UserSchema = new Schema({
     }],
 
     phoneNumber: {
-        type: String
+        type: String,
+        unique: true,
+        required: false
     },
 
     isPhoneNumberVerified: {

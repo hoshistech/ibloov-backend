@@ -2,29 +2,36 @@ const mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
-var UserSchema = new Schema({
+var InfluencerSchema = new Schema({
 
-    userId: {
+    category: {
         type: String,
         required: true
     },
 
-    firstName: {
-        type: String,
-        required: true
+    fee: {
+        type: Number,
+        default: null
     },
 
-    lastName: {
-        type: String,
-        required: true
-    },
+    user: {
 
-    fullName: {
-        type: String
-    },
-
-    email: {
-        type: String
+        id: {
+            type: String,
+            required: true
+        },
+        fullName: {
+            type: String,
+            required: true
+        },
+        email: {
+            type: String,
+            required: true
+        },
+        phoneNumber: {
+            type: String,
+            required: true
+        }
     },
 
     isVerified: {
@@ -32,20 +39,28 @@ var UserSchema = new Schema({
         default: false
     },
 
-    phoneNumber: {
-        type: String
+    verifiedDate: {
+        type: Date,
+        default: null
     },
 
-    folowers: [
+    followers: [
         {
             userId: String,
             email: String,
             fullName: String,
-            dateFollowed: Date
+            createdAt: Date
+        }
+    ],
+
+    events: [
+        {
+            eventId: String,
+            eventName: String
         }
     ]
 
 });
 
-let Events = mongoose.model('users', UserSchema);
-module.exports = Events;
+let Influencers = mongoose.model('influencers', InfluencerSchema);
+module.exports = Influencers;

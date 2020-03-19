@@ -149,7 +149,7 @@ var EventSchema = new Schema({
     },
 
     frequency: {
-        type: String
+        type: String //for recurring events - monthly, daily, weekly, yearly, fornightly etc.
     }, 
 
     publish: {
