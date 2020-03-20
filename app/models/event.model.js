@@ -140,7 +140,8 @@ var EventSchema = new Schema({
     },
 
     wishList: {
-        type: String //maybe this should be an objectId type
+        type: String, //maybe this should be an objectId type
+        default: null
     },
 
     isRecurring: {
@@ -156,8 +157,6 @@ var EventSchema = new Schema({
         type: Boolean,
         default: false
     }
-
-    //sponsors, event date, type
 
 });
 

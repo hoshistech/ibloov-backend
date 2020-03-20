@@ -47,7 +47,7 @@ const eventFactory =  ( eventCodeCount ) => {
     let isSameDay = randomInt(0,2);
     let isPrivate = randomInt(1,9) % 2 === 0;
     let eventDay = faker.date.future();
-    let createdBy = "89n98nv939nf30";
+    let createdBy = "5e74a056a1d062242108b212";
 
     for( let i = 0; i < eventCodeCount; i++ ){
         
@@ -74,7 +74,7 @@ const eventFactory =  ( eventCodeCount ) => {
         startDate: isSameDay ? eventDay : faker.date.future() ,
         endDate: isSameDay ? eventDay : faker.date.future(),
         isPrivate,
-        createdBy: createdBy,
+        createdBy,
         status: "UPCOMING",
         createdAt: new Date,
         updatedAt: new Date,
