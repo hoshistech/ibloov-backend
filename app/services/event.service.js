@@ -120,10 +120,16 @@ module.exports = {
     },
 
 
+    /**
+     * Adds a new follower to an event.
+     * users can follow an event - this allows them to get updates as regards then event.
+     * @param eventId String
+     * @param user object
+     */
     followEvent: async( eventId, user ) => {
 
         let follower = {
-            userId: user._id,
+            id: user._id,
             name: user.fullName,
             email: user.email,
             createdAt: new Date(),

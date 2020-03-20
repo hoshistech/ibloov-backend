@@ -1,10 +1,6 @@
 const eventService = require('@services/event.service');
+const { sendAccountConfirmationNotification } = require('@services/mail.service');
 const uuidv4 = require('uuid/v4');
-const {sendAccountConfirmationNotification} = require('@services/mail.service');
-
-// const Event = require('@models/event.model');
-// var JsBarcode = require('jsbarcode');
-// var Canvas = require("canvas");
 
 
 /**
@@ -33,6 +29,7 @@ index = async (req, res) => {
 
 
 /**
+ * @RESTCONTROLLER
  * create a new event.
  */
 create = async (req, res) => {
@@ -60,8 +57,9 @@ create = async (req, res) => {
     }
 };
 
-
+ 
 /**
+ * @RESTCONTROLLER
  * update a single event model
  * 
  */
@@ -105,7 +103,10 @@ update = async (req, res) => {
     }
 };
 
-
+/**
+ * @RESTCONTROLLER
+ * view a single event instance
+ */
 view = async (req, res) => {
 
     let eventId = req.params.eventId;
@@ -146,12 +147,12 @@ view = async (req, res) => {
 
 
 /**
+ * @RESTCONTROLLER
  * softDeletes a single event instance.
  * @authLevel - authenticated | isEventAdmin | isEventCreator
  */
 softdelete = async (req, res) => { 
 
-    
     let eventId = req.params.eventId;
     let eventData = req.body;
 
@@ -184,13 +185,15 @@ softdelete = async (req, res) => {
         console.log(e)
         return res.status(400).json({
             success: false,
-            message: "Error occured while trying to update this event.",
+            message: "Error occured while trying to process this event.",
             data: e
         });
     }
 };
 
+
 /**
+ * @RESTCONTROLLER
  * Generates a single code for an event
  * most likely used when genrating an event
  * @authlevel - no auth
@@ -208,6 +211,7 @@ generateEventCode = (req, res) => {
 
 
 /**
+ * @RESTCONTROLLER
  * sunscribes a user to an event
  * user would start receiving event notifications/updates
  * @authlevel authenticated
@@ -260,11 +264,11 @@ follow = async (req, res) => {
             data: e.toString()
         });
     }
-    
 },
 
 
 /**
+ * @RESTCONTROLLER
  * Disables notifications for an event
  * user would no longer receive event notifications even if they are the creators, following the event etc..
  * 
@@ -316,6 +320,7 @@ muteNotifications = async (req, res) => {
 
 
 /**
+ * @RESTCONTROLLER
  * unsubscribes a user from an event.
  * user no longer gets event notification/updates
  * 
@@ -379,7 +384,9 @@ unfollow = async (req, res) => {
     
 },
 
+
 /**
+ * @RESTCONTROLLER
  * sets the status of a user's attendance for an event based on the user's response
  */
 confirmAttendance = async (req, res) => {
@@ -430,6 +437,7 @@ confirmAttendance = async (req, res) => {
 }
 
 /**
+ * @RESTCONTROLLER
  * events happening right now
  */
 live = async (req, res) => {
@@ -452,7 +460,9 @@ live = async (req, res) => {
     }
 }
 
-
+/**
+ * helper to generate event codes.
+ */
 generateCode = () => {
 
     return Math.random().toString(36).slice(3);

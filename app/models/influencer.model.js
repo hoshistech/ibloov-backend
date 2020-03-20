@@ -14,6 +14,11 @@ var InfluencerSchema = new Schema({
         default: null
     },
 
+    username: {
+        type: String,
+        required: true
+    },
+
     user: {
 
         id: {
@@ -58,7 +63,27 @@ var InfluencerSchema = new Schema({
             eventId: String,
             eventName: String
         }
-    ]
+    ],
+
+    createdAt: {
+        type: Date,
+        default: new Date
+    },
+
+    updatedAt: {
+        type: Date,
+        default: new Date
+    },
+
+    deletedAt: {
+        type: Date,
+        default: null
+    }, 
+    
+    deletedBy: {
+        type: String,
+        default: null
+    },
 
 });
 
