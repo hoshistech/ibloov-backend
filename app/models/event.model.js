@@ -54,7 +54,7 @@ var EventSchema = new Schema({
 
     createdAt: {
         type: Date,
-        required: true
+        //required: true
     },
 
     updatedAt: {
