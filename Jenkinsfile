@@ -1,24 +1,7 @@
-pipeline {
-  agent any
-  tools {nodejs "node" }
+node {
+    checkout scm
+    def customImage = docker.build("my-image:${env.BUILD_ID}")
+    customImage.push()
 
-  stages {
-    stage('Cloning Git') {
-      steps {
-        git 'https://theekhay@bitbucket.org/xpasson/ibloov-backend.git'
-      }
-    }
-
-    stage('Build') {
-       steps {
-         sh 'npm install'
-       }
-    }
-
-    stage('Test') {
-      steps {
-        sh 'npm test'
-      }
-    }
-  }
+    customImage.push('latest')
 }
