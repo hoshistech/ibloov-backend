@@ -49,6 +49,7 @@ module.exports = {
 
     /**
      * Part 2: Take the "code" parameter which Google gives us once when the user logs in, then get the user's email and id.
+     * 
      */
     getGoogleAccountFromCode: async (code) => {
 
@@ -61,9 +62,9 @@ module.exports = {
         const userGoogleId = me.data.id;
         const userGoogleEmail = me.data.emails && me.data.emails.length && me.data.emails[0].value;
         return {
-        id: userGoogleId,
-        email: userGoogleEmail,
-        tokens: tokens,
+            id: userGoogleId,
+            email: userGoogleEmail,
+            tokens: tokens,
         };
     }
 }
