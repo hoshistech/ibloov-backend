@@ -1,6 +1,6 @@
 node {
     checkout scm
-    docker.withRegistry("hoshistech/ibloov-backend-api", "DockerHub") {
+    docker.withRegistry("https://hub.docker.com", "DockerHub") {
 
         def customImage = docker.build("hoshistech/ibloov-backend-api:${env.BUILD_ID}")
         
