@@ -153,7 +153,7 @@ var EventSchema = new Schema({
         type: String //for recurring events - monthly, daily, weekly, yearly, fornightly etc.
     }, 
 
-    publish: {
+    publish: { //determines if the event should be shown or not 
         type: Boolean,
         default: false
     }

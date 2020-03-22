@@ -17,6 +17,7 @@
     "express": "~4.16.1",
     "express-validator": "^6.4.0",
     "faker": "^4.1.0",
+    "googleapis": "^48.0.0",
     "http-errors": "~1.6.3",
     "jsbarcode": "^3.11.0",
     "module-alias": "^2.2.2",
@@ -40,6 +41,5 @@
     "@services": "app/services",
     "@middleware": "app/middlewares",
     "@request-middleware": "app/middlewares/requests"
-
   }
 }
