@@ -140,7 +140,8 @@ var EventSchema = new Schema({
     },
 
     wishList: {
-        type: String //maybe this should be an objectId type
+        type: String, //maybe this should be an objectId type
+        default: null
     },
 
     isRecurring: {
@@ -152,12 +153,10 @@ var EventSchema = new Schema({
         type: String //for recurring events - monthly, daily, weekly, yearly, fornightly etc.
     }, 
 
-    publish: {
+    publish: { //determines if the event should be shown or not 
         type: Boolean,
         default: false
     }
-
-    //sponsors, event date, type
 
 });
 
