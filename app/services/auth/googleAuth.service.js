@@ -1,9 +1,6 @@
 const {google} =  require('googleapis');
 const { googleAuth } = require("@config/socialAuth");
 
-console.log(googleAuth)
-
-
 
 /**
  * This scope tells google what information we want to request.
