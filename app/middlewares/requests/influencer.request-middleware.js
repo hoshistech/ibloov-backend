@@ -96,7 +96,7 @@ exports.validate = (method) => {
           return influencerService.viewInfluencer(value).then( influencer => {
 
             if ( ! influencer ) {
-              return Promise.reject('Influencer not found!');
+              return Promise.reject('Influencer not found!!');
             }
           });
         })
