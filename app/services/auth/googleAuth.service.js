@@ -40,6 +40,7 @@ module.exports = {
     /**
      * Create the google url to be sent to the client.
      * 
+     * 
      */
 
     urlGoogle: () => {
