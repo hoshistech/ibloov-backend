@@ -288,6 +288,37 @@ module.exports = {
 
 
     /**
+     * Search for events within a given radius from a location
+     * @param long float
+     * @param lat float
+     * @param radius float
+     */
+    byLocation: ( long, lat, radius ) => {
+
+        Event.aggregate(
+            [
+                { "$geoNear": {
+                    "near": {
+                        "type": "Point",
+                        "coordinates": [ `<${long}>`,`<${lat}>`]
+                    },
+                    "distanceField": "distance",
+                    "spherical": true,
+                    "maxDistance": radius
+                }}
+            ],
+            function(err,results) {
+
+                if(err) throw (err);
+
+                return results;
+            }
+        )
+
+    },
+
+
+    /**
      * adds an event to a user's google calendar
      * when a user creates an event | likes an event | follows an event - the event gets added to their google calendar
      * @param eventId

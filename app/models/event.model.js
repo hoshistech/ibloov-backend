@@ -14,6 +14,18 @@ var EventSchema = new Schema({
         type: String
     },
 
+    location: {
+        address: {
+            type: String,
+            required: true
+        },
+        type: { 
+            type: String,
+            default: "Point"
+        },
+        coordinates: [ Number ]
+    },
+
     uuid: {
         type: String,
         unique: true,
@@ -168,6 +180,9 @@ var EventSchema = new Schema({
 //     this._id = this._id.toString();
 //     next();
 // });
+
+
+EventSchema.index({ "location": "2dsphere" });
 
 let Events = mongoose.model('events', EventSchema);
 
