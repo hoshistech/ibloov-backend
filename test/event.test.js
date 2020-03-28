@@ -6,7 +6,7 @@ var assert = require("assert");
 var request = require("supertest");
 var app = require("../app");
 
-const EventSeeder = require("@seeders/events.seeder");
+//const EventSeeder = require("@seeders/events.seeder");
 
 describe( "Events", () => {
 
