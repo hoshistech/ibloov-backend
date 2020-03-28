@@ -86,4 +86,4 @@ const eventFactory =  ( eventCodeCount ) => {
     return event;
 }
 
-module.exports = { seedEvents }
+module.exports = { seedEvents, eventFactory }
