@@ -1,10 +1,8 @@
-require('module-alias/register');
-
-
+var app = require("../app");
 var should = require("should");
 var assert = require("assert");
 var request = require("supertest");
-var app = require("../app");
+
 
 const EventSeeder = require("@seeders/events.seeder");
 
