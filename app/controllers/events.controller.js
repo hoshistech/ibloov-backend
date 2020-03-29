@@ -40,8 +40,8 @@ create = async (req, res) => {
 
     try{
         await eventService.createEvent(event);
-        sendAccountConfirmationNotification();
-        res.status(200).send({
+        //sendAccountConfirmationNotification();
+        res.status(201).send({
             success: true,
             message: "Event created successfully",
             data: event

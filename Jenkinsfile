@@ -18,7 +18,7 @@ node {
         // app.inside {
         //     echo "Tests passed"
         // }
-        sh 'vendor/bin/phpunit'
+        sh 'npm run test'
     }
 
     stage('Push image') {
