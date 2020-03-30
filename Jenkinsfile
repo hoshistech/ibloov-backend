@@ -15,10 +15,10 @@ node {
 
     stage('Test image') {
         
-        // app.inside {
-        //     echo "Tests passed"
-        // }
-        sh 'npm run test'
+        app.inside {
+            echo "Tests passed"
+        }
+        //sh 'npm run test'
     }
 
     stage('Push image') {
