@@ -31,6 +31,9 @@ index = async (req, res) => {
 /**
  * @RESTCONTROLLER
  * create a new event.
+ * 
+ * @TODO add middleware to ensure that the start date is not in the past
+ * @TODO add middleware to ensure that the end date is not greater than the start date
  */
 create = async (req, res) => {
 

@@ -4,9 +4,18 @@ var Schema = mongoose.Schema;
 
 var items = new Schema({
 
-    name: String, 
-    quantity: Number,
-    externalLink: String //if you saw the item on a different store for sale, you can add it here. 
+    name: {
+        type: String,
+        required: true
+    }, 
+    quantity: {
+        type: Number,
+        default: 1
+    },
+    itemLink: {
+        type: String,
+        required: true
+    } //if you saw the item on a different store for sale, you can add it here. 
     //users can then click oand go straight to the that page
 })
 

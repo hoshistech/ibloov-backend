@@ -52,7 +52,8 @@ const factory = ( itemcount ) => {
 
         item = {
             name: faker.lorem.word(),
-            quantity: faker.random.number()
+            quantity: faker.random.number(),
+            itemLink: faker.internet.url()   
         }
 
         items.push(item);
