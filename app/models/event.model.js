@@ -91,13 +91,19 @@ var EventSchema = new Schema({
     }],
 
     invitees: [{
-        name: String,
-        email: String,
+        name: {
+            type: String,
+            required: true
+        },
+        email: {
+            type: String,
+            required: true
+        },
         userId: String, //optional. for people on the platform
         accepted: {
             type: String,
-            enum: ["YES", "NO", "MAYBE", "NULL"],
-            default: "NULL",
+            enum: ["YES", "NO", "MAYBE", null],
+            default: null,
         }
     }], 
 

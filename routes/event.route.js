@@ -26,5 +26,9 @@ router.post('/invite/setattendingstatus/:eventId', EventController.confirmAttend
 
 router.patch('/notifications/mute/:eventId', EventController.muteNotifications );
 
+router.patch('/invite/add/:eventId', EventController.addInvites );
+
+router.patch('/invite/remove/:eventId', EventController.removeInvites );
+
 
 module.exports = router; 

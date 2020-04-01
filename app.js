@@ -7,6 +7,9 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var passport = require("passport");
 
+//body-parser
+var bodyParser = require('body-parser');
+
 //env
 const dotenv = require('dotenv');
 dotenv.config();
@@ -19,7 +22,9 @@ const AuthRouter = require('@routes/auth.route');
 const WishListRouter = require("@routes/wishlist.route");
 const CrowdFundingRouter = require("@routes/crowdfunding.route");
 const PaymentRouter = require("@routes/payment.route");
-const influencerRouter = require("@routes/influencer.route");
+const InfluencerRouter = require("@routes/influencer.route");
+const ShoppingRouter = require("@routes/shopping.route");
+const CategoryRouter = require("@routes/category.route");
 
 //seeders
 const eventSeederRouter = require('@routes/seeders/event.route');
@@ -45,6 +50,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(passport.initialize());
 
+app.use( bodyParser.json( { limit: '50mb', extended: true } ));
+app.use( bodyParser.urlencoded( { limit: '50md', extended: true, parameterLimit: 50000 } ))
+
 app.use('/', indexRouter);
 app.use('/v1/users', UsersRouter);
 app.use('/v1/event', EventRouter);
@@ -52,7 +60,9 @@ app.use('/v1/wishlist', WishListRouter);
 app.use('/v1/crowdfunding', CrowdFundingRouter);
 app.use('/v1/payment', PaymentRouter);
 app.use('/auth', AuthRouter);
-app.use('/v1/influencer', influencerRouter);
+app.use('/v1/influencer', InfluencerRouter);
+app.use('/v1/shopping', ShoppingRouter);
+app.use('/v1/category', CategoryRouter);
 
 //seeders
 app.use('/seeders/event', eventSeederRouter );

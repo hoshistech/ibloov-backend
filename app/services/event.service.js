@@ -231,15 +231,15 @@ module.exports = {
      * @param eventId String
      * @param invitees array
      */
-    addInvitees: async( eventId, invitees = [] ) => {
+    addInvitees: async( eventId, invites ) => {
 
         await Event.bulkWrite(
 
-            payload.map( data => 
+            invites.map( invite => 
               ({
                 updateOne: {
-                  filter: { '_id': 'eventId', 'invitees.userId' : { $ne: data.key } },
-                  update: { $push: { invitees: data } }
+                  filter: { '_id': eventId, 'invitees.email' : { $ne: invite.email } },
+                  update: { $push: { invitees: invite } }
                 }
               })
             )
@@ -252,9 +252,9 @@ module.exports = {
      * @param eventId string
      * @param userId string - this could later be the user's email, yet to decide
      */
-    removeInvitees: async( eventId, userId ) => {
+    removeInvitees: async( eventId, email ) => {
 
-        let update = await Event.findByIdAndUpdate( eventId, { $pull: { 'invitees':  { "userId": userId }  } }, 
+        let update = await Event.findByIdAndUpdate( eventId, { $pull: { 'invitees':  { "email": email }  } }, 
         { new: true} );
         return update;
     },
@@ -271,12 +271,12 @@ module.exports = {
     liveEvents: async() => {
 
         let filter = {};
-
         let dateFilter = {};
+        let recurringFilter = {};
+
         dateFilter["startDate"] = { "$lte" : new Date() };
         dateFilter["endDate"] = { "$gte" : new Date() };
-
-        let recurringFilter = {};
+        
         recurringFilter["isRecurring"] = true
         recurringFilter["startDate"] = { "$lte" : new Date()}
         recurringFilter["endDate"]  = { "$gte" : new Date() }

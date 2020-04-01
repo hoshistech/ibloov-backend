@@ -200,5 +200,74 @@ softdelete = async (req, res) => {
 };
 
 
+/**
+ * adds new invitees to the wishlist invitees
+ * 
+ */
+addInvites = async ( req, res) => {
 
-module.exports = {index, create, view, update, softdelete }
+    let wishlistId = req.params.wishlistId;
+    let invites = req.body.invites;
+
+    if( invites.constructor !== Array ){
+
+        return res.status(400).json({
+
+            success: false,
+            message: `Expected body to be an array, ${typeof invites} provided.`
+        });
+    }
+    
+    try {
+        await service.addInvitees(wishlistId, invites);
+
+        return res.status(200).json({
+            success: true,
+            message: "invites have been add successfully. An email has been sent to notify the recepient.",
+            //data: re
+        });
+        
+    } catch (err) {
+
+        return res.status(400).json({
+
+            success: false,
+            message: "Error occured while performing this operation.",
+            data: err.toString()
+        });
+    }
+
+}
+
+/**
+ * removes an invite from the list of invites for a wishlist
+ * 
+ */
+removeInvites = async ( req, res) => {
+
+    let wishlistId = req.params.wishlistId;
+    let invite = req.body.email;
+    
+    try {
+        await service.removeInvitee(wishlistId, invite);
+
+        return res.status(200).json({
+            success: true,
+            message: "Invite has been removed successfully."
+        });
+        
+    } catch (err) {
+
+        return res.status(400).json({
+
+            success: false,
+            message: "Error occured while performing this operation.",
+            data: err.toString()
+        });
+    }
+
+}
+
+
+
+module.exports = {index, create, view, update, softdelete, addInvites, removeInvites }

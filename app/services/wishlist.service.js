@@ -63,4 +63,43 @@ module.exports = {
         const updateData = { deletedAt: Date.now(), deletedBy: '1edfhuio3ifj' };
         return await module.exports.updateWishlist(wishlistId, updateData); 
     },
+
+    /**
+     * add new invitees to a wishlist
+     * 
+     * @param wishlistId String
+     * @param contacts array
+     */
+    addInvitees: async( wishlistId, invites = [] ) => {
+
+        try{
+
+            await Wishlist.bulkWrite(
+
+                invites.map( contact => 
+                  ({
+                    updateOne: {
+                      filter: { '_id': wishlistId, 'invitees.email' : { $ne: contact.email } },
+                      update: { $push: { invitees: contact } }
+                    }
+                  })
+                )
+            )
+        } catch(err) {
+            throw err;
+        }
+    },
+
+    /**
+     * Removes a contact from the list of invitees for a wishlist
+     * 
+     * @param wishlistId String
+     * @param email String
+     */
+    removeInvitee: async( wishlistId, email ) => {
+
+        let update = await Wishlist.findByIdAndUpdate( wishlistId, { $pull: { 'invitees':  { "email": email }  } }, 
+        { new: true} );
+        return update;
+    }
 }

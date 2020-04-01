@@ -27,6 +27,12 @@ var WishListSchema = new Schema({
         required: true
     },
 
+    eventId: {
+        type: String,
+        required: false,
+        default: null
+    },
+
     items: {
         type: [ items ],
         required: true
@@ -36,7 +42,30 @@ var WishListSchema = new Schema({
         type: String,
         unique: true,
         required: true
-    },       
+    }, 
+    
+    isPrivate: {
+        type: Boolean,
+        default: false,
+        enum: [true, false] 
+    },
+
+    invitees: [{
+        name: {
+            type: String,
+            required: true
+        },
+        email: {
+            type: String,
+            required: true
+        },
+        userId: String, //optional. for people on the platform
+        accepted: {
+            type: String,
+            enum: ["YES", "NO", "MAYBE", null ],
+            default: null,
+        }
+    }],
 
     createdAt: {
         type: Date,
@@ -70,7 +99,8 @@ var WishListSchema = new Schema({
     }, 
     
     deletedBy: {
-        type: String
+        type: String,
+        default: null
     }
 
 });

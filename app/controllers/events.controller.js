@@ -463,6 +463,74 @@ live = async (req, res) => {
     }
 }
 
+
+/**
+ * adds new invitees to the event invitees
+ * @TODO - only the creator or admins of an event should be able to do this
+ */
+addInvites = async ( req, res) => {
+
+    let eventId = req.params.eventId;
+    let invites = req.body.invites;
+
+    if( invites.constructor !== Array ){
+
+        return res.status(400).json({
+
+            success: false,
+            message: `Expected body to be an array, ${typeof invites} provided.`
+        });
+    }
+    
+    try {
+        await eventService.addInvitees(eventId, invites);
+
+        return res.status(200).json({
+            success: true,
+            message: "invites have been add successfully. An email has been sent to notify the recepient."
+        });
+        
+    } catch (err) {
+
+        return res.status(400).json({
+
+            success: false,
+            message: "Error occured while performing this operation.",
+            data: err.toString()
+        });
+    }
+
+}
+
+/**
+ * removes an invite from the list of invites for an event
+ * @TODO - only the creator or admins of an event should be able to do this
+ */
+removeInvites = async ( req, res) => {
+
+    let eventId = req.params.eventId;
+    let invite = req.body.email;
+    
+    try {
+        await eventService.removeInvitees(eventId, invite);
+
+        return res.status(200).json({
+            success: true,
+            message: "Invite has been removed successfully."
+        });
+        
+    } catch (err) {
+
+        return res.status(400).json({
+
+            success: false,
+            message: "Error occured while performing this operation.",
+            data: err.toString()
+        });
+    }
+
+}
+
 /**
  * helper to generate event codes.
  */
@@ -471,4 +539,4 @@ generateCode = () => {
     return Math.random().toString(36).slice(3);
 }
 
-module.exports = {index, create, view, update, softdelete, generateEventCode, follow, unfollow, confirmAttendance, muteNotifications, live}
+module.exports = {index, create, view, update, softdelete, generateEventCode, follow, unfollow, confirmAttendance, muteNotifications, live, addInvites, removeInvites}

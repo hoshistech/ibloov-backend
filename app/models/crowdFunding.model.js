@@ -31,7 +31,7 @@ var CrowdFundingSchema = new Schema({
 
     isPrivate: {
         type: Boolean,
-        required: true,
+        enum: [true, false], 
         default: false
     }, 
 
