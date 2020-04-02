@@ -4,9 +4,18 @@ var Schema = mongoose.Schema;
 
 var donor = new Schema({
 
-    name: String,
-    userId: String,
-    email: String,
+    name: {
+        type: String,
+        required: true
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    email: {
+        type: String,
+        required: true
+    },
     pledge: {
         type: Number,
         required: true
@@ -56,18 +65,10 @@ var CrowdFundingSchema = new Schema({
         required: true
     },       
 
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now()
-    },
-
-    updatedAt: {
-        type: Date,
-    },
-
     createdBy: {
-        type: String,
+        
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true
     },
 
@@ -78,7 +79,10 @@ var CrowdFundingSchema = new Schema({
     history: [{
         event: String,
         comment: String,
-        userId: String,
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        },
         createdAt: String
     }],
 
@@ -92,7 +96,7 @@ var CrowdFundingSchema = new Schema({
         default: null
     }
 
-});
+}, {timestamps: true} );
 
 
 let Events = mongoose.model('crowdfunds', CrowdFundingSchema);

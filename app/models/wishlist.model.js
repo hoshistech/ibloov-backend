@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 
 var items = new Schema({
 
-    name: {
+    item: {
         type: String,
         required: true
     }, 
@@ -15,6 +15,9 @@ var items = new Schema({
     itemLink: {
         type: String,
         required: true
+    },
+    itemImage: {
+        type: String
     } //if you saw the item on a different store for sale, you can add it here. 
     //users can then click oand go straight to the that page
 })
@@ -24,18 +27,20 @@ var WishListSchema = new Schema({
     name: {
         type: String,
         unique: true,
-        required: true
+        required: true,
+        max: 255
     },
 
     eventId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         required: false,
-        default: null
+        default: null,
+        ref: "Event"
     },
 
     items: {
         type: [ items ],
-        required: true
+        required: false
     },
 
     uuid: {
@@ -55,23 +60,23 @@ var WishListSchema = new Schema({
             type: String,
             required: true
         },
+
         email: {
             type: String,
             required: true
         },
-        userId: String, //optional. for people on the platform
+
+        userId: { //optional. for people on the platform
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        },
+
         accepted: {
             type: String,
             enum: ["YES", "NO", "MAYBE", null ],
             default: null,
         }
     }],
-
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now()
-    },
 
     createdBy: {
         type: String,
@@ -82,15 +87,17 @@ var WishListSchema = new Schema({
         type: String
     },
 
-    updatedAt: {
-        type: Date,
-    },
-
     history: [{
         event: String,
         comment: String,
-        userId: String,
-        createdAt: String
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        },
+        createdAt: {
+            type: Date,
+            default: new Date
+        }
     }],
 
     deletedAt: {
@@ -99,11 +106,12 @@ var WishListSchema = new Schema({
     }, 
     
     deletedBy: {
-        type: String,
-        default: null
+        type: mongoose.Schema.Types.ObjectId,
+        default: null,
+        ref: "User"
     }
 
-});
+}, {timestamps: true} );
 
 
 let Events = mongoose.model('wishlists', WishListSchema);

@@ -10,7 +10,6 @@ module.exports = {
     all: async ( query = {}, options = {} ) =>{
 
         //const {limit, sort} =  options;
-        query["deletedAt"] = null;
         query["isPrivate"] = false;
 
         console.log(query);

@@ -2,6 +2,27 @@ const mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
+var influencerEvent = new Schema({
+
+    eventId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Event",
+        required: true
+    },
+    eventName: String
+})
+
+var influencerFollower = new Schema({
+
+    userId: mongoose.Schema.Types.ObjectId,
+    email: String,
+    fullName: String,
+    createdAt: {
+        type: Date,
+        default: new Date
+    }
+})
+
 var InfluencerSchema = new Schema({
 
     category: {
@@ -16,27 +37,16 @@ var InfluencerSchema = new Schema({
 
     username: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
 
-    user: {
+    userId: {
 
-        id: {
-            type: String,
-            required: true
-        },
-        fullName: {
-            type: String,
-            required: true
-        },
-        email: {
-            type: String,
-            required: true
-        },
-        phoneNumber: {
-            type: String,
-            required: true
-        }
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+        unique: true
     },
 
     isVerified: {
@@ -46,33 +56,20 @@ var InfluencerSchema = new Schema({
 
     verifiedDate: {
         type: Date,
-        default: null
+        default: null,
+        required: function(){
+
+            return this.isVerified === true
+        }
     },
 
-    followers: [
-        {
-            userId: String,
-            email: String,
-            fullName: String,
-            createdAt: Date
-        }
-    ],
-
-    events: [
-        {
-            eventId: String,
-            eventName: String
-        }
-    ],
-
-    createdAt: {
-        type: Date,
-        default: new Date
+    followers: {
+        type: [influencerFollower]
     },
 
-    updatedAt: {
-        type: Date,
-        default: new Date
+    events: {
+        type: [influencerEvent],
+        required: false
     },
 
     deletedAt: {
@@ -81,11 +78,11 @@ var InfluencerSchema = new Schema({
     }, 
     
     deletedBy: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         default: null
     },
 
-});
+}, {timestamps: true} );
 
 let Influencers = mongoose.model('influencers', InfluencerSchema);
 module.exports = Influencers;

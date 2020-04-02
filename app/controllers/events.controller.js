@@ -8,8 +8,18 @@ const uuidv4 = require('uuid/v4');
  */
 index = async (req, res) => {
 
+    let filter = {};
+
+    //dont change this line
+    //it forces withDeleted to be false as long as it is not true
+    let withDeleted = ( req.query.withdeleted !== "true" ) ? false : true
+    let withUnPublished = ( req.query.unpublished !== "true" ) ? false : true;
+    
+    if( ! withDeleted ) filter["deletedAt"] = null
+    if( ! withUnPublished ) filter["publish"] = true
+ 
     try{
-        let events = await eventService.all();
+        let events = await eventService.all(filter);
         res.status(200).send({
             success: true,
             message: "events retreived succesfully",

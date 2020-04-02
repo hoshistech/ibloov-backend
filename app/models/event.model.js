@@ -2,12 +2,67 @@ const mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
+var sponsor = new Schema({
+
+    name: {
+        type: String,
+        required: true,
+        max: 255
+    },
+    logo: {
+        type: String
+    }
+})
+
+var coordinator = new Schema({
+
+    name: {
+        type: String,
+        required: true
+    },
+
+    email: {
+        type: String,
+        required: true
+    },
+
+    userId: { //optional. for people on the platform
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    }
+})
+
+var invite = new Schema({
+
+    name: {
+        type: String,
+        required: true
+    },
+
+    email: {
+        type: String,
+        required: true
+    },
+
+    userId: { //optional. for people on the platform
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    }, 
+
+    accepted: {
+        type: String,
+        enum: ["YES", "NO", "MAYBE", null],
+        default: null,
+    }
+})
+
 var EventSchema = new Schema({
 
     name: {
         type: String,
         unique: true,
-        required: true
+        required: true,
+        max: 255
     },
 
     category: {
@@ -49,7 +104,8 @@ var EventSchema = new Schema({
     },
 
     createdBy: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true
     },
 
@@ -64,70 +120,59 @@ var EventSchema = new Schema({
         required: true
     },
 
-    createdAt: {
-        type: Date,
-        //required: true
-    },
-
-    updatedAt: {
-        type: Date,
-    },
-
     eventCode: [{
-        name: String,
+        type: String,
         description: String
     }], //should have a maximum of x possible generations
 
-    sponsors: [{
-        name: String,
-        logo: String,
-    }],
+    sponsors: {
+        type:[sponsor],
+        required: false
+    },
 
-    coordinators: [{
-        
-        name: String,
-        email: String,
-        userId: String //optional. for people on the platform
-    }],
+    coordinators: {
+        type: [coordinator],
+        required: false
+    },
 
-    invitees: [{
-        name: {
-            type: String,
-            required: true
-        },
-        email: {
-            type: String,
-            required: true
-        },
-        userId: String, //optional. for people on the platform
-        accepted: {
-            type: String,
-            enum: ["YES", "NO", "MAYBE", null],
-            default: null,
-        }
-    }], 
+    invitees: {
+        type: invite,
+        required: false
+    }, 
 
     history: [{
         event: String,
         comment: String,
-        userId: String,
+        userId: { //optional. for people on the platform
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        },
         createdAt: Date
     }],
 
     controls: [{
-        name: String,
+        type: String,
         createdAt: Date,
-        createdBy: String
+        createdBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
     }],
 
     followers: [{
         email: String, //maybe
         telephone: String, //maybe
-        userId: String,
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: "User"
+        },
+
         date: {
             type: Date,
             default: Date.now()
         },
+
         allowNoifications: {
             type: Boolean,
             default: true
@@ -136,11 +181,18 @@ var EventSchema = new Schema({
 
     likes: [{
         email: String,
-        userId: String,
+        
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: "User"
+        },
+
         date: {
             type: Date,
             default: Date.now()
         },
+
         allowNoifications: {
             type: Boolean,
             default: true
@@ -153,8 +205,9 @@ var EventSchema = new Schema({
     }, 
     
     deletedBy: {
-        type: String,
-        default: null
+        type: mongoose.Schema.Types.ObjectId,
+        default: null,
+        ref: "User"
     },
 
     wishList: {
@@ -176,7 +229,7 @@ var EventSchema = new Schema({
         default: false
     }
 
-});
+}, {timestamps: true} );
 
 // EventSchema.pre('save', function(next) {
 

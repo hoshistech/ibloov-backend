@@ -20,28 +20,18 @@ var CategorySchema = new Schema({
         required: true
     },
 
-    createdAt: {
-        type: Date,
-        default: new Date
-        //required: true
-    },
-
-    updatedAt: {
-        type: Date,
-        default: new Date
-    },
-
     deletedAt: {
         type: Date,
         default: null
     }, 
     
     deletedBy: {
-        type: String,
-        default: null
+        type: mongoose.Schema.Types.ObjectId,
+        default: null,
+        ref: "User"
     }
 
-});
+}, {timestamps: true} );
 
 
 let Category = mongoose.model('categories', CategorySchema);

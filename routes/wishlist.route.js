@@ -7,7 +7,7 @@ const { isValidRequest } = require("@middleware/isRequestValid.middleware");
 
 router.get('/', WishListController.index ) ;
 
-router.get('/create', WishListController.create ) ;
+router.post('/create', WishListController.create ) ;
 
 router.get('/:wishlistId', WishListController.view );
 

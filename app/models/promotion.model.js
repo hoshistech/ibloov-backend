@@ -8,14 +8,6 @@ var PromotionSchema = new Schema({
         type: String
     },
 
-    createdAt: {
-        type: Date
-    },
-
-    updatedAt: {
-        type: Date
-    },
-
     promotionStart: {
         type: Date
     },
@@ -26,8 +18,33 @@ var PromotionSchema = new Schema({
 
     endDate: {
         type: Date
+    },
+
+    fee: {
+        type:Number
+    },
+
+    isDiscounted: {
+        type: Number,
+        default: false
+    },
+
+    discount: {
+
+        type: Number,
+        required: function(){
+            return this.isDiscounted === true
+        }
     }
-});
+}, {timestamps: true} );
+
+/**
+ * checks if a promotion model is discounted.
+ */
+PromotionSchema.methods.isDiscounted = function() {
+
+    return ( this.isDiscounted === true )
+};
 
 let Promotions = mongoose.model('promotions', PromotionSchema);
 
