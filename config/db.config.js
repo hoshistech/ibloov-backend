@@ -21,7 +21,7 @@ connect : function(){
     db.once('open', function() {
 
         console.log(" ---- remove this in production ----")
-        console.log("DB connected to ", mongoDB)
+        console.log("DB connected to ", mongoDB);
     });
 }
 };
