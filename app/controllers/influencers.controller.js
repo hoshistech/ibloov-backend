@@ -218,7 +218,7 @@ module.exports = {
             await influencerService.followInfluencer(influencerId, user);
             return res.status(200).json({
                 successful: true,
-                message: `you are now following ${ influencer.user.fullName }`
+                 message: `you are now following ${ user.fullName }`
             });
 
         } catch (err) {
@@ -275,4 +275,28 @@ module.exports = {
             });
         }
     },
+
+    verifyInfluencer: async (req, res) => {
+
+        let influencerId = req.params.influencerId
+
+        try{
+            
+            let influencer = await influencerService.verifyInfluencer(influencerId);
+            return res.status(200).json({
+                success: true,
+                message: "Influencer verified successfully",
+                data: influencer
+            });
+
+        } catch (err) {
+
+            return res.status(400).json({
+                success: false,
+                message: "oops! An errocured while carrying out this operation",
+                data: err.toString()
+            });
+        }
+
+    }
 }

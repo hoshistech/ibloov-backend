@@ -10,6 +10,8 @@ router.patch('/follow/:influencerId', [ validate("followInfluencer"), isValidReq
 
 router.patch('/unfollow/:influencerId', [ validate("unfollowInfluencer"), isValidRequest ], influencerController.unfollow );
 
+router.patch('/verify/:influencerId', influencerController.verifyInfluencer );
+
 router.patch('/:influencerId', [ validate("updateInfluencer"), isValidRequest ], influencerController.update );
 
 router.delete('/:influencerId', [ validate("deleteInfluencer"), isValidRequest ], influencerController.softdelete );

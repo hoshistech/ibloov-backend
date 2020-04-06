@@ -14,7 +14,11 @@ var influencerEvent = new Schema({
 
 var influencerFollower = new Schema({
 
-    userId: mongoose.Schema.Types.ObjectId,
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        required: true
+    },
     email: String,
     fullName: String,
     createdAt: {
@@ -37,8 +41,10 @@ var InfluencerSchema = new Schema({
 
     username: {
         type: String,
-        required: true,
-        unique: true
+        required: [true, "missing username value"],
+        lowercase: true,
+        unique: true,
+        index: true
     },
 
     userId: {
@@ -46,11 +52,13 @@ var InfluencerSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
-        unique: true
+        unique: true,
+        index: true
     },
 
     isVerified: {
         type: Boolean,
+        enum: [true, false],
         default: false
     },
 
@@ -58,7 +66,6 @@ var InfluencerSchema = new Schema({
         type: Date,
         default: null,
         required: function(){
-
             return this.isVerified === true
         }
     },
@@ -83,6 +90,45 @@ var InfluencerSchema = new Schema({
     },
 
 }, {timestamps: true} );
+
+
+/**
+ * gets a Influencer's followers
+ * @returns array
+ */
+InfluencerSchema.methods.getFollowers = function() {
+    return this.followers;
+};
+
+/**
+ * checks if an influencer has followers
+ * @returns bool
+ */
+InfluencerSchema.methods.hasFollowers = function() {
+
+    return this.getFollowers().length > 0;
+};
+
+
+// InfluencerSchema.pre('save', function(next) {
+
+//     console.log("gets here to pre-save")
+//     console.log(this.verifiedDate);
+
+//     delete this.verifiedDate;
+//     delete this.isVerified;
+//     next();
+// });
+
+/**
+ * gets a list of an influencer's events
+ * 
+ * @returns bool
+ */
+InfluencerSchema.methods.getEvents = function() {
+
+    return this.events;
+};
 
 let Influencers = mongoose.model('influencers', InfluencerSchema);
 module.exports = Influencers;

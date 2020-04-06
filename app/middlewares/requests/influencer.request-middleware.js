@@ -68,6 +68,13 @@ exports.validate = (method) => {
 
         body('username')
         .exists().withMessage("Expected username not found!")
+        .custom( username => {
+
+          return influencerService.all({username}).then( influencers => {
+
+            if ( influencers.length > 0 ) return Promise.reject('Username already exists!');
+          });
+        })
       ]   
     }
 

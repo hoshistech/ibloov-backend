@@ -34,7 +34,7 @@ index = async (req, res) => {
 create = async (req, res) => {
 
     let wishlist = req.body;
-    wishlist.createdBy = "76trfguiolk";
+    wishlist.userId = "5e871d4fc0c90b4ced436185"; //auth-after-auth-imp
     wishlist.uuid = uuidv4();
 
     try{

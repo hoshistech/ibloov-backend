@@ -51,9 +51,14 @@ const factory = ( itemcount ) => {
     for( let i = 0; i < itemcount; i++ ){
 
         item = {
-            name: faker.lorem.word(),
+
+            title: faker.lorem.word(),
             quantity: faker.random.number(),
-            itemLink: faker.internet.url()   
+            link: faker.internet.url(),
+            imageUrl: faker.image.imageUrl() ,
+            price:  parseFloat( randomInt(1000, 10000) ),
+            rating: randomInt(1, 5),
+            desciption: faker.lorem.sentence()
         }
 
         items.push(item);

@@ -19,7 +19,9 @@ connect : function(){
     db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
     db.once('open', function() {
-       console.log("DB connected to ", mongoDB)
+
+        console.log(" ---- remove this in production ----")
+        console.log("DB connected to ", mongoDB)
     });
 }
 };

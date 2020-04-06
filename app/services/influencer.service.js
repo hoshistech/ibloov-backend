@@ -5,12 +5,14 @@ module.exports = {
     /**
      * returns all influencers given certain parameters
      * @param query object 
-     * @param options objecte
+     * @param options object
+     * 
+     * @TODO - add query["deletedAt"] = null; to the influencer controller to filter out deleted infuencers
      */
     all: async ( query = {}, options = {} ) =>{
 
         //const {limit, sort} =  options;
-        query["deletedAt"] = null;
+        //query["deletedAt"] = null;
         let influencers = await Influencer.find(query);
         return influencers;
     },
@@ -19,6 +21,8 @@ module.exports = {
     /**
      * creates a new influencer
      * @param influencerData object
+     * 
+     * @TODO prevent verifiedAt and isVerified to be populated at creation
      */
     createInfluencer: async (influencerData ) =>{
 
@@ -109,7 +113,7 @@ module.exports = {
 
         let follower = {
             userId: user._id,
-            name: user.fullName,
+            fullName: user.fullName,
             email: user.email,
             createdAt: new Date(),
         };
@@ -162,5 +166,26 @@ module.exports = {
     muteInfluencerNotification: async ( influencerId, userId ) => {
 
         return await Influencer.findOneAndUpdate( { _id: influencerId, "followers.userId": userId }, { $set : { 'followers.$.allowNoifications' : false }}, { runValidators: true } );  
+    },
+
+
+    /**
+     * Verify an influencer 
+     * @param influencerId String
+     * 
+     * @TODO - add 'verifiedBy' to the schema and the update object
+     */
+    verifyInfluencer: async (influencerId) => {
+
+        console.log("influencerId is ");
+        console.log(influencerId);
+
+        let verificationUpdate = {
+            isVerified: true,
+            verifiedDate: new Date
+        }
+
+        return await module.exports.updateInfluencer( influencerId, verificationUpdate); 
+        
     }
 }

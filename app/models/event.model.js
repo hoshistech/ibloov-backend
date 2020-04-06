@@ -241,6 +241,17 @@ var EventSchema = new Schema({
 // });
 
 
+/**
+ * notifiable users are those that are following this event
+ * or have liked this event 
+ * and havent turned off notification for the event
+ */
+EventSchema.methods.getNotifiableUsers = function() {
+
+    //return this.events;
+};
+
+
 EventSchema.index({ "location": "2dsphere" });
 
 let Events = mongoose.model('events', EventSchema);

@@ -26,8 +26,7 @@ module.exports = {
     createEvent: async (eventData ) =>{
 
         let event = new Event(eventData);
-        let result = await event.save(); 
-        return result; 
+        return await event.save();
     },
 
 
@@ -287,7 +286,7 @@ module.exports = {
 
 
     /**
-     * Search for events within a given radius from a location
+     * returns events within a given radius from a location
      * @param long float
      * @param lat float
      * @param radius float
@@ -319,7 +318,7 @@ module.exports = {
 
     /**
      * adds an event to a user's google calendar
-     * when a user creates an event | likes an event | follows an event - the event gets added to their google calendar
+     * when a user creates an event | accepts to attend an event - the event gets added to their google calendar
      * @param eventId
      */
     googleCalendarIntegration: async( eventId ) => {

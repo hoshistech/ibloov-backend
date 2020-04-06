@@ -4,29 +4,52 @@ var Schema = mongoose.Schema;
 
 var items = new Schema({
 
-    item: {
+    title: {
         type: String,
         required: true
     }, 
+
     quantity: {
         type: Number,
         default: 1
     },
-    itemLink: {
+
+    link: {
         type: String,
         required: true
     },
-    itemImage: {
+
+    imageUrl: {
         type: String
-    } //if you saw the item on a different store for sale, you can add it here. 
-    //users can then click oand go straight to the that page
+    },
+
+    price: {
+        type: Number,
+        required: true
+    },
+
+    rating: {
+        type: Number
+    },
+
+    desciption: {
+        type: String
+    },
+
+    volunteer: {
+
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        default: null,
+        ref: "User"
+    }
+
 })
 
 var WishListSchema = new Schema({
 
     name: {
         type: String,
-        unique: true,
         required: true,
         max: 255
     },
@@ -78,9 +101,10 @@ var WishListSchema = new Schema({
         }
     }],
 
-    createdBy: {
-        type: String,
-        required: true
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "User"
     },
 
     updatedBy: {
@@ -114,6 +138,9 @@ var WishListSchema = new Schema({
 }, {timestamps: true} );
 
 
-let Events = mongoose.model('wishlists', WishListSchema);
+WishListSchema.index( { "name": 1, "userId": 1 }, {unique: true} );
 
-module.exports = Events;
+
+let Wishlist = mongoose.model('wishlists', WishListSchema);
+
+module.exports = Wishlist;
