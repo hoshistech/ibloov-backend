@@ -38,11 +38,11 @@ module.exports = {
         wishlist.uuid = uuidv4();
 
         try{
-            await service.createWishlist(wishlist);
+            let result = await service.createWishlist(wishlist);
             res.status(201).send({
                 success: true,
                 message: "Wishlist created successfully.",
-                data: wishlist
+                data: result
             });
         }
         catch(e){
