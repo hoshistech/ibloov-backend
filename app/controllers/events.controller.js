@@ -12,8 +12,13 @@ index = async (req, res) => {
 
     //dont change this line
     //it forces withDeleted to be false as long as it is not true
-    let withDeleted = ( req.query.withdeleted !== "true" ) ? false : true
-    let withUnPublished = ( req.query.unpublished !== "true" ) ? false : true;
+
+    const {withdeleted, unpublished, category} = req.query;
+    
+    let withDeleted = ( withdeleted !== "true" ) ? false : true
+    let withUnPublished = ( unpublished !== "true" ) ? false : true;
+
+    if( category) filter["category"] = category;
     
     if( ! withDeleted ) filter["deletedAt"] = null
     if( ! withUnPublished ) filter["publish"] = true
@@ -48,16 +53,15 @@ index = async (req, res) => {
 create = async (req, res) => {
 
     let event = req.body;
-    event.createdBy = "76trfguiolk";
     event.uuid = uuidv4();
 
     try{
-        await eventService.createEvent(event);
+        let result = await eventService.createEvent(event);
         //sendAccountConfirmationNotification();
         res.status(201).send({
             success: true,
             message: "Event created successfully",
-            data: event
+            data: result
         });
     }
     catch(e){
@@ -214,7 +218,7 @@ softdelete = async (req, res) => {
  */
 generateEventCode = (req, res) => {
 
-    let code = generateCode();
+    let code = eventService.generateCode();
     res.status(200).json({
         success: true,
         message: "Event code generated successfully",
@@ -232,49 +236,30 @@ generateEventCode = (req, res) => {
 follow = async (req, res) => {
 
     let eventId = req.params.eventId;
-
-    if( ! eventId){
-        return res.status(400).json({
-            success: false,
-            message: "required event id missing."
-        });
-    }
     
     try{
-        let event = await eventService.viewEvent(eventId);
-
-        if( ! event ){
-            return res.status(404).json({
-                success: false,
-                message: "invalid event."
-            });
-        }
 
         let follower = {
-            userId: "98765tguif",
+
+            _id : "316564666875696f3369666a",
             email: "test@test.com",
             telephone: "09039015531"
         }
 
-        let isFollowing = await eventService.isFollowingEvent(eventId, follower.userId);
-
-        if( ! isFollowing){
-            eventService.updateEventSet(eventId, {"followers": follower }); 
-        }
+        let result = await eventService.followEvent(eventId, follower ); 
 
         return res.status(200).json({
-
             success: true,
             message: "Operation successful",
-            data: event
+            data: result
         });
     }
-    catch(e){
+    catch( err ){
 
         return res.status(400).json({
             success: false,
             message: "There was an error performing this operation",
-            data: e.toString()
+            data: err.toString()
         });
     }
 },
@@ -292,40 +277,25 @@ follow = async (req, res) => {
 muteNotifications = async (req, res) => {
 
     const eventId = req.params.eventId;
-    const userId = "98765tguif";
-
-    if( ! eventId){
-        return res.status(400).json({
-            success: false,
-            message: "required event id missing."
-        });
-    }
+    const userId = "316564666875696f3369666a";
     
     try{
-        let event = await eventService.viewEvent(eventId);
 
-        if( ! event ){
-            return res.status(404).json({
-                success: false,
-                message: "Event not found!."
-            });
-        }
-
-        eventService.muteEventNotification(eventId, userId ); 
+        let result = await eventService.muteEventNotification(eventId, userId ); 
 
         return res.status(200).json({
 
             success: true,
-            message: "Operation successful",
-            data: event
+            message: "Notification has been muted successfully.",
+            data: result
         });
     }
-    catch(e){
+    catch( err ){
 
         return res.status(400).json({
             success: false,
             message: "There was an error performing this operation",
-            data: e.toString()
+            data: err.toString()
         });
     }
     
@@ -342,48 +312,22 @@ muteNotifications = async (req, res) => {
 unfollow = async (req, res) => {
 
     let eventId = req.params.eventId;
-
-    if( ! eventId){
-        return res.status(400).json({
-            success: false,
-            message: "required event id missing."
-        });
-    }
     
     try{
-        let event = await eventService.viewEvent(eventId);
-
-        if( ! event ){
-            return res.status(404).json({
-                success: false,
-                message: "invalid event."
-            });
-        }
-
-        //userId to be gotten from the user token
+        
         let follower = {
-            userId: "98765tguik",
+            userId: "316564666875696f3369666a",
             email: "test@test.com",
             telephone: "09039015531"
         }
 
-        let isFollowing = await eventService.isFollowingEvent(eventId, follower.userId);
-
-        if( ! isFollowing ){
-
-            return res.status(422).json({
-                success: false,
-                message: "user is currently not following event!"
-            });
-        }
-
-        await eventService.unfollowEvent(eventId, follower.userId); 
+        let result = await eventService.unfollowEvent(eventId, follower.userId); 
 
         return res.status(200).json({
 
             success: true,
-            message: "User has been unsubscribed from event sucessfully.",
-            data: event
+            message: "You have unsubscribed from this event sucessfully.",
+            data: result
         });
     }
     catch(e){
@@ -493,11 +437,12 @@ addInvites = async ( req, res) => {
     }
     
     try {
-        await eventService.addInvitees(eventId, invites);
+        let result = await eventService.addInvitees(eventId, invites);
 
         return res.status(200).json({
             success: true,
-            message: "invites have been add successfully. An email has been sent to notify the recepient."
+            message: "invites have been add successfully. An email has been sent to notify the recepient.",
+            data: result
         });
         
     } catch (err) {
@@ -506,7 +451,7 @@ addInvites = async ( req, res) => {
 
             success: false,
             message: "Error occured while performing this operation.",
-            data: err.toString()
+            data: err.toString() 
         });
     }
 
@@ -522,14 +467,15 @@ removeInvites = async ( req, res) => {
     let invite = req.body.email;
     
     try {
-        await eventService.removeInvitees(eventId, invite);
+        let result = await eventService.removeInvitees(eventId, invite);
 
         return res.status(200).json({
             success: true,
-            message: "Invite has been removed successfully."
+            message: "Invite has been removed successfully.",
+            data: result
         });
         
-    } catch (err) {
+    } catch ( err ) {
 
         return res.status(400).json({
 
@@ -541,12 +487,6 @@ removeInvites = async ( req, res) => {
 
 }
 
-/**
- * helper to generate event codes.
- */
-generateCode = () => {
 
-    return Math.random().toString(36).slice(3);
-}
 
 module.exports = {index, create, view, update, softdelete, generateEventCode, follow, unfollow, confirmAttendance, muteNotifications, live, addInvites, removeInvites}

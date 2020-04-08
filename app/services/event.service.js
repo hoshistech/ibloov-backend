@@ -12,7 +12,7 @@ module.exports = {
         //const {limit, sort} =  options;
         query["isPrivate"] = false;
 
-        console.log(query);
+        //console.log(query);
 
         let events = await Event.find(query);
         return events;
@@ -48,7 +48,7 @@ module.exports = {
      */
     updateEvent: async (eventId, updateData) => {
 
-        const result = await Event.findByIdAndUpdate( eventId, updateData, {new: true});
+        const result = await Event.findByIdAndUpdate( eventId, updateData, { runValidators: true , new: true});
         return result;
     },
 
@@ -61,7 +61,7 @@ module.exports = {
      */
     updateEventSet: async (eventId, setData) => {
 
-        return await Event.findByIdAndUpdate( { _id: eventId } , { '$addToSet': setData });
+        return await Event.findByIdAndUpdate( { _id: eventId } , { '$addToSet': setData}, { runValidators: true , new: true} );
     },
 
 
@@ -72,8 +72,17 @@ module.exports = {
      */
     softDeleteEvent: async (eventId) => {
 
-        const updateData = {deletedAt: Date.now(), deletedBy: '1edfhuio3ifj'};
+        const updateData = { deletedAt: Date.now(), deletedBy: '5e8cb0191ec1f8160def48c1' };
         return await module.exports.updateEvent(eventId, updateData);  
+    },
+
+
+
+    /**
+     * helper to generate event codes.
+     */
+    generateCode: () => {
+        return Math.random().toString(36).slice(3);
     },
 
 
@@ -88,7 +97,7 @@ module.exports = {
             event,
             createdAt: new Date(),
             comment: "new event history",
-            userId: "o098uyhjk"
+            userId: "5e74a056a1d062242108b212"
         };
 
         let set = { 'history': history };
@@ -127,14 +136,18 @@ module.exports = {
     followEvent: async( eventId, user ) => {
 
         let follower = {
-            id: user._id,
+            userId: user._id,
             name: user.fullName,
             email: user.email,
+            telephone:  user.telephone,
             createdAt: new Date(),
         };
 
-        let set = { 'followers': follower };
-        return await module.exports.updateEventSet(eventId, set);
+        let setData = { 'followers': follower };
+
+        return await Event.findOneAndUpdate( { _id: eventId } , 
+        { '$addToSet': setData }, { runValidators: true , new: true} );
+
     },
 
     
@@ -161,9 +174,9 @@ module.exports = {
      */
     unfollowEvent: async (eventId, userId) => {
 
-        let update = await Event.findByIdAndUpdate( eventId, { $pull: { 'followers':  {"userId": userId }  } }, 
-        { new: true} );
-        return update;
+        return await Event.findByIdAndUpdate( eventId, { $pull: { 'followers':  {"userId": userId }  } }, 
+        {  runValidators: true, new: true} );
+    
     },
 
 
@@ -176,7 +189,8 @@ module.exports = {
      */
     muteEventNotification: async ( eventId, userId ) => {
 
-        return await Event.findOneAndUpdate( { _id: eventId, "followers.userId": userId }, { $set : { 'followers.$.allowNoifications' : false }}, { runValidators: true } );  
+        return await Event.findOneAndUpdate( { _id: eventId, "followers.userId": userId }, { $set : { 'followers.$.allowNoifications' : false }}, 
+        { runValidators: true, new: true  } );  
     },
 
 
@@ -229,19 +243,19 @@ module.exports = {
      * @param eventId String
      * @param invitees array
      */
-    addInvitees: async( eventId, invites ) => {
+    addInvitees: async( eventId, invites = [] ) => {
 
-        await Event.bulkWrite(
-
-            invites.map( invite => 
-              ({
-                updateOne: {
-                  filter: { '_id': eventId, 'invitees.email' : { $ne: invite.email } },
-                  update: { $push: { invitees: invite } }
-                }
-              })
-            )
-        )
+        return await Event.findOneAndUpdate(
+            { "_id" : eventId },
+            { 
+                "$addToSet": { 
+                    invitees : { 
+                        "$each": invites
+                    } 
+                } 
+            }, 
+            { runValidators: true, new: true }
+        );
     },
 
 
@@ -275,6 +289,7 @@ module.exports = {
         dateFilter["startDate"] = { "$lte" : new Date() };
         dateFilter["endDate"] = { "$gte" : new Date() };
         
+        //this should only compare the month and the day - year should be excluded
         recurringFilter["isRecurring"] = true
         recurringFilter["startDate"] = { "$lte" : new Date()}
         recurringFilter["endDate"]  = { "$gte" : new Date() }
@@ -315,6 +330,21 @@ module.exports = {
 
     },
 
+
+    /**
+     * removes all documents in this colletion
+     * This service cannot be exposed to a controller 
+     * and should only be used during tests and on the test Db
+     * 
+     */
+    removeAll: async () => {
+
+        let env = process.env.NODE_ENV;
+
+        if( env === 'test'){
+            return await Event.deleteMany({}) 
+        }
+    },
 
     /**
      * adds an event to a user's google calendar

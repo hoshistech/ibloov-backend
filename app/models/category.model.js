@@ -31,7 +31,7 @@ var CategorySchema = new Schema({
         ref: "User"
     }
 
-}, {timestamps: true} );
+}, {timestamps: true, versionKey: false} );
 
 
 let Category = mongoose.model('categories', CategorySchema);

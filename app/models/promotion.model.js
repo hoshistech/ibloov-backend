@@ -36,7 +36,7 @@ var PromotionSchema = new Schema({
             return this.isDiscounted === true
         }
     }
-}, {timestamps: true} );
+}, {timestamps: true,  versionKey: false} );
 
 /**
  * checks if a promotion model is discounted.

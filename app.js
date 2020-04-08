@@ -35,7 +35,7 @@ const influencerSeederRouter = require('@routes/seeders/influencer.route');
 
 var app = express();
 
-var dbConnect = require( './config/db.config' );
+var dbConnect = require( './db.connect' );
 dbConnect.connect();
 
 // view engine setup

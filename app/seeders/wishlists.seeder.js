@@ -12,7 +12,7 @@ const seedWishlists = async (req, res) => {
 
     for( let count = 0; count < wishlistCount; count++){
 
-        let wishlist = factory(itemCount);
+        let wishlist = wishlistFactory(itemCount);
         wishlists.push(wishlist);
     }
 
@@ -36,9 +36,9 @@ const seedWishlists = async (req, res) => {
 }
 
 
-const factory = ( itemcount ) => {
+const wishlistFactory = ( itemcount ) => {
 
-    const createdBy = "89n98nv939nf30";
+    const createdBy = "316564666875696f3369666a";
     const items = [];
 
     const history = {
@@ -78,4 +78,4 @@ const factory = ( itemcount ) => {
     return wishlist;
 }
 
-module.exports = { seedWishlists }
+module.exports = { seedWishlists, wishlistFactory }

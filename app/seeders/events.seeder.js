@@ -3,6 +3,8 @@ const { randomInt } = require("@helpers/number.helper");
 
 const eventCategory = ["birthday", "cooperate", "wedding", "house party", "sports", "house warming"];
 
+const locations = [ {address: "lagos, `Nigeria"}, {address: "abuja, `Nigeria"}, {address: "paris, Italy"} ]
+
 //models
 const Event = require("@models/event.model");
 
@@ -69,7 +71,8 @@ const eventFactory =  ( eventCodeCount ) => {
     const event = {
 
         name: `${faker.lorem.word()}${randomInt(1110,9999)}`,
-        category: eventCategory[ Math.floor(Math.random() * ( eventCategory.length - 0) + 0) ],
+        category: eventCategory[ randomInt( 0, eventCategory.length - 1) ],
+        location: locations[ randomInt( 0, locations.length - 1) ],
         uuid: faker.random.uuid(),
         startDate: isSameDay ? eventDay : faker.date.future() ,
         endDate: isSameDay ? eventDay : faker.date.future(),

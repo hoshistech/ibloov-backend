@@ -77,7 +77,7 @@ var UserSchema = new Schema({
         }
     }
 
-});
+}, {timestamps: true,  versionKey: false} );
 
 UserSchema.methods.generateJWT = function() {
     var today = new Date();

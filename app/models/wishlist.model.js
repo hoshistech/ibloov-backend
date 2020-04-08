@@ -2,7 +2,63 @@ const mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
-var items = new Schema({
+var invite = new Schema({
+
+    name: {
+        type: String
+    },
+
+    email: {
+        type: String,
+        required: true
+    },
+
+    userId: { //optional. for people on the platform
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    }, 
+
+    accepted: {
+        type: String,
+        enum: ["YES", "NO", "MAYBE", null],
+        default: null,
+    }
+}, { _id : false } )
+
+
+var pledge = new Schema({
+
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+
+    quantity: {
+        type: Number,
+        default: 1
+    },
+
+    mode: { //this talks about how the donor intends to redeem this pledge
+        type: String,
+        enum: ["CASH", "GIFT", "GIFT_CARDS", "OTHERS"],
+        default: "GIFT" 
+    },
+
+    customMode: { //this talks about how the donor intends to redeem this pledge
+        type: String,
+        required: function(){
+            return this.mode == "OTHERS"
+        }
+    },
+
+    createdAt: {
+        type: Date,
+        default: Date.now()
+    }
+}, { _id : false } )
+
+
+var item = new Schema({
 
     title: {
         type: String,
@@ -28,6 +84,11 @@ var items = new Schema({
         required: true
     },
 
+    currency: {
+        type: String,
+        required: true
+    },
+
     rating: {
         type: Number
     },
@@ -36,12 +97,9 @@ var items = new Schema({
         type: String
     },
 
-    volunteer: {
-
-        type: mongoose.Schema.Types.ObjectId,
-        required: false,
-        default: null,
-        ref: "User"
+    pledges: {
+        type: [ pledge ],
+        default: []
     }
 
 })
@@ -62,7 +120,7 @@ var WishListSchema = new Schema({
     },
 
     items: {
-        type: [ items ],
+        type: [ item ],
         required: false
     },
 
@@ -78,50 +136,34 @@ var WishListSchema = new Schema({
         enum: [true, false] 
     },
 
-    invitees: [{
-        name: {
-            type: String,
-            required: true
-        },
-
-        email: {
-            type: String,
-            required: true
-        },
-
-        userId: { //optional. for people on the platform
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
-        },
-
-        accepted: {
-            type: String,
-            enum: ["YES", "NO", "MAYBE", null ],
-            default: null,
-        }
-    }],
+    invitees: {
+        type: [ invite ],
+        required: false,
+        default: []
+    },
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: "User"
+        ref: "User",
+        required: function(){
+
+            return this.eventId !== null 
+        }
     },
 
     updatedBy: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
     },
 
     history: [{
         event: String,
         comment: String,
-        userId: {
+        userId: { //optional. for people on the platform
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         },
-        createdAt: {
-            type: Date,
-            default: new Date
-        }
+        createdAt: Date
     }],
 
     deletedAt: {
@@ -133,9 +175,16 @@ var WishListSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         default: null,
         ref: "User"
+    },
+
+    allowcashRedemption: {
+
+        type: String,
+        enum: [true, false],
+        default: false
     }
 
-}, {timestamps: true} );
+}, {timestamps: true,  versionKey: false} );
 
 
 WishListSchema.index( { "name": 1, "userId": 1 }, {unique: true} );

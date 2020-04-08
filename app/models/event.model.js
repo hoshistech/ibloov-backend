@@ -12,7 +12,7 @@ var sponsor = new Schema({
     logo: {
         type: String
     }
-})
+}, { _id : false } )
 
 var coordinator = new Schema({
 
@@ -30,13 +30,33 @@ var coordinator = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }
-})
+}, { _id : false } )
+
+var follower = new Schema({
+
+    email: String, //maybe
+    telephone: String, //maybe
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "User"
+    },
+
+    date: {
+        type: Date,
+        default: Date.now()
+    },
+
+    allowNoifications: {
+        type: Boolean,
+        default: true
+    }
+}, { _id : false } )
 
 var invite = new Schema({
 
     name: {
-        type: String,
-        required: true
+        type: String
     },
 
     email: {
@@ -54,7 +74,28 @@ var invite = new Schema({
         enum: ["YES", "NO", "MAYBE", null],
         default: null,
     }
-})
+}, { _id : false } )
+
+var like = new Schema({
+
+    email: String,
+    
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "User"
+    },
+
+    date: {
+        type: Date,
+        default: Date.now()
+    },
+
+    allowNoifications: {
+        type: Boolean,
+        default: true
+    }
+}, { _id: false } )
 
 var EventSchema = new Schema({
 
@@ -78,7 +119,10 @@ var EventSchema = new Schema({
             type: String,
             default: "Point"
         },
-        coordinates: [ Number ]
+        coordinates: {
+            type: [ Number ],
+            default: [0, 0]
+        }
     },
 
     uuid: {
@@ -127,17 +171,20 @@ var EventSchema = new Schema({
 
     sponsors: {
         type:[sponsor],
-        required: false
+        required: false,
+        default: []
     },
 
     coordinators: {
         type: [coordinator],
-        required: false
+        required: false,
+        default: []
     },
 
     invitees: {
-        type: invite,
-        required: false
+        type: [invite],
+        required: false,
+        default: []
     }, 
 
     history: [{
@@ -159,45 +206,17 @@ var EventSchema = new Schema({
         }
     }],
 
-    followers: [{
-        email: String, //maybe
-        telephone: String, //maybe
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            required: true,
-            ref: "User"
-        },
+    followers: {
+        type: [ follower ],
+        required: false,
+        default: []
+    },
 
-        date: {
-            type: Date,
-            default: Date.now()
-        },
-
-        allowNoifications: {
-            type: Boolean,
-            default: true
-        }
-    }],
-
-    likes: [{
-        email: String,
-        
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            required: true,
-            ref: "User"
-        },
-
-        date: {
-            type: Date,
-            default: Date.now()
-        },
-
-        allowNoifications: {
-            type: Boolean,
-            default: true
-        }
-    }],
+    likes: {
+        type: [ like ],
+        required: false,
+        default: []
+    },
 
     deletedAt: {
         type: Date,
@@ -229,7 +248,7 @@ var EventSchema = new Schema({
         default: false
     }
 
-}, {timestamps: true} );
+}, {timestamps: true,  versionKey: false} );
 
 // EventSchema.pre('save', function(next) {
 
