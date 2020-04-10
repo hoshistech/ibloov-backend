@@ -200,7 +200,7 @@ var EventSchema = new Schema({
     controls: [{
         type: String,
         createdAt: Date,
-        createdBy: {
+        userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }

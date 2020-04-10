@@ -20,9 +20,9 @@ module.exports = {
      * creates a new user
      * @param userData object
      */
-    createUser: async (userData ) =>{
+    createUser: async ( user  ) =>{
 
-        //code to create a new user goes here.
+        return await User.create( user );
     },
 
     /**
@@ -32,6 +32,12 @@ module.exports = {
     viewUser: async (userId) => {
 
         let user = await User.findById(userId);
+        return user;
+    },
+
+    getUser: async (query) => {
+
+        let user = await User.findOne(query);
         return user;
     },
 

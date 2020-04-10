@@ -37,12 +37,7 @@ module.exports = {
      */
     viewCrowdFunding: async (crowdFundingId) => {
 
-        let query = {};
-        query["_id"] = crowdFundingId;
-        query["deletedAt"] = null;
-
-        let crowdFunding = await CrowdFunding.findOne(query);
-        return crowdFunding;
+        return await CrowdFunding.findById(crowdFundingId);
     },
 
 
@@ -129,6 +124,20 @@ module.exports = {
         .findOneAndUpdate( { _id: crowdFundingId, "donors.userId": userId }, 
         { $set : { 'donors.$.pledge' : newPledge }}, 
         { runValidators: true } );
+    },
 
-    }
+    /**
+     * removes all documents in this colletion
+     * This service cannot be exposed to a controller 
+     * and should only be used during tests and on the test Db
+     * 
+     */
+    removeAll: async () => {
+
+        let env = process.env.NODE_ENV;
+
+        if( env === 'test'){
+            return await CrowdFunding.deleteMany({}) 
+        }
+    },
 }

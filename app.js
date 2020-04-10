@@ -5,6 +5,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
 var passport = require("passport");
 
 //body-parser
@@ -35,23 +36,43 @@ const influencerSeederRouter = require('@routes/seeders/influencer.route');
 
 var app = express();
 
-var dbConnect = require( './db.connect' );
+var dbConnect = require('./db.connect');
 dbConnect.connect();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug') ;
+app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(passport.initialize());
+app.use(passport.initialize()); // Used to initialize passport
+app.use(passport.session()); // Used to persist login sessions
 
-app.use( bodyParser.json( { limit: '50mb', extended: true } ));
-app.use( bodyParser.urlencoded( { limit: '50md', extended: true, parameterLimit: 50000 } ))
+// Used to stuff a piece of information into a cookie
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+// Used to decode the received cookie and persist session
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+app.use(bodyParser.json({
+  limit: '50mb',
+  extended: true
+}));
+app.use(bodyParser.urlencoded({
+  limit: '50md',
+  extended: true,
+  parameterLimit: 50000
+}))
 
 app.use('/', indexRouter);
 app.use('/v1/users', UsersRouter);
@@ -65,21 +86,21 @@ app.use('/v1/shopping', ShoppingRouter);
 app.use('/v1/category', CategoryRouter);
 
 //seeders
-app.use('/seeders/event', eventSeederRouter );
-app.use('/seeders/wishlist', wishlistSeederRouter );
-app.use('/seeders/crowdfunding', crowdfundingSeederRouter );
-app.use('/seeders/user', userSeederRouter );
-app.use('/seeders/influencer', influencerSeederRouter );
+app.use('/seeders/event', eventSeederRouter);
+app.use('/seeders/wishlist', wishlistSeederRouter);
+app.use('/seeders/crowdfunding', crowdfundingSeederRouter);
+app.use('/seeders/user', userSeederRouter);
+app.use('/seeders/influencer', influencerSeederRouter);
 
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

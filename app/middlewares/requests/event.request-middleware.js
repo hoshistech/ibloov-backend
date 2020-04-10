@@ -9,13 +9,16 @@ exports.validate = (method) => {
       case 'createEvent': {
 
          return [
-            param('inflencerId', "userName doesn't exists.").exists(),
-            body('name', 'Invalid email.').exists()
-            .isEmail(),
+      
+            body('name', 'Invalid email.').exists(),
 
             body('category', 'Invalid category provided.').exists(),
 
-            body('eventStartDate', 'Invalid event start date provided.').exists(), //validDate | notInThePast | notGreaterThanEndDate 
+            body('startDate', 'Invalid event start date provided.')
+            .exists(), //validDate | notInThePast | notGreaterThanEndDate
+            
+            body('endDate', 'Invalid event start date provided.')
+            .exists()
          ]
       }
 

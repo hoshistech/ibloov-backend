@@ -245,7 +245,7 @@ module.exports = {
     },
 
     /**
-     * adds new invitees to the wishlist invitees
+     * adds new item to the wishlist array of items
      * 
      */
     addItem: async ( req, res) => {
@@ -258,7 +258,7 @@ module.exports = {
 
             return res.status(200).json({
                 success: true,
-                message: "Items has been add successfully.",
+                message: "Item has been add successfully.",
                 data: response
             });
             
@@ -276,7 +276,7 @@ module.exports = {
 
 
     /**
-     * removes an invite from the list of invites for a wishlist
+     * removes an item from the list of itmes for a wishlist
      * 
      */
     removeItem: async ( req, res) => {
@@ -289,7 +289,7 @@ module.exports = {
 
             return res.status(200).json({
                 success: true,
-                message: "Invite has been removed successfully.",
+                message: "Item has been removed successfully.",
                 data: result
             });
             
@@ -306,6 +306,11 @@ module.exports = {
     },
 
 
+    /**
+     * Adds a pledge to an item
+     * this simply means this user has opted to buy this item in the wishlist
+     * 
+     */
     pledgeItem: async (req, res) => {
 
         let wishlistId = req.params.wishlistId;
@@ -335,6 +340,12 @@ module.exports = {
         }
     },
 
+
+    /**
+     * Removes a pledge from the array of pledges for an item
+     * This simply means this user has opted out of buying this item in the wishlist
+     * 
+     */
     unpledgeItem: async ( req, res) => {
 
         let wishlistId = req.params.wishlistId;

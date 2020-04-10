@@ -1,4 +1,4 @@
-const crowdFundingService = require('@services/crowdFunding.service');
+const crowdFundingService = require('@services/crowdfunding.service');
 const uuidv4 = require('uuid/v4');
 
 
@@ -37,12 +37,12 @@ module.exports = {
     create: async (req, res) => {
 
         let crowdFunding = req.body;
-        crowdFunding.createdBy = "76trfguiolk";
+        crowdFunding.userId = "5e904bcc9d30d25180059571"; 
         crowdFunding.uuid = uuidv4();
 
         try{
             await crowdFundingService.createCrowdFunding(crowdFunding);
-            res.status(200).send({
+            res.status(201).send({
                 success: true,
                 message: "CrowdFunding created successfully",
                 data: crowdFunding
@@ -68,47 +68,23 @@ module.exports = {
         let crowdFundingId = req.params.crowdFundingId;
         let crowdFundingData = req.body.data;
 
-        if( ! crowdFundingId){
-            return res.status(400).json({
-                success: false,
-                message: "required crowdFunding id missing!."
-            });
-        }
-        
-        if( ! crowdFundingData ){
-            return res.status(400).json({
-                success: false,
-                message: "required update data missing!"
-            });
-        }
-
-        let crowdFunding = await crowdFundingService.viewCrowdFunding(crowdFundingId);
-        
-        if( !crowdFunding ){
-            return res.status(404).json({
-                success: false,
-                message: "invalid crowdFunding."
-            });
-        }
-
         try {
             
             let resp = await crowdFundingService.updateCrowdFunding(crowdFundingId, crowdFundingData);
-            //crowdFundingService.addCrowdFundingHistory(crowdFundingId, "EVENT_UPDATE")
+            //crowdFundingService.addCrowdFundingHistory(crowdFundingId, "CROWDFUNDING_UPDATE")
             
-            console.log("resp");
-            console.log(resp);
             return res.status(200).json({
                 success: true,
                 message: "CrowdFunding information has been updated successfully.",
                 data: resp
             });
-        } catch (e) {
+
+        } catch ( err ) {
             
             return res.status(400).json({
                 success: false,
                 message: "Error occured while trying to update this crowdFunding.",
-                data: e.toString()
+                data: err.toString()
             });
         }
     },
@@ -122,24 +98,8 @@ module.exports = {
 
         let crowdFundingId = req.params.crowdFundingId;
 
-        if( ! crowdFundingId ){
-
-            return res.status(400).json({
-                success: false,
-                message: "invalid crowdFunding id provided.",
-            });
-        }
-
         try {
             let crowdFunding = await crowdFundingService.viewCrowdFunding(crowdFundingId);
-
-            if( ! crowdFunding){
-
-                return res.status(404).json({
-                    success: true,
-                    message: "CrowdFunding not found!."
-                });
-            }
 
             return res.status(200).json({
                 success: true,
@@ -164,22 +124,7 @@ module.exports = {
 
         let crowdFundingId = req.params.crowdFundingId;
 
-        if( ! crowdFundingId){
-            return res.status(400).json({
-                success: false,
-                message: "required crowdFunding id missing."
-            });
-        }
-
         try {
-
-            let crowdFunding = await crowdFundingService.viewCrowdFunding(crowdFundingId);
-            if( ! crowdFunding ){
-                return res.status(404).json({
-                    success: false,
-                    message: "invalid crowdFunding."
-                });
-            }
             
             let resp = await crowdFundingService.softDeleteCrowdFunding(crowdFundingId);
             return res.status(200).json({
@@ -187,6 +132,7 @@ module.exports = {
                 message: "CrowdFunding information has been deleted successfully.",
                 data: resp
             });
+
         } catch (e) {
             
             return res.status(400).json({

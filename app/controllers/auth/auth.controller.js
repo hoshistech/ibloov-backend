@@ -1,44 +1,16 @@
-// const  passport = require('passport');
-// const FacebookStrategy = require('passport-facebook').Strategy;
-// const User = require("@models/user.model");
-// const {facebook} = require('@config/app.config');
+module.exports = {
 
-// passport.serializeUser(function(user, done) {
-//   done(null, user);
-// });
+    googleAuth: async (req, res) => {
 
-// passport.deserializeUser(function(obj, done) {
-//   done(null, obj);
-// });
+        const user = req.user;
+        console.log(user);
 
-// passport.use( new FacebookStrategy({
-//     clientID: facebook.app_id,
-//     clientSecret: facebook.app_secret,
-//     callbackURL: facebook.callback,
-//     profileFields: ["email", "name"]
-// },
+        return res.status(200).json({
 
-// function( accessToken, refreshToken, profile, cb ) {
+            success: true,
+            message: "Operation successful",
+            data: user
+        })
 
-//    const { email, first_name, last_name } = profile._json;
-//    const userData = {
-//     email,
-//     firstName: first_name,
-//     lastName: last_name
-//   };
-//     User.findOrCreate( { facebookId: profile.id } , function(err, user) {
-//       return cb(err, user);
-//     });
-//   }
-// ));
-
-// //const facebook = social.facebook;
-
-// facebookLogin = (req, res) => {
-
-    
-
-// };
-
-
-// module.exports = {facebookLogin};
+    }
+}

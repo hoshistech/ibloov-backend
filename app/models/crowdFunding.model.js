@@ -45,18 +45,19 @@ var CrowdFundingSchema = new Schema({
     }, 
 
     eventId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         required: false,
         default: null
     },
 
     dueDate: { // for crowdfundings tied to an event, consider setting the expiry date to x day(s) before the event
         type: Date,
-        required: true
+        //required: true
     },
 
     donors: {
-        type: [donor]
+        type: [ donor ],
+        default: []
     },
 
     uuid: {
@@ -65,15 +66,17 @@ var CrowdFundingSchema = new Schema({
         required: true
     },       
 
-    createdBy: {
-        
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        required: function(){
+
+            return this.eventId !== null 
+        }
     },
 
     updatedBy: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
     },
 
     history: [{
@@ -92,13 +95,16 @@ var CrowdFundingSchema = new Schema({
     }, 
     
     deletedBy: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         default: null
     }
 
-}, {timestamps: true,  versionKey: false} );
+}, { timestamps: true,  versionKey: false} );
+
+CrowdFundingSchema.index( { "name": 1, "userId": 1 }, {unique: true} );
 
 
-let Events = mongoose.model('crowdfunds', CrowdFundingSchema);
+let CrowdfundingSchema = mongoose.model('crowdfunds', CrowdFundingSchema);
 
-module.exports = Events;
+
+module.exports = CrowdfundingSchema;

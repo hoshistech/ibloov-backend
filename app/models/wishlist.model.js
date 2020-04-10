@@ -147,7 +147,7 @@ var WishListSchema = new Schema({
         ref: "User",
         required: function(){
 
-            return this.eventId !== null 
+            return this.eventId !== null
         }
     },
 

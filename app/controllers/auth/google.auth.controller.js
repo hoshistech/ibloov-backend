@@ -11,20 +11,7 @@ module.exports = {
             message: "google auth url generated successfully.",
             data: url
         });
-    },
-
-    getAccountDetail: async (req, res) => {
-
-        let code = req.params.code;
-        try{
-            let user = await googleAuthService.getGoogleAccountFromCode(code);
-            console.log(user);
-            res.send("done");
-        } 
-        catch(e)
-        {
-            console.log("There was an error!");
-            console.log(e);
-        }
     }
+
+    
 }

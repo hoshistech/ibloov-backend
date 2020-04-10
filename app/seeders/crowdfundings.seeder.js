@@ -86,4 +86,4 @@ const crowdFundingFactory =  ( crowdFundingDonorCount ) => {
     return crowdFunding;
 }
 
-module.exports = { seedCrowdFundings }
+module.exports = { seedCrowdFundings, crowdFundingFactory }

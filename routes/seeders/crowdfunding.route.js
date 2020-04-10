@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const CrowdFundingSeeder = require('@seeders/crowdfunding.seeder');
+const CrowdFundingSeeder = require('@seeders/crowdfundings.seeder');
 
 router.post('/create', CrowdFundingSeeder.seedCrowdFundings);
 
