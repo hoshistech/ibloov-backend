@@ -9,8 +9,6 @@ module.exports = {
         
         let scope = req.params.scope || null;
 
-        console.log(scope);
-
         try{
             let categories = await categoryService.all( {scope} );
 

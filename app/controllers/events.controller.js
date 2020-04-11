@@ -52,10 +52,11 @@ index = async (req, res) => {
  */
 create = async (req, res) => {
 
-    let event = req.body;
-    event.uuid = uuidv4();
-
     try{
+        let event = req.body;
+        event.uuid = uuidv4();
+        event.userId = req.authuser._id;
+        
         let result = await eventService.createEvent(event);
         //sendAccountConfirmationNotification();
         res.status(201).send({
@@ -196,14 +197,12 @@ softdelete = async (req, res) => {
             message: "Event information has been deleted successfully.",
             data: resp
         });
-    } catch (e) {
+    } catch ( err ) {
         
-
-        console.log(e)
         return res.status(400).json({
             success: false,
             message: "Error occured while trying to process this event.",
-            data: e
+            data: err.toString()
         });
     }
 };

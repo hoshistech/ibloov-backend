@@ -147,12 +147,6 @@ var EventSchema = new Schema({
         enum: [true, false] 
     },
 
-    createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true
-    },
-
     updatedBy: {
         type: String
     },
@@ -234,6 +228,12 @@ var EventSchema = new Schema({
         ref: "Wishlist",
         default: null
     },
+
+    userId: {
+        type: mongoose.Schema.Types.ObjectId, //maybe this should be an objectId type
+        ref: "User",
+        required: true
+    },
     
     crowdfundingId: {
         type: mongoose.Schema.Types.ObjectId, //maybe this should be an objectId type
@@ -256,15 +256,6 @@ var EventSchema = new Schema({
     }
 
 }, {timestamps: true,  versionKey: false} );
-
-// EventSchema.pre('save', function(next) {
-
-//     console.log("trying to convert!");
-//     console.log(this._id, typeof this._id)
-//     console.log(this._id.toString(), typeof this._id.toString() )
-//     this._id = this._id.toString();
-//     next();
-// });
 
 
 /**

@@ -9,7 +9,6 @@ module.exports = {
         try {
             
             let resp = await paymentService.checkout(amount, nonceFromTheClient);
-            console.log(resp);
 
             if(! resp.success ){
 

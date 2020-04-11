@@ -21,16 +21,6 @@ module.exports = {
      * @param userData object
      */
     createUser: async ( user  ) =>{
-
-        user.authMethod = "local";
-        let local = {
-            password: user.password,
-            firstName: user.firstName,
-            lastName: user.lastName
-        }
-
-        user.authMethod = "local";
-        user.local= local;
         
         return await User.create( user );
     },

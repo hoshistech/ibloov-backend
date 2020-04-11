@@ -16,16 +16,12 @@ router.get("/google/authurl", googleAuthController.googleAuthUrl );
 
 router.get("/google",  passport.authenticate('google', { scope: ["profile", "email"] }),   );
 
-router.get('/google/callback', passport.authenticate('google'), authController.googleAuth);
+router.get('/google/callback', passport.authenticate('google'), authController.signUser);
 
-router.post('/local', passport.authenticate('local'), authController.localAuth );
+router.post('/local', passport.authenticate('local'), authController.signUser );
 
 //router.get("/facebook",  passport.authenticate('google', { scope: ["profile"] }) );
 
-//router.get("/facebook/callback",  passport.authenticate('google', { scope: ["profile"] }) );
-
-
-
-
+router.get("/facebook/callback",  passport.authenticate('facebook'), authController.signUser );
 
 module.exports = router; 

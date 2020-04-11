@@ -122,8 +122,6 @@ module.exports = {
      */
     pledge: async ( wishlistId, itemId, pledge ) => {
 
-        console.log(itemId)
-
         return await Wishlist
         .findOneAndUpdate( { _id: wishlistId, "items._id": itemId, "items.userId": {$ne: pledge.userId } }, 
         { $addToSet : { "items.$.pledges" : pledge }}, 

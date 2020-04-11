@@ -12,8 +12,6 @@ const session = require('express-session');
 //passport 
 var passport = require("passport");
 
-require('@services/auth/localAuth.service')(passport);
-
 //body-parser
 var bodyParser = require('body-parser');
 
@@ -59,27 +57,28 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
+
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false
+  
 }));
 
 app.use(passport.initialize()); // Used to initialize passport
 app.use(passport.session()); // Used to persist login sessions
 
+require('@services/auth/localAuth.service')(passport);
+require('@services/auth/facebookAuth.service')(passport);
+require('@services/auth/googleAuth.service')(passport);
+
+
 // Used to stuff a piece of information into a cookie
 passport.serializeUser((user, done) => {
-
-  console.log("user")
-  console.log(user)
   done(null, user);
 });
 
 // Used to decode the received cookie and persist session
 passport.deserializeUser((user, done) => {
-
-  console.log("user")
-  console.log(user)
   done(null, user);
 });
 
@@ -112,7 +111,6 @@ app.use('/seeders/wishlist', wishlistSeederRouter);
 app.use('/seeders/crowdfunding', crowdfundingSeederRouter);
 app.use('/seeders/user', userSeederRouter);
 app.use('/seeders/influencer', influencerSeederRouter);
-
 
 
 // catch 404 and forward to error handler

@@ -9,5 +9,11 @@ module.exports = {
             process.env.JWT_SECRET_KEY, 
             { expiresIn: process.env.JWT_TOKEN_VALIDATON_LENGTH }
         )
+    },
+
+
+    getAuthUser: async() => {
+
+        return null;
     }
 }

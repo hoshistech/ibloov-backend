@@ -13,8 +13,6 @@ module.exports = {
         query["deletedAt"] = null;
         query["dueDate"] = { "$gte": new Date };
 
-        console.log(query);
-
         let crowdFunding = await CrowdFunding.find(query);
         return crowdFunding;
     },
@@ -60,7 +58,6 @@ module.exports = {
      */
     softDeleteCrowdFunding: async (crowdFundingId) => {
 
-        console.log(crowdFundingId);
         const updateData = { deletedAt: Date.now(), deletedBy: '1edfhuio3ifj' };
         return await module.exports.updateCrowdFunding(crowdFundingId, updateData); 
     },

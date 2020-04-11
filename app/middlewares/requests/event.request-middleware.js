@@ -14,6 +14,9 @@ exports.validate = (method) => {
 
             body('category', 'Invalid category provided.').exists(),
 
+            body('location', "Required  property, 'location' not provided.")
+            .exists(),
+
             body('startDate', 'Invalid event start date provided.')
             .exists(), //validDate | notInThePast | notGreaterThanEndDate
             

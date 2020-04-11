@@ -12,8 +12,6 @@ module.exports = {
         //const {limit, sort} =  options;
         query["isPrivate"] = false;
 
-        //console.log(query);
-
         let events = await Event.find(query);
         return events;
     },

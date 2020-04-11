@@ -177,9 +177,6 @@ module.exports = {
      */
     verifyInfluencer: async (influencerId) => {
 
-        console.log("influencerId is ");
-        console.log(influencerId);
-
         let verificationUpdate = {
             isVerified: true,
             verifiedDate: new Date

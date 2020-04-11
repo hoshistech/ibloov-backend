@@ -21,9 +21,19 @@ index = async (req, res) => {
 create = async (req, res) => {
 
     let user = req.body;
-    user.uuid = uuidv4();
-
+    
     try {
+
+        let local = {
+            password: user.password,
+            firstName: user.firstName,
+            lastName: user.lastName
+        }
+
+        user.uuid = uuidv4();
+        user.authMethod = "local";
+        user.local= local;
+
         let resp = await userService.createUser(user);
 
         return res.status(200).json({
@@ -163,14 +173,12 @@ softdelete = async (req, res) => {
             message: "Event information has been deleted successfully.",
             data: resp
         });
-    } catch (e) {
+    } catch ( err ) {
         
-
-        console.log(e)
         return res.status(400).json({
             success: false,
             message: "Error occured while trying to update this event.",
-            data: e
+            data: err.toString()
         });
     }
 };

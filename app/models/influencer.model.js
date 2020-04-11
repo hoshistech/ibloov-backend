@@ -110,16 +110,6 @@ InfluencerSchema.methods.hasFollowers = function() {
 };
 
 
-// InfluencerSchema.pre('save', function(next) {
-
-//     console.log("gets here to pre-save")
-//     console.log(this.verifiedDate);
-
-//     delete this.verifiedDate;
-//     delete this.isVerified;
-//     next();
-// });
-
 /**
  * gets a list of an influencer's events
  * 

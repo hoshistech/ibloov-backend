@@ -2,12 +2,16 @@ const express = require('express');
 const router = express.Router();
 const EventController = require('@controllers/events.controller');
 
+//middlewares
 const { validate } = require("@request-middleware/event.request-middleware");
 const { isValidRequest } = require("@middleware/isRequestValid.middleware");
+const { checkAuth } = require("@middleware/auth.middleware");
 
-router.get('/', EventController.index) ;
+const middleWareGroup = [validate("createEvent"), isValidRequest, checkAuth];
 
-router.post('/create', EventController.create );
+router.get('/', checkAuth, EventController.index) ;
+
+router.post('/create', middleWareGroup, EventController.create );
 
 router.get('/live', EventController.live );
 

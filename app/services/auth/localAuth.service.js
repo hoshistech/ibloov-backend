@@ -32,13 +32,10 @@ module.exports = function(passport){
 
         async (email, password, done) => {
 
-            console.log(email, password);
-
             try {
 
                 let user = await userService.getUser( { email } );
 
-                console.log(user);
                 if( ! user) return done(null, false);
 
                 if ( ! user.isValidPassword( password ) ) return done( null, false )

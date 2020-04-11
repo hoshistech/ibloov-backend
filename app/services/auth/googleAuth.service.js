@@ -2,34 +2,36 @@ const passport = require("passport");
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const userService = require("@services/user.service");
 
-
+//credentials 
 const { googleAuth } = require("@config/socialAuth");
 
-passport.use( new GoogleStrategy( googleAuth,
+module.exports = function(passport){ 
 
-    async (accessToken, refreshToken, profile, done) => {
+    passport.use( new GoogleStrategy( googleAuth,
 
-        try {
+        async (accessToken, refreshToken, profile, done) => {
 
-            let user = await userService.getUser( {"google.id": profile.id} )
-            if( user ) return done(null, user);
+            try {
 
-            let newUser =  {
+                let user = await userService.getUser( {"google.id": profile.id} )
+                if( user ) return done(null, user);
 
-                authMethod: "google",
-                email: profile.email,
-                google: {
-                  id: profile.id,
-                  firstName: profile.name.givenName,
-                  lastName: profile.name.familyName, 
+                let newUser =  {
+
+                    authMethod: "google",
+                    email: profile.email,
+                    google: {
+                    id: profile.id,
+                    firstName: profile.name.givenName,
+                    lastName: profile.name.familyName, 
+                    }
                 }
+                await userService.createUser( newUser );
+                return done(null, newUser);
+                
+            } catch (err) {
+                return done( err, false, err.toString() )
             }
-            await userService.createUser( newUser );
-            return done(null, newUser);
-            
-        } catch (err) {
-            return done( err, false, err.toString() )
-        }
-    }
-  )
-);
+        })
+    );
+}

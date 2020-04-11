@@ -95,7 +95,7 @@ UserSchema.methods.isValidPassword = async function( password ){
 
 
 UserSchema.pre('save',  async function(next){
-
+    
     try{
         if( this.authMethod !== "local") next();
 
