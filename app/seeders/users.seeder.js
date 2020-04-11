@@ -1,5 +1,6 @@
 const faker = require('faker');
 const { randomInt } = require("@helpers/number.helper");
+const bcrypt = require('bcryptjs');
 
 //models
 const User = require("@models/user.model");
@@ -37,27 +38,31 @@ const seedUsers = async (req, res) => {
 }
 
 
-const userFactory =  ( ) => {
+const userFactory =  async() => {
+
+    const salt = await bcrypt.genSaltSync(10);
+    const hash = await bcrypt.hash(this.local.password, salt);
     
-    const user = {
+    const local = {
 
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
-        email: faker.internet.email(),
+        password: hash
+    }
+
+    const user = {
+
         isEmailVerified: false,
         phoneNumber: faker.phone.phoneNumber(),
         isPhoneNumberVerified: false,
         dob: faker.date.past(),
         address: faker.address.streetAddress(),
         uuid: faker.random.uuid(),
-
-        createdAt: new Date,
-        updatedAt: new Date
+        local
+        
     }
-
-    user.fullName = `${user.firstName} ${user.lastName}`;
 
     return user;
 }
 
-module.exports = { seedUsers }
+module.exports = { seedUsers, userFactory }

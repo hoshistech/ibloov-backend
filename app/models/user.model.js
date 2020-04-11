@@ -1,9 +1,5 @@
 const mongoose = require('mongoose');
-var jwt = require('jsonwebtoken');
-var crypto = require('crypto');
-
-//JWT secret key
-var secret = process.env.JWT_SECRET_KEY;
+const bcrypt = require('bcryptjs');
 
 var Schema = mongoose.Schema;
 
@@ -17,16 +13,9 @@ var UserSchema = new Schema({
 
     local: {
 
+        firstName: String, 
 
-        email: {
-            type: String,
-            unique: true
-        },
-    
-        isEmailVerified: {
-            type: Boolean,
-            default: false
-        },
+        lastName: String,
 
         verificationCode: [{
             code: {
@@ -36,6 +25,10 @@ var UserSchema = new Schema({
                 type: Date
             }
         }],
+
+        password: {
+            type: String
+        }
 
     },
 
@@ -47,17 +40,30 @@ var UserSchema = new Schema({
 
         id: {
             type: String,
-            required: true
+            required: function(){
+                return this.authMethod == "google"
+            }
         },
-        email: String,
         firstName: String, 
         lastName: String
+    },
 
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+
+    isEmailVerified: {
+        type: Boolean,
+        default: function(){
+            return this.authMethod == "local" ? false : true
+        }
     },
 
     phoneNumber: {
         type: String,
-        unique: true
+        //unique: true
     },
 
     isPhoneNumberVerified: {
@@ -73,41 +79,35 @@ var UserSchema = new Schema({
 
 }, {timestamps: true,  versionKey: false} );
 
-// UserSchema.methods.generateJWT = function() {
-//     var today = new Date();
-//     var exp = new Date(today);
-//     exp.setDate(today.getDate() + 60);
 
-//     return jwt.sign({
-//     id: this._id,
-//     username: this.username,
-//     exp: parseInt(exp.getTime() / 1000),
-//     }, secret);
-// };
+UserSchema.methods.isValidPassword = async function( password ){
 
-// UserSchema.methods.toAuthJSON = function(){
+    try {
 
-//     return {
-//     username: this.username,
-//     email: this.email,
-//     token: this.generateJWT(),
-//     bio: this.bio,
-//     image: this.image
-// };
-// };
+        return await bcrypt.compare( password, this.local.password);
 
-UserSchema.pre('save',  async (next) => {
+    } catch ( err ) {
+        
+        throw new Error(err);
+    }   
+};
 
-    if( this.authMethod !== "local") next();
 
-    this.salt = crypto.randomBytes(16).toString('hex');
-    this.hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
+
+UserSchema.pre('save',  async function(next){
+
+    try{
+        if( this.authMethod !== "local") next();
+
+        const salt = await bcrypt.genSaltSync(10);
+        const hash = await bcrypt.hash(this.local.password, salt);
+        this.local.password = hash;
+        next()
+
+    } catch( err ){
+        next(err);
+    }
 })
-
-// UserSchema.methods.validPassword = function(password) {
-//     var hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
-//     return this.hash === hash;
-// };
 
 let Users = mongoose.model('users', UserSchema);
 

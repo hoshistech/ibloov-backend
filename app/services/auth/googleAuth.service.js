@@ -1,11 +1,9 @@
 const passport = require("passport");
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const userService = require("@services/user.service");
-const User = require('@models/user.model');
 
 
 const { googleAuth } = require("@config/socialAuth");
-
 
 passport.use( new GoogleStrategy( googleAuth,
 
@@ -19,11 +17,11 @@ passport.use( new GoogleStrategy( googleAuth,
             let newUser =  {
 
                 authMethod: "google",
+                email: profile.email,
                 google: {
                   id: profile.id,
                   firstName: profile.name.givenName,
-                  lastName: profile.name.familyName,
-                  email: profile.email
+                  lastName: profile.name.familyName, 
                 }
             }
             await userService.createUser( newUser );

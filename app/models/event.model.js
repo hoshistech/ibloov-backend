@@ -229,8 +229,15 @@ var EventSchema = new Schema({
         ref: "User"
     },
 
-    wishList: {
-        type: String, //maybe this should be an objectId type
+    wishlistId: {
+        type: mongoose.Schema.Types.ObjectId, //maybe this should be an objectId type
+        ref: "Wishlist",
+        default: null
+    },
+    
+    crowdfundingId: {
+        type: mongoose.Schema.Types.ObjectId, //maybe this should be an objectId type
+        ref: "Crowdfund",
         default: null
     },
 

@@ -6,7 +6,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+//session
+const session = require('express-session');
+
+//passport 
 var passport = require("passport");
+
+require('@services/auth/localAuth.service')(passport);
 
 //body-parser
 var bodyParser = require('body-parser');
@@ -26,6 +32,7 @@ const PaymentRouter = require("@routes/payment.route");
 const InfluencerRouter = require("@routes/influencer.route");
 const ShoppingRouter = require("@routes/shopping.route");
 const CategoryRouter = require("@routes/category.route");
+const StoageRouter  = require("@routes/storage.route");
 
 //seeders
 const eventSeederRouter = require('@routes/seeders/event.route');
@@ -51,16 +58,28 @@ app.use(express.urlencoded({
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}));
+
 app.use(passport.initialize()); // Used to initialize passport
 app.use(passport.session()); // Used to persist login sessions
 
 // Used to stuff a piece of information into a cookie
 passport.serializeUser((user, done) => {
+
+  console.log("user")
+  console.log(user)
   done(null, user);
 });
 
 // Used to decode the received cookie and persist session
 passport.deserializeUser((user, done) => {
+
+  console.log("user")
+  console.log(user)
   done(null, user);
 });
 
@@ -68,6 +87,7 @@ app.use(bodyParser.json({
   limit: '50mb',
   extended: true
 }));
+
 app.use(bodyParser.urlencoded({
   limit: '50md',
   extended: true,
@@ -75,7 +95,7 @@ app.use(bodyParser.urlencoded({
 }))
 
 app.use('/', indexRouter);
-app.use('/v1/users', UsersRouter);
+app.use('/v1/user', UsersRouter);
 app.use('/v1/event', EventRouter);
 app.use('/v1/wishlist', WishListRouter);
 app.use('/v1/crowdfunding', CrowdFundingRouter);
@@ -84,6 +104,7 @@ app.use('/auth', AuthRouter);
 app.use('/v1/influencer', InfluencerRouter);
 app.use('/v1/shopping', ShoppingRouter);
 app.use('/v1/category', CategoryRouter);
+app.use('/v1/do/', StoageRouter);
 
 //seeders
 app.use('/seeders/event', eventSeederRouter);

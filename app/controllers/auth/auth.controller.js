@@ -1,16 +1,56 @@
+const authService = require("@services/auth.service");
+
 module.exports = {
 
     googleAuth: async (req, res) => {
 
-        const user = req.user;
-        console.log(user);
+        try {
 
-        return res.status(200).json({
+            const token = await authService.signToken( req.user );
 
-            success: true,
-            message: "Operation successful",
-            data: user
-        })
+            return res.status(200).json({
 
+                success: true,
+                message: "Operation successful",
+                data: token
+            })
+            
+        } catch ( err ) {
+
+            return res.status(400).json({
+
+                success: true,
+                message: "error occured while performing this operation.",
+                data: err.toString()
+            })
+            
+        }
+    },
+
+    localAuth: async (req, res) => {
+
+        try {
+
+            const token = await authService.signToken( req.user );
+
+            return res.status(200).json({
+
+                success: true,
+                message: "Operation successful",
+                data: token
+            })
+            
+        } catch ( err ) {
+
+            return res.status(400).json({
+
+                success: true,
+                message: "error occured while performing this operation.",
+                data: err.toString()
+            })
+            
+        }
     }
+
+
 }

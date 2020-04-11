@@ -20,6 +20,29 @@ index = async (req, res) => {
  */
 create = async (req, res) => {
 
+    let user = req.body;
+    user.uuid = uuidv4();
+
+    try {
+        let resp = await userService.createUser(user);
+
+        return res.status(200).json({
+            success: true,
+            message: "user created successfully",
+            data: resp
+        });
+    } catch ( err ) {
+        
+        return res.status(400).json({
+            success: false,
+            message: "required User id missing.",
+            data: err.toString()
+        });
+    }
+
+    
+    
+
 };
 
 

@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const passport = require("passport");
-const { facebookLogin } = require('@controllers/auth/auth.controller');
 
 const authController = require("@controllers/auth/auth.controller");
-
 const googleAuthController = require('@controllers/auth/google.auth.controller');
 
 
@@ -18,8 +16,9 @@ router.get("/google/authurl", googleAuthController.googleAuthUrl );
 
 router.get("/google",  passport.authenticate('google', { scope: ["profile", "email"] }),   );
 
-
 router.get('/google/callback', passport.authenticate('google'), authController.googleAuth);
+
+router.post('/local', passport.authenticate('local'), authController.localAuth );
 
 //router.get("/facebook",  passport.authenticate('google', { scope: ["profile"] }) );
 

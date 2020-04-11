@@ -1,6 +1,7 @@
 const service = require('@services/wishlist.service');
 const uuidv4 = require('uuid/v4');
-const { addHistory } = require('@helpers/event.helper');
+
+//const { addHistory } = require('@helpers/event.helper');
 
 
 module.exports = {
@@ -373,7 +374,7 @@ module.exports = {
             });
         }
 
-    },
+    }
 
     
 }
