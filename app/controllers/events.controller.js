@@ -8,20 +8,21 @@ const uuidv4 = require('uuid/v4');
  */
 index = async (req, res) => {
 
-    let filter = {};
+    let filter = { deletedAt: null };
 
     //dont change this line
     //it forces withDeleted to be false as long as it is not true
 
-    const {withdeleted, unpublished, category} = req.query;
+    //const {withdeleted, unpublished, category} = req.query;
+    const {category} = req.query;
     
-    let withDeleted = ( withdeleted !== "true" ) ? false : true
-    let withUnPublished = ( unpublished !== "true" ) ? false : true;
+    // let withDeleted = ( withdeleted !== "true" ) ? false : true
+    // let withUnPublished = ( unpublished !== "true" ) ? false : true;
 
-    if( category) filter["category"] = category;
+    if( category ) filter["category"] = category;
     
-    if( ! withDeleted ) filter["deletedAt"] = null
-    if( ! withUnPublished ) filter["publish"] = true
+    // if( ! withDeleted ) filter["deletedAt"] = null
+    // if( ! withUnPublished ) filter["publish"] = true
  
     try{
         let events = await eventService.all(filter);
@@ -65,12 +66,12 @@ create = async (req, res) => {
             data: result
         });
     }
-    catch(e){
+    catch( err ){
 
         res.status(400).send({
             success: false,
             message: "Error performing this operation",
-            data: e
+            data: err.toString()
         });
     }
 };
@@ -129,24 +130,8 @@ view = async (req, res) => {
 
     let eventId = req.params.eventId;
 
-    if( ! eventId ){
-
-        return res.status(400).json({
-            success: false,
-            message: "invalid event id provided.",
-        });
-    }
-
     try {
         let event = await eventService.viewEvent(eventId);
-
-        if( ! event){
-
-            return res.status(404).json({
-                success: true,
-                message: "Event not found!."
-            });
-        }
 
         return res.status(200).json({
             success: true,

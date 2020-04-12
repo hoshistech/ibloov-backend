@@ -8,6 +8,7 @@ const { isValidRequest } = require("@middleware/isRequestValid.middleware");
 const { checkAuth } = require("@middleware/auth.middleware");
 
 const middleWareGroup = [validate("createEvent"), isValidRequest, checkAuth];
+const middleWareGroup2 = [validate("createEvent"), isValidRequest];
 
 router.get('/', checkAuth, EventController.index) ;
 
@@ -17,7 +18,7 @@ router.get('/live', EventController.live );
 
 router.patch('/:eventId', EventController.update );
 
-router.get('/:eventId', EventController.view );
+router.get('/:eventId', [ validate("viewEvent"), isValidRequest ], EventController.view );
 
 router.delete('/:eventId', EventController.softdelete );
 

@@ -2,6 +2,8 @@ const Influencer = require('@models/influencer.model');
 
 module.exports = {
 
+    "model": Influencer,
+
     /**
      * returns all influencers given certain parameters
      * @param query object 

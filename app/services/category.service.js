@@ -2,6 +2,8 @@ const Category = require("@models/category.model");
 
 module.exports = {
 
+    "model": Category,
+
     /**
      * returns all categories given certain parameters
      * @param query object 

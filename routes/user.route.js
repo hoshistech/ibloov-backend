@@ -8,7 +8,15 @@ const { isValidRequest } = require("@middleware/isRequestValid.middleware");
 
 
 
+router.get('/',  UserController.index );
+
 router.post('/register', [ validate("createUser"), isValidRequest], UserController.create );
+
+router.get('/:userId', UserController.view );
+
+router.delete('/:userId', UserController.softdelete );
+
+router.patch('/:userId', UserController.update );
 
 
 /* GET users listing. */

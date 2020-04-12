@@ -7,14 +7,18 @@ let should = chai.should();
 
 chai.use(chaiHttp);
 
+//services
 const UserService = require("@services/user.service");
 const UserSeeder = require("@seeders/users.seeder");
+
+//helpers
+const modelHelper = require("@helpers/model.helper");
 
 describe('Users', () => {
 
     beforeEach(function (done) { //Before each test we empty the database
 
-        UserService.removeAll().then(() => {
+        modelHelper.removeAll( UserService.model ).then(() => {
             done();
         })
 
@@ -41,12 +45,18 @@ describe('Users', () => {
 
     describe('CREATE USER', () => {
 
-        it('it should create a new user', (done) => {
+        it('it should create a new user', async (done) => {
 
-            let user = UserSeeder.userFactory();
+            let user = {
+
+                "firstName": "Toks",
+                "lastName": "Ojo",
+                "email": "test7@test.com",
+                "password": "password"
+            }
 
             chai.request(app)
-                .post('/v1/user/create')
+                .post('/v1/user/register')
                 .send(user)
                 .end((err, res) => {
 
@@ -60,9 +70,9 @@ describe('Users', () => {
 
     describe('GET SINGLE USER RESOURCE', () => {
 
-        it('it should GET a single user instance', (done) => {
+        it('it should GET a single user instance', async (done) => {
 
-            let user = UserSeeder.userFactory();
+            let user = await UserSeeder.localUserFactory();
 
             UserService.createUser(user)
                 .then(data => {
@@ -75,7 +85,6 @@ describe('Users', () => {
                             res.body.should.have.property('success').eql(true);
                             res.body.data.should.be.a('object');
                             res.body.data.should.have.property('_id');
-                            res.body.data.should.have.property('uuid');
                             done();
                         });
                 });
@@ -84,9 +93,9 @@ describe('Users', () => {
 
     describe('UPDATE SINGLE USER RESOURCE', () => {
 
-        it('it should GET a single user instance by its _id', (done) => {
+        it('it should GET a single user instance', async (done) => {
 
-            let user = UserSeeder.userFactory();
+            let user = await UserSeeder.localUserFactory();
 
             UserService.createUser(user)
                 .then(data => {
@@ -94,13 +103,13 @@ describe('Users', () => {
                     chai.request(app)
                         .patch(`/v1/user/${data._id}`)
                         .send({
-                            publish: true
+                            authMethod: "google"
                         })
                         .end((err, res) => {
 
                             res.should.have.status(200);
                             res.body.data.should.be.a('object');
-                            res.body.data.publish.should.equal(true);
+                            res.body.data.authMethod.should.equal("google");
                             res.body.data.should.have.property('updatedAt').not.eql(data.createdAt);
 
                             done();
@@ -111,9 +120,9 @@ describe('Users', () => {
 
     describe('DELETE SINGLE USER RESOURCE ', () => {
 
-        it('it should DELETE a single user instance', (done) => {
+        it('it should DELETE a single user instance', async(done) => {
 
-            let user = UserSeeder.userFactory();
+            let user = await UserSeeder.localUserFactory();
 
             UserService.createUser(user)
                 .then(data => {

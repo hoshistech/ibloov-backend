@@ -2,6 +2,8 @@ const Wishlist = require('@models/wishlist.model');
 
 module.exports = {
 
+    "model": Wishlist,
+
     /**
      * returns all wishlists
      * @param query object 

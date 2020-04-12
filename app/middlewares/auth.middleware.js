@@ -34,7 +34,7 @@ verifyToken = function( req, res, next ){
 
         if( ! data.user._id ){
     
-            userService.getUser( {email: data.user.email})
+            userService.getUser( { email: data.user.email })
             .then( user => {
 
                 req.authuser = user;
@@ -50,10 +50,9 @@ verifyToken = function( req, res, next ){
                 })
 
             })
-          }
-
-          
-
+        } 
         
+        req.authuser = data.user;
+        next();
     })
 }

@@ -1,330 +1,276 @@
 const userService = require('@services/user.service');
 const uuidv4 = require('uuid/v4');
 
-// const Event = require('@models/event.model');
-// var JsBarcode = require('jsbarcode');
-// var Canvas = require("canvas");
 
+module.exports = {
 
 /**
  * get users
  * @authlevel authenticated | admin
  */
-index = async (req, res) => {
-    
-},
+    index: async (req, res) => {
 
+        try {
 
-/**
- * create a new user.
- */
-create = async (req, res) => {
+            let users = await userService.all();
+            return res.status(200).json({
 
-    let user = req.body;
-    
-    try {
-
-        let local = {
-            password: user.password,
-            firstName: user.firstName,
-            lastName: user.lastName
-        }
-
-        user.uuid = uuidv4();
-        user.authMethod = "local";
-        user.local= local;
-
-        let resp = await userService.createUser(user);
-
-        return res.status(200).json({
-            success: true,
-            message: "user created successfully",
-            data: resp
-        });
-    } catch ( err ) {
-        
-        return res.status(400).json({
-            success: false,
-            message: "required User id missing.",
-            data: err.toString()
-        });
-    }
-
-    
-    
-
-};
-
-
-/**
- * update a single user model
- * 
- */
-update = async (req, res) => {
-
-    let userId = req.params.userId;
-    let userData = req.body;
-
-    if( ! userId){
-        return res.status(400).json({
-            success: false,
-            message: "required User id missing."
-        });
-    }
-
-    let user = await userService.viewUser(userId);
-    
-    if( ! user ){
-        return res.status(404).json({
-            success: false,
-            message: "invalid user."
-        });
-    }
-
-    try {
-        
-        let resp = await userService.updateUser(userId, userData);
-        // userService.addEventHistory( userId, "USER_UPDATE")
-        return res.status(200).json({
-            success: true,
-            message: "User information has been updated successfully.",
-            data: resp
-        });
-    } catch (e) {
-        
-        return res.status(400).json({
-            success: false,
-            message: "Error occured while trying to update this user.",
-            data: e
-        });
-    }
-};
-
-
-view = async (req, res) => {
-
-    let eventId = req.params.eventId;
-
-    if( ! eventId ){
-
-        return res.status(400).json({
-            success: false,
-            message: "invalid event id provided.",
-        });
-    }
-
-    try {
-        let event = await userService.viewEvent(eventId);
-
-        if( ! event){
-
-            return res.status(404).json({
                 success: true,
-                message: "Event not found!."
-            });
-        }
+                message: "users retreived successfully",
+                data: users
+            }); 
+            
+        } catch ( err ) {
 
-        return res.status(200).json({
-            success: true,
-            message: "Event retreived successfully.",
-            data: event
-        });
-        
-    } catch (e) {
-        return res.status(400).json({
-            success: false,
-            message: "Error occured while performing this operation.",
-            data: e
-        });
-    }
-};
+            return res.status(400).json({
 
-
-/**
- * softDeletes a single event instance.
- * @authLevel - authenticated | isEventAdmin | isEventCreator
- */
-softdelete = async (req, res) => { 
-
-    
-    let eventId = req.params.eventId;
-    let eventData = req.body;
-
-    if( ! eventId){
-        return res.status(400).json({
-            success: false,
-            message: "required event id missing."
-        });
-    }
-
-    let event = await userService.viewEvent(eventId);
-    if( ! event ){
-        return res.status(404).json({
-            success: false,
-            message: "invalid event."
-        });
-    }
-
-    try {
-        
-        let resp = await userService.softDeleteEvent(eventId, eventData);
-        return res.status(200).json({
-            success: true,
-            message: "Event information has been deleted successfully.",
-            data: resp
-        });
-    } catch ( err ) {
-        
-        return res.status(400).json({
-            success: false,
-            message: "Error occured while trying to update this event.",
-            data: err.toString()
-        });
-    }
-};
-
-/**
- * Generates a single code for an event
- * most likely used when genrating an event
- * @authlevel - no auth
- * @returns String
- */
-generateEventCode = (req, res) => {
-
-    let code = generateCode();
-    res.status(200).json({
-        success: true,
-        message: "Event code generated successfully",
-        data: code
-    });
-}
-
-
-/**
- * sunscribes a user to an event
- * user would start receiving event notifications/updates
- * @authlevel authenticated
- */
-follow = async (req, res) => {
-
-    let eventId = req.params.eventId;
-
-    if( ! eventId){
-        return res.status(400).json({
-            success: false,
-            message: "required event id missing."
-        });
-    }
-    
-    try{
-        let event = await userService.viewEvent(eventId);
-
-        if( ! event ){
-            return res.status(404).json({
                 success: false,
-                message: "invalid event."
+                message: "Error occured while trying to perform this operation",
+                data: users
+            }); 
+        }
+    },
+
+
+    /**
+     * create a new user.
+     */
+    create: async (req, res) => {
+
+        let user = req.body;
+        
+        try {
+
+            let local = {
+                password: user.password,
+                firstName: user.firstName,
+                lastName: user.lastName
+            }
+
+            user.uuid = uuidv4();
+            user.authMethod = "local";
+            user.local= local;
+
+            let resp = await userService.createUser(user);
+
+            return res.status(201).json({
+                success: true,
+                message: "user created successfully",
+                data: resp
             });
-        }
-
-        let follower = {
-            userId: "98765tguif",
-            email: "test@test.com",
-            telephone: "09039015531"
-        }
-
-        let isFollowing = await userService.isFollowingEvent(eventId, follower.userId);
-
-        if( ! isFollowing){
-            userService.updateEventSet(eventId, {"followers": follower }); 
-        }
-
-        return res.status(200).json({
-
-            success: true,
-            message: "Operation successful",
-            data: event
-        });
-    }
-    catch(e){
-
-        return res.status(400).json({
-            success: false,
-            message: "There was an error performing this operation",
-            data: e.toString()
-        });
-    }
-    
-},
-
-
-/**
- * unsubscribes a user from an event.
- * user no longer gets event notification/updates
- * 
- * @authlevel authenticated
- */
-unfollow = async (req, res) => {
-
-    let eventId = req.params.eventId;
-
-    if( ! eventId){
-        return res.status(400).json({
-            success: false,
-            message: "required event id missing."
-        });
-    }
-    
-    try{
-        let event = await userService.viewEvent(eventId);
-
-        if( ! event ){
-            return res.status(404).json({
+        } catch ( err ) {
+            
+            return res.status(400).json({
                 success: false,
-                message: "invalid event."
+                message: "Error occured while trying to perform this operation",
+                data: err.toString()
             });
         }
+    },
 
-        //userId to be gotten from the user token
-        let follower = {
-            userId: "98765tguik",
-            email: "test@test.com",
-            telephone: "09039015531"
-        }
 
-        let isFollowing = await userService.isFollowingEvent(eventId, follower.userId);
+    /**
+     * update a single user model
+     * 
+     */
+    update: async (req, res) => {
 
-        if( ! isFollowing ){
+        let userId = req.params.userId;
+        let userData = req.body;
 
-            return res.status(422).json({
+        try {
+            
+            let resp = await userService.updateUser( userId, userData );
+            // userService.addUserHistory( userId, "USER_UPDATE")
+            return res.status(200).json({
+                success: true,
+                message: "User information has been updated successfully.",
+                data: resp
+            });
+
+        } catch ( err ) {
+            
+            return res.status(400).json({
                 success: false,
-                message: "user is currently not following event!"
+                message: "Error occured while trying to update this user.",
+                data: err.toString()
             });
         }
+    },
 
-        await userService.unfollowEvent(eventId, follower.userId); 
 
-        return res.status(200).json({
+    view: async (req, res) => {
 
-            success: true,
-            message: "User has been unsubscribed from event sucessfully.",
-            data: event
-        });
+        let userId = req.params.userId;
+
+        try {
+            let user = await userService.viewUser(userId);
+
+            return res.status(200).json({
+                success: true,
+                message: "User retreived successfully.",
+                data: user
+            });
+            
+        } catch ( err ) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Error occured while performing this operation.",
+                data: err.toString()
+            });
+        }
+    },
+
+
+    /**
+     * softDeletes a single user instance.
+     * @authLevel - authenticated | isUserAdmin | isUserCreator
+     */
+    softdelete: async (req, res) => { 
+
+        let userId = req.params.userId;
+
+        try {
+            
+            let resp = await userService.softDeleteUser( userId, req.authuser._id );
+
+            return res.status(200).json({
+                success: true,
+                message: "User has been deleted successfully.",
+                data: resp
+            });
+
+        } catch ( err ) {
+            
+            return res.status(400).json({
+                success: false,
+                message: "Error occured while trying to update this user.",
+                data: err.toString()
+            });
+        }
+    },
+
+
+
+    /**
+     * sunscribes a user to an user
+     * user would start receiving user notifications/updates
+     * @authlevel authenticated
+     */
+    follow: async (req, res) => {
+
+        let userId = req.params.userId;
+
+        if( ! userId){
+            return res.status(400).json({
+                success: false,
+                message: "required user id missing."
+            });
+        }
+        
+        try{
+            let user = await userService.viewUser(userId);
+
+            if( ! user ){
+                return res.status(404).json({
+                    success: false,
+                    message: "invalid user."
+                });
+            }
+
+            let follower = {
+                userId: "98765tguif",
+                email: "test@test.com",
+                telephone: "09039015531"
+            }
+
+            let isFollowing = await userService.isFollowingUser(userId, follower.userId);
+
+            if( ! isFollowing){
+                userService.updateUserSet(userId, {"followers": follower }); 
+            }
+
+            return res.status(200).json({
+
+                success: true,
+                message: "Operation successful",
+                data: user
+            });
+        }
+        catch(e){
+
+            return res.status(400).json({
+                success: false,
+                message: "There was an error performing this operation",
+                data: e.toString()
+            });
+        }
+        
+    },
+
+
+    /**
+     * unsubscribes a user from an user.
+     * user no longer gets user notification/updates
+     * 
+     * @authlevel authenticated
+     */
+    unfollow: async (req, res) => {
+
+        let userId = req.params.userId;
+
+        if( ! userId){
+            return res.status(400).json({
+                success: false,
+                message: "required user id missing."
+            });
+        }
+        
+        try{
+            let user = await userService.viewUser(userId);
+
+            if( ! user ){
+                return res.status(404).json({
+                    success: false,
+                    message: "invalid user."
+                });
+            }
+
+            //userId to be gotten from the user token
+            let follower = {
+                userId: "98765tguik",
+                email: "test@test.com",
+                telephone: "09039015531"
+            }
+
+            let isFollowing = await userService.isFollowingUser(userId, follower.userId);
+
+            if( ! isFollowing ){
+
+                return res.status(422).json({
+                    success: false,
+                    message: "user is currently not following user!"
+                });
+            }
+
+            await userService.unfollowUser(userId, follower.userId); 
+
+            return res.status(200).json({
+
+                success: true,
+                message: "User has been unsubscribed from user sucessfully.",
+                data: user
+            });
+        }
+        catch(e){
+
+            return res.status(400).json({
+                success: false,
+                message: "There was an error performing this operation",
+                data: e.toString()
+            });
+        }
+        
     }
-    catch(e){
-
-        return res.status(400).json({
-            success: false,
-            message: "There was an error performing this operation",
-            data: e.toString()
-        });
-    }
-    
 }
-
-
-generateCode = () => {
-
-    return Math.random().toString(36).slice(3);
-}
-
-module.exports = {index, create, view, update, softdelete, generateEventCode, follow, unfollow}

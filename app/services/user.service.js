@@ -3,6 +3,8 @@ const eventService = require('@services/event.service');
 
 module.exports = {
 
+    "model": User,
+
     /**
      * returns all users given certain parameters
      * @param query object 
@@ -47,10 +49,9 @@ module.exports = {
      * @param userId integer
      * @param updateData object
      */
-    updateUser: async (userId, updateData) => {
+    updateUser: async ( userId, updateData ) => {
 
-        const result = await User.findByIdAndUpdate( userId, updateData, {new: true});
-        return result;
+        return  await User.findByIdAndUpdate( userId, updateData, {new: true});
     },
 
 
@@ -59,9 +60,9 @@ module.exports = {
      * @param userId integer
      *
      */
-    softDeleteUser: async (userId) => {
+    softDeleteUser: async (userId, deletedBy) => {
 
-        const updateData = {deletedAt: Date.now(), deletedBy: '1edfhuio3ifj'};
+        const updateData = { deletedAt: Date.now(), deletedBy };
         return await User.findByIdAndUpdate(userId, updateData);  
     },
 

@@ -7,14 +7,57 @@ let should = chai.should();
 
 chai.use(chaiHttp);
 
+const UserService = require("@services/user.service");
+const AuthService = require("@services/auth.service");
 const EventService = require("@services/event.service");
+
+//seeders
 const EventSeeder = require("@seeders/events.seeder");
+//const UserSeeder = require("@seeders/users.seeder");
+
+//helper
+const modelHelper = require("@helpers/model.helper");
 
 describe('Events', () => {
 
+    var testSessionToken;
+    var authUser;
+
+    before( function(done){
+
+        modelHelper.removeAll( UserService.model ).then( () => {
+            //done();
+        })
+
+        let user = {};
+        let local = {
+
+            "firstName": "Toks",
+            "lastName": "Ojo",
+            "password": "password"
+        }
+
+        user.email = "test6@test.com"
+        user.local = local;
+        user.authMethod = "local";
+
+        UserService.createUser(user)
+        .then( data => {
+
+            authUser = data;
+            AuthService.signToken( data )
+            .then( resp => {
+
+                testSessionToken = resp
+                done();
+
+            });
+        })
+    })
+
     beforeEach( function(done){ //Before each test we empty the database
 
-        EventService.removeAll().then( () => {
+        modelHelper.removeAll( EventService.model ).then( () => {
             done();
         })
         
@@ -27,6 +70,7 @@ describe('Events', () => {
 
             chai.request(app)
                 .get('/v1/event/')
+                .set({'Authorization': `Bearer ${testSessionToken}`, Accept: 'application/json'} )
                 .end(( err, res ) => {
 
                     res.should.have.status(200);
@@ -47,6 +91,7 @@ describe('Events', () => {
 
             chai.request(app)
             .post('/v1/event/create')
+            .set({'Authorization': `Bearer ${testSessionToken}`, Accept: 'application/json'} )
             .send(event)
             .end((err, res) => {
 
@@ -60,15 +105,17 @@ describe('Events', () => {
 
     describe('GET SINGLE EVENT RESOURCE', () => {
 
-        it('it should GET a single event instance by its _id', (done) => {
+        it('it should GET a single event instance', (done) => {
 
             let event = EventSeeder.eventFactory();
+            event.userId = authUser._id;
 
             EventService.createEvent( event )
             .then( data  => {
 
                 chai.request(app)
                 .get(`/v1/event/${data._id}`)
+                .set({'Authorization': `Bearer ${testSessionToken}`, Accept: 'application/json'} )
                 .end((err, res) => {
 
                         res.should.have.status(200);
@@ -86,15 +133,17 @@ describe('Events', () => {
 
     describe('UPDATE SINGLE EVENT RESOURCE', () => {
 
-        it('it should GET a single event instance by its _id', (done) => {
+        it('it should GET a single event instance ', (done) => {
 
             let event = EventSeeder.eventFactory();
+            event.userId = authUser._id;
 
             EventService.createEvent( event )
             .then( data  => {
 
                 chai.request(app)
                 .patch(`/v1/event/${data._id}`)
+                .set({'Authorization': `Bearer ${testSessionToken}`, Accept: 'application/json'} )
                 .send({ publish: true})
                 .end((err, res) => {
 
@@ -114,12 +163,14 @@ describe('Events', () => {
         it('it should DELETE a single event instance', (done) => {
 
             let event = EventSeeder.eventFactory();
+            event.userId = authUser._id;
 
             EventService.createEvent( event )
             .then( data  => {
 
                 chai.request(app)
                 .delete(`/v1/event/${data._id}`)
+                .set({'Authorization': `Bearer ${testSessionToken}`, Accept: 'application/json'} )
                 .end((err, res) => {
 
                         res.should.have.status(200);
@@ -155,16 +206,19 @@ describe('Events', () => {
 
             let event = EventSeeder.eventFactory();
             let follower = {
-                userId: "316564666875696f3369666a",
-                email: "test@test.com",
-                telephone: "09039015531"
+                userId: authUser._id,
+                email: authUser.email,
+                telephone: authUser.telephone
             }
+            event.userId = authUser._id;
+
 
             EventService.createEvent( event )
             .then( data  => {
 
                 chai.request(app)
                 .patch(`/v1/event/follow/${data._id}`)
+                .set({'Authorization': `Bearer ${testSessionToken}`, Accept: 'application/json'} )
                 .send(follower)
                 .end((err, res) => {
 
@@ -189,12 +243,14 @@ describe('Events', () => {
                 telephone: "09039015531"
             }
             event.followers = follower;
+            event.userId = authUser._id;
 
             EventService.createEvent( event )
             .then( data  => {
 
                 chai.request(app)
                 .patch(`/v1/event/unfollow/${data._id}`)
+                .set({'Authorization': `Bearer ${testSessionToken}`, Accept: 'application/json'} )
                 .end((err, res) => {
 
                     res.should.have.status(200);
@@ -219,12 +275,14 @@ describe('Events', () => {
             }
 
             event.followers = follower;
+            event.userId = authUser._id;
 
             EventService.createEvent( event )
             .then( data  => {
 
                 chai.request(app)
                 .patch(`/v1/event/notifications/mute/${data._id}`)
+                .set({'Authorization': `Bearer ${testSessionToken}`, Accept: 'application/json'} )
                 .end((err, res) => {
 
                     res.should.have.status(200);
@@ -242,6 +300,8 @@ describe('Events', () => {
         it("it should add a new user to the 'invitees' array of the events", (done) => {
 
             let event = EventSeeder.eventFactory();
+            event.userId = authUser._id;
+
             let invites = [
                 {
                     userId: "316564666875696f3369666a",
@@ -255,6 +315,7 @@ describe('Events', () => {
 
                 chai.request(app)
                 .patch(`/v1/event/invite/add/${data._id}`)
+                .set({'Authorization': `Bearer ${testSessionToken}`, Accept: 'application/json'} )
                 .send({invites})
                 .end((err, res) => {
 
@@ -279,12 +340,14 @@ describe('Events', () => {
                 telephone: "09039015531"
             }
             event.invitees = [ invites ];
+            event.userId = authUser._id;
 
             EventService.createEvent( event )
             .then( data  => {
 
                 chai.request(app)
                 .patch(`/v1/event/invite/remove/${data._id}`)
+                .set({'Authorization': `Bearer ${testSessionToken}`, Accept: 'application/json'} )
                 .send( { "email": invites.email })
                 .end((err, res ) => {
 
@@ -297,9 +360,6 @@ describe('Events', () => {
             });
         })
     })
-
-    
-
 })
 
 

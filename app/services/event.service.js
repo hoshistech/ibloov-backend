@@ -2,6 +2,8 @@ const Event = require('@models/event.model');
 
 module.exports = {
 
+    "model": Event,
+
     /**
      * returns all events given certain parameters
      * @param query object 

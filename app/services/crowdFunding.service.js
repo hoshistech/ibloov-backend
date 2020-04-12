@@ -2,6 +2,8 @@ const CrowdFunding = require('@models/crowdFunding.model');
 
 module.exports = {
 
+    "model": CrowdFunding,
+
     /**
      * returns all crowdFunds
      * @param query object 
