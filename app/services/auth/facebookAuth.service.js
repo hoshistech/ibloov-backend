@@ -28,8 +28,8 @@ module.exports = function(passport){
                         lastName: profile.name.familyName, 
                     }
                 }
-                await userService.createUser( newUser );
-                return done(null, newUser);
+                let createdUser = await userService.createUser( newUser );
+                return done(null, createdUser);
                 
             } catch (err) {
                 return done( err, false, err.toString() )

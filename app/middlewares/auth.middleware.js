@@ -25,34 +25,38 @@ verifyToken = function( req, res, next ){
     jwt.verify( req.token, process.env.JWT_SECRET_KEY, (err, data) => {
 
         if( err ) {
-            return res.status(403).json({
+            return res.status(401).json({
                 success: false,
                 message: "unauthorized",
                 data: err.toString()
             })
         }
 
-        if( ! data.user._id ){
-    
-            userService.getUser( { email: data.user.email })
-            .then( user => {
+        //userService.getUser( { email: data.user.email })
+        userService.getUser( { _id: data.user._id })
+        .then( user => {
 
-                req.authuser = user;
-                next();
-            })
-            .catch( err => {
+            if( ! user ){
 
-                return res.status(403).json({
+                return res.status(401).json({
 
                     success: false,
-                    message: "unauthorized",
-                    data: err.toString()
+                    message: "invalid token",
                 })
+            }
 
+            req.authuser = user;
+            next();
+        })
+        .catch( err => {
+
+            return res.status(403).json({
+
+                success: false,
+                message: "unauthorized",
+                data: err.toString()
             })
-        } 
-        
-        req.authuser = data.user;
-        next();
+
+        })  
     })
 }

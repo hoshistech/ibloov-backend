@@ -108,9 +108,6 @@ var UserSchema = new Schema({
 
 UserSchema.methods.isValidPassword = async function( password ){
 
-    console.log("password in isVali")
-    console.log(password)
-
     try {
 
         return await bcrypt.compare( password, this.local.password);
@@ -124,7 +121,7 @@ UserSchema.methods.isValidPassword = async function( password ){
 UserSchema.virtual('fullName').get(function () {
 
     let method = this.authMethod;
-   return this[method].firstName + ' ' + this[method].lastName;
+    return this[method].firstName + ' ' + this[method].lastName;
 });
 
 
