@@ -1,6 +1,7 @@
 const influencerService = require('@services/influencer.service');
 const mailer = require('@services/mail.service');
 const uuidv4 = require('uuid/v4');
+const userService = require('@services/user.service');
 
 module.exports = {
 
@@ -36,36 +37,27 @@ module.exports = {
      * @RESTCONTROLLER
      * endpoint to create a new influencer.
      */
-    create: async (req, res) => {
+    create: async (req, res) => { 
 
         let influencer = req.body;
         influencer.uuid = uuidv4();
+        influencer.userId = req.authuser._id;
         
-        /**
-         * @todo replace this with the actual user
-         */
-        influencer.user = { 
-            id: "ovmvmmvmvmmvmvmv", 
-            fullName: "ninnvj nvvnjv", 
-            phoneNumber: "090883747744", 
-            email: "user@test.com"
-        };
-
         try {
 
-            await influencerService.createInfluencer(influencer);
+            let resp = await influencerService.createInfluencer(influencer);
             res.status(201).send({
                 success: true,
                 message: "influencer created successfully",
-                data: influencer
+                data: resp
             });
 
-        } catch (e) {
+        } catch ( err ) {
 
             res.status(400).send({
                 success: false,
                 message: "Error performing this operation",
-                data: e.toString()
+                data: err.toString()
             });
         }
     },
@@ -197,28 +189,17 @@ module.exports = {
     follow: async (req, res) => {
 
         try {
+            
+            influencerId = req.params.influencerId;
 
-            let user = {
+            let follower = await userService.viewUser( req.authuser._id );
+            let resp = await influencerService.followInfluencer(influencerId, follower);
 
-                _id: "5e74a056a1d062242108b211",
-                fullName: "Imogene Lebsack",
-                email: "Mike_Powlowski12@yahoo.com"
-            };
-
-            let influencerId = req.params.influencerId;
-            let influencer = await influencerService.viewInfluencer(influencerId);
-
-            if (! influencer) {
-                return res.status(404).json({
-                    success: false,
-                    message: "Influencer not found."
-                });
-            };
-
-            await influencerService.followInfluencer(influencerId, user);
             return res.status(200).json({
+
                 successful: true,
-                 message: `you are now following ${ user.fullName }`
+                message: `you are now following ${ follower.fullName }`,
+                data: resp
             });
 
         } catch (err) {
@@ -242,30 +223,18 @@ module.exports = {
 
         try {
 
-            let user = {
-
-                _id: "5e74a056a1d062242108b211",
-                fullName: "Imogene Lebsack",
-                email: "Mike_Powlowski12@yahoo.com"
-            };
-
             let influencerId = req.params.influencerId;
-            let influencer = await influencerService.viewInfluencer(influencerId);
 
-            if (! influencer) {
-                return res.status(404).json({
-                    success: false,
-                    message: "Influencer not found."
-                });
-            };
+            let resp = await influencerService.unfollowInfluencer(influencerId, req.authuser._id);
 
-            await influencerService.unfollowInfluencer(influencerId, user);
             return res.status(200).json({
+
                 successful: true,
-                message: `you have unfollowed ${ influencer.user.fullName } successfully.`
+                message: `you have unfollowed successfully.`,
+                data: resp
             });
 
-        } catch (err) {
+        } catch ( err ) {
 
             return res.status(400).json({
 
@@ -283,6 +252,7 @@ module.exports = {
         try{
             
             let influencer = await influencerService.verifyInfluencer(influencerId);
+
             return res.status(200).json({
                 success: true,
                 message: "Influencer verified successfully",

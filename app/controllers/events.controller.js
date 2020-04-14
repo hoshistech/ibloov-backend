@@ -261,7 +261,7 @@ follow = async (req, res) => {
 muteNotifications = async (req, res) => {
 
     const eventId = req.params.eventId;
-    const userId = "316564666875696f3369666a";
+    const userId = req.authuser._id;
     
     try{
 

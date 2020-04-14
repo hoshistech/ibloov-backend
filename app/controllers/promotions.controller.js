@@ -11,7 +11,7 @@ index = ( req, res) => {
             message: "Promotions retreived successfully"
         });
     }
-    catch(err)
+    catch( err )
     {
 
         return res.status(400).json({

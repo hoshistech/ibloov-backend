@@ -24,7 +24,8 @@ exports.validate = (method) => {
 
       return [ 
 
-        param('wishlistId').custom( value => {
+        param('wishlistId')
+        .custom( value => {
           return itExists(value);
         })
        
@@ -35,13 +36,18 @@ exports.validate = (method) => {
 
       return [ 
 
-        param('wishlistId').custom( value => {
+        param('wishlistId')
+        .custom( value => {
           return itExists(value);
         })
        
       ]   
     }
 
+    /**
+     * @requestValidator
+     * validates the request to update a wishlist
+     */
     case 'updateWishlist': {
 
       return [ 

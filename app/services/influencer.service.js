@@ -65,7 +65,7 @@ module.exports = {
      */
     updateInfluencerSet: async (influencerId, setData) => {
 
-        return await Influencer.findByIdAndUpdate( { _id: influencerId } , { '$addToSet': setData });
+        return await Influencer.findByIdAndUpdate( { _id: influencerId } , { '$addToSet': setData }, { new: true });
     },
 
 
@@ -123,8 +123,8 @@ module.exports = {
         let setData = { 'followers': follower };
         return await Influencer.findOneAndUpdate( 
             
-            {_id: influencerId, 'followers.userId' : { $ne: follower.userId }}, 
-            { $push : setData }
+            {_id: influencerId}, 
+            { $addToSet : setData }, { new: true}
         );
     },
 
@@ -152,9 +152,9 @@ module.exports = {
      */
     unfollowInfluencer: async (influencerId, userId) => {
 
-        let update = await Influencer.findByIdAndUpdate( influencerId, { $pull: { 'followers':  {"userId": userId }  } }, 
+        return await Influencer.findByIdAndUpdate( influencerId, { $pull: { 'followers':  {"userId": userId }  } }, 
         { new: true} );
-        return update;
+       
     },
 
 

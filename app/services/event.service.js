@@ -12,7 +12,7 @@ module.exports = {
     all: async ( query = {}, options = {} ) =>{
 
         //const {limit, sort} =  options;
-        query["isPrivate"] = false;
+        //query["isPrivate"] = false;
 
         let events = await Event.find(query);
         return events;

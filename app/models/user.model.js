@@ -3,6 +3,19 @@ const bcrypt = require('bcryptjs');
 
 var Schema = mongoose.Schema;
 
+var userFollower = new Schema({
+
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: new Date
+    }
+}, { _id: false })
+
 var UserSchema = new Schema({
 
     authMethod: {
@@ -51,7 +64,8 @@ var UserSchema = new Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        lowercase: true
     },
 
     isEmailVerified: {
@@ -76,6 +90,12 @@ var UserSchema = new Schema({
         type: Date
     },
 
+    followers: {
+        type: [userFollower],
+        required: false,
+        default: []
+    }
+
 
 }, {timestamps: true,  versionKey: false} );
 
@@ -91,6 +111,14 @@ UserSchema.methods.isValidPassword = async function( password ){
         throw new Error(err);
     }   
 };
+
+UserSchema
+.virtual('fullName')
+.get(function () {
+
+    let method = this.authMethod;
+   return this[method].firstName + ' ' + this[method].lastName;
+});
 
 
 

@@ -17,7 +17,7 @@ module.exports = {
                 message: "Categories retreived successfully",
                 data: categories
             });
-        } catch(err) {
+        } catch( err ) {
             
             return res.status(400).send({
                 success: false,

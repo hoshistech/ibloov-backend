@@ -10,7 +10,18 @@ var influencerEvent = new Schema({
         required: true
     },
     eventName: String
-})
+}, { _id : false })
+
+
+var influencerWishlist = new Schema({
+
+    wishlistId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Wishlist",
+        required: true
+    },
+    wishlistName: String
+}, { _id : false } )
 
 var influencerFollower = new Schema({
 
@@ -19,13 +30,17 @@ var influencerFollower = new Schema({
         ref:"User",
         required: true
     },
-    email: String,
-    fullName: String,
+    email: {
+        type: String
+    },
+    fullName: {
+        type: String
+    },
     createdAt: {
         type: Date,
         default: new Date
     }
-})
+}, { _id: false })
 
 var InfluencerSchema = new Schema({
 
@@ -71,12 +86,21 @@ var InfluencerSchema = new Schema({
     },
 
     followers: {
-        type: [influencerFollower]
+        type: [influencerFollower],
+        default: []
     },
+
+    wishlists:{
+        type: [influencerWishlist],
+        required: false,
+        default: []
+        
+    },  
 
     events: {
         type: [influencerEvent],
-        required: false
+        required: false,
+        default: []
     },
 
     deletedAt: {

@@ -38,6 +38,66 @@ exports.validate = (method) => {
        
       ]   
     }
+
+    case 'updateUser': {
+
+      return [ 
+
+        param('userId')
+        .exists().withMessage("Required parameter 'userId' not found.")
+        .custom( (value) => {
+          itExists(value);
+        })     
+      ]   
+    }
+
+    case 'viewUser': {
+
+      return [ 
+
+        param('userId')
+        .exists().withMessage("Required parameter 'userId' not found.")
+        .custom( (value) => {
+          itExists(value);
+        })     
+      ]   
+    }
+
+    case 'deleteUser': {
+
+      return [ 
+
+        param('userId')
+        .exists().withMessage("Required parameter 'userId' not found.")
+        .custom( (value) => {
+          itExists(value);
+        })     
+      ]   
+    }
+
+    case 'userEvents': {
+
+      return [ 
+
+        param('userId')
+        .exists().withMessage("Required parameter 'userId' not found.")
+        .custom( (value) => {
+          return itExists(value);
+        })     
+      ]   
+    }
+
+    case 'userWishlists': {
+
+      return [ 
+
+        param('userId')
+        .exists().withMessage("Required parameter 'userId' not found.")
+        .custom( (value) => {
+          itExists(value);
+        })     
+      ]   
+    }
   }
 }
 
@@ -46,7 +106,7 @@ const itExists = function( value ){
   return userService.viewUser(value).then( user => {
     
      if ( ! user ) {
-       return Promise.reject('Wishlist not found!');
+       return Promise.reject('user not found!');
      }
    });
 }

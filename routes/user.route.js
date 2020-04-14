@@ -5,24 +5,23 @@ const UserController = require('@controllers/users.controller');
 
 const { validate } = require("@request-middleware/user.request-middleware");
 const { isValidRequest } = require("@middleware/isRequestValid.middleware");
+const { checkAuth } = require("@middleware/auth.middleware");
 
 
 
-router.get('/',  UserController.index );
+router.get('/', [ checkAuth ], UserController.index );
 
 router.post('/register', [ validate("createUser"), isValidRequest], UserController.create );
 
-router.get('/:userId', UserController.view );
+router.get('/:userId', [ checkAuth, validate("viewUser"), isValidRequest ], UserController.view );
 
-router.delete('/:userId', UserController.softdelete );
+router.delete('/:userId',  [ checkAuth, validate("deleteUser"), isValidRequest ], UserController.softdelete );
 
-router.patch('/:userId', UserController.update );
+router.patch('/:userId', [ checkAuth, validate("updateUser"), isValidRequest ], UserController.update );
 
+router.get('/wishlists/:userId', [ checkAuth, validate("userWishlists"), isValidRequest ], UserController.wishlists );
 
-/* GET users listing. */
-// router.get('/', function(req, res, next) {
-//   res.send('respond with a resource');
-// });
+router.get('/events/:userId', [ checkAuth, validate("userEvents"), isValidRequest ], UserController.events );
 
 
 

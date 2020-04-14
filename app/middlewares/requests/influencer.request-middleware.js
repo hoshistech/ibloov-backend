@@ -16,6 +16,10 @@ exports.validate = (method) => {
       return [ 
         param('influencerId')
         .exists().withMessage("Expected inflencerId parameter not found!")
+        .custom( value => {
+          return itExists(value);
+        }) 
+
       ]   
     }
 
@@ -26,8 +30,12 @@ exports.validate = (method) => {
     case 'followInfluencer': {
 
       return [ 
+
         param('influencerId')
         .exists().withMessage("Expected inflencerId parameter not found!")
+        .custom( value => {
+          return itExists(value);
+        }) 
       ]   
     }
 
@@ -39,31 +47,27 @@ exports.validate = (method) => {
 
       return [ 
 
-        param('influencerId').custom( value => {
-
-          return influencerService.viewInfluencer(value).then( influencer => {
-
-            if ( ! influencer ) {
-              return Promise.reject('Influencer not found!');
-            }
-          });
-        })
+        param('influencerId')
+        .custom( value => {
+          return itExists(value);
+        }) 
         
       ]   
     }
 
     /**
      * @requestValidator
-     * validates the request to create an influencer
+     * validates the request to create a new influencer
      */
     case 'createInfluencer': { 
 
       return [ 
+
         body('fee')
         .exists().withMessage("Expected inflencer fee not found!")
         .toFloat(),
 
-        body('category')
+        body('category') 
         .exists().withMessage("Expected inflencer category not found!"),
 
         body('username')
@@ -72,7 +76,7 @@ exports.validate = (method) => {
 
           return influencerService.all({username}).then( influencers => {
 
-            if ( influencers.length > 0 ) return Promise.reject('Username already exists!');
+            if ( username && influencers.length > 0 ) return Promise.reject('Username already exists!');
           });
         })
       ]   
@@ -85,8 +89,11 @@ exports.validate = (method) => {
     case 'updateInfluencer': { 
 
       return [ 
+
         param('influencerId')
-        .exists().withMessage("Expected influencerId not found!")
+        .custom( value => {
+          return itExists(value);
+        }) 
       ]   
     }
 
@@ -98,19 +105,40 @@ exports.validate = (method) => {
 
       return [ 
 
-        param('influencerId').custom( value => {
-
-          return influencerService.viewInfluencer(value).then( influencer => {
-
-            if ( ! influencer ) {
-              return Promise.reject('Influencer not found!!');
-            }
-          });
-        })
+        param('influencerId')
+        .custom( value => {
+          return itExists(value);
+        }) 
         
       ]   
     }
 
+    /**
+     * @requestValidator
+     * validates the request to delete an influencer
+     */
+    case 'verifyInfluencer': {
+
+      return [ 
+
+        param('influencerId')
+        .custom( value => {
+          return itExists(value);
+        }) 
+      ]   
+    }
+
   }
+}
+
+
+const itExists = function( value ){
+
+  return influencerService.viewInfluencer(value).then( influencer => {
+    
+     if ( ! influencer ) {
+       return Promise.reject('Influencer not found!');
+     }
+   });
 }
 

@@ -29,7 +29,8 @@ exports.validate = (method) => {
 
          return [
 
-            param('eventId').custom(value => {
+            param('eventId')
+            .custom(value => {
                return itExists(value);
             })
          ]
@@ -56,6 +57,26 @@ exports.validate = (method) => {
       }
 
       case 'unfollowEvent': {
+
+         return [
+            
+            param('eventId').custom( value => {
+               return itExists(value);
+             }),
+         ]
+      }
+
+      case 'deleteEvent': {
+
+         return [
+            
+            param('eventId').custom( value => {
+               return itExists(value);
+             }),
+         ]
+      }
+
+      case 'updateEvent': {
 
          return [
             

@@ -8,8 +8,12 @@ module.exports = {
 
     index: async (req, res) => {
 
+        let filter = req.body;
+
+        console.log("filter", filter);
+
         try{
-            let wishlists = await service.all();
+            let wishlists = await service.all( filter  );
             res.status(200).send({
 
                 success: true,
@@ -35,7 +39,7 @@ module.exports = {
     create: async (req, res) => {
 
         let wishlist = req.body;
-        wishlist.userId = "5e871d4fc0c90b4ced436185"; //auth-after-auth-imp
+        wishlist.userId = req.authuser._id;
         wishlist.uuid = uuidv4();
 
         try{

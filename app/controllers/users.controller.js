@@ -1,4 +1,6 @@
 const userService = require('@services/user.service');
+const eventService = require('@services/event.service');
+const wishlistService = require('@services/wishlist.service');
 const uuidv4 = require('uuid/v4');
 
 
@@ -154,7 +156,7 @@ module.exports = {
 
 
     /**
-     * sunscribes a user to an user
+     * subscribes a user to an user
      * user would start receiving user notifications/updates
      * @authlevel authenticated
      */
@@ -220,41 +222,11 @@ module.exports = {
 
         let userId = req.params.userId;
 
-        if( ! userId){
-            return res.status(400).json({
-                success: false,
-                message: "required user id missing."
-            });
-        }
-        
         try{
-            let user = await userService.viewUser(userId);
+            
+            let follower = req.authuser._id;
 
-            if( ! user ){
-                return res.status(404).json({
-                    success: false,
-                    message: "invalid user."
-                });
-            }
-
-            //userId to be gotten from the user token
-            let follower = {
-                userId: "98765tguik",
-                email: "test@test.com",
-                telephone: "09039015531"
-            }
-
-            let isFollowing = await userService.isFollowingUser(userId, follower.userId);
-
-            if( ! isFollowing ){
-
-                return res.status(422).json({
-                    success: false,
-                    message: "user is currently not following user!"
-                });
-            }
-
-            await userService.unfollowUser(userId, follower.userId); 
+            await userService.unfollowUser(userId, follower._id); 
 
             return res.status(200).json({
 
@@ -263,14 +235,63 @@ module.exports = {
                 data: user
             });
         }
-        catch(e){
+        catch( err ){
 
             return res.status(400).json({
                 success: false,
                 message: "There was an error performing this operation",
-                data: e.toString()
+                data: err.toString()
             });
         }
         
+    },
+
+    events: async (req, res) => {
+
+        let userId = req.params.userId;
+        
+        try{
+            let events = await eventService.all({userId});
+
+            return res.status(200).json({
+
+                success: true,
+                message: "User's events retreived successfully.",
+                data: events
+            });
+        }
+        catch( err ){
+
+            return res.status(400).json({
+                success: false,
+                message: "There was an error performing this operation",
+                data: err.toString()
+            });
+        }
+        
+    },
+
+    wishlists: async (req, res) => {
+
+        let userId = req.params.userId;
+        
+        try{
+            let wishlists = await wishlistService.all({userId});
+
+            return res.status(200).json({
+
+                success: true,
+                message: "Wishlists retreived successfully.",
+                data: wishlists
+            });
+        }
+        catch( err ){
+
+            return res.status(400).json({
+                success: false,
+                message: "There was an error performing this operation",
+                data: err.toString()
+            });
+        }
     }
 }

@@ -2,25 +2,28 @@
 const express = require('express');
 const router = express.Router();
 const influencerController = require('@controllers/influencers.controller');
+
+//middlewares
 const { validate } = require("@request-middleware/influencer.request-middleware");
 const { isValidRequest } = require("@middleware/isRequestValid.middleware");
+const { checkAuth } = require("@middleware/auth.middleware");
 
 
-router.patch('/follow/:influencerId', [ validate("followInfluencer"), isValidRequest ], influencerController.follow );
+router.patch('/follow/:influencerId', [ checkAuth, validate("followInfluencer"), isValidRequest ], influencerController.follow );
 
-router.patch('/unfollow/:influencerId', [ validate("unfollowInfluencer"), isValidRequest ], influencerController.unfollow );
+router.patch('/unfollow/:influencerId', [ checkAuth, validate("unfollowInfluencer"), isValidRequest ], influencerController.unfollow );
 
-router.patch('/verify/:influencerId', influencerController.verifyInfluencer );
+router.patch('/verify/:influencerId', [ checkAuth, validate("verifyInfluencer"), isValidRequest ], influencerController.verifyInfluencer );
 
-router.patch('/:influencerId', [ validate("updateInfluencer"), isValidRequest ], influencerController.update );
+router.patch('/:influencerId', [ checkAuth, validate("updateInfluencer"), isValidRequest ], influencerController.update );
 
-router.delete('/:influencerId', [ validate("deleteInfluencer"), isValidRequest ], influencerController.softdelete );
+router.delete('/:influencerId', [ checkAuth, validate("deleteInfluencer"), isValidRequest ], influencerController.softdelete );
 
-router.get('/', influencerController.index) ;
+router.get('/', [ checkAuth ], influencerController.index) ;
 
-router.get('/:influencerId', [ validate("viewInfluencer"), isValidRequest  ], influencerController.view );
+router.get('/:influencerId', [ checkAuth, validate("viewInfluencer"), isValidRequest ], influencerController.view );
 
-router.post('/create', [ validate("createInfluencer"), isValidRequest ], influencerController.create );
+router.post('/create', [ checkAuth, validate("createInfluencer"), isValidRequest ], influencerController.create );
 
 
 module.exports = router; 
