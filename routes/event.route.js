@@ -29,13 +29,13 @@ router.patch('/follow/:eventId', [ checkAuth, validate("followEvent"), isValidRe
 
 router.patch('/unfollow/:eventId', [ checkAuth, validate("unfollowEvent"), isValidRequest ], EventController.unfollow );
 
-router.post('/invite/setattendingstatus/:eventId', EventController.confirmAttendance );
+router.post('/invite/setattendingstatus/:eventId', [ checkAuth, validate("confirmAttendance"), isValidRequest ], EventController.confirmAttendance );
 
 router.patch('/notifications/mute/:eventId', [ checkAuth, validate("muteEventNotification"), isValidRequest ], EventController.muteNotifications ); 
 
 router.patch('/invite/add/:eventId', [ checkAuth, validate("addInvite"), isValidRequest ], EventController.addInvites ); 
 
-router.patch('/invite/remove/:eventId', EventController.removeInvites );
+router.patch('/invite/remove/:eventId', [ checkAuth, validate("removeInvite"), isValidRequest ], EventController.removeInvites );
 
 
 module.exports = router; 

@@ -234,7 +234,7 @@ module.exports = {
      */
     confirmEventAttendance: async( eventId, userId, status ) => {
 
-        return await Event.findOneAndUpdate( { _id: eventId, "invitees.userId": userId }, { $set : { 'invitees.$.accepted' : status }}, { runValidators: true } );
+        return await Event.findOneAndUpdate( { _id: eventId, "invitees.userId": userId }, { $set : { 'invitees.$.accepted' : status }}, { new:true, runValidators: true } );
     },
 
 

@@ -1,6 +1,9 @@
+//services
 const userService = require('@services/user.service');
 const eventService = require('@services/event.service');
 const wishlistService = require('@services/wishlist.service');
+const crowdfundingService = require('@services/crowdfunding.service');
+
 const uuidv4 = require('uuid/v4');
 
 
@@ -283,6 +286,30 @@ module.exports = {
                 success: true,
                 message: "Wishlists retreived successfully.",
                 data: wishlists
+            });
+        }
+        catch( err ){
+
+            return res.status(400).json({
+                success: false,
+                message: "There was an error performing this operation",
+                data: err.toString()
+            });
+        }
+    },
+
+    crowdfunds: async (req, res) => {
+
+        let userId = req.params.userId;
+        
+        try{
+            let crowdfunds = await crowdfundingService.all({userId});
+
+            return res.status(200).json({
+
+                success: true,
+                message: "Crowdfunds retreived successfully.",
+                data: crowdfunds
             });
         }
         catch( err ){

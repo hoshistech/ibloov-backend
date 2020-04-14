@@ -23,6 +23,8 @@ router.get('/wishlists/:userId', [ checkAuth, validate("userWishlists"), isValid
 
 router.get('/events/:userId', [ checkAuth, validate("userEvents"), isValidRequest ], UserController.events );
 
+router.get('/crowdfunds/:userId', [ checkAuth, validate("userCrowdfunds"), isValidRequest ], UserController.crowdfunds );
+
 
 
 module.exports = router;

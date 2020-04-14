@@ -13,7 +13,7 @@ module.exports = {
 
         //const {limit, sort} =  options;
         query["deletedAt"] = null;
-        query["dueDate"] = { "$gte": new Date };
+        // query["dueDate"] = { "$gte": new Date };
 
         let crowdFunding = await CrowdFunding.find(query);
         return crowdFunding;

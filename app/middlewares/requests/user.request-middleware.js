@@ -94,7 +94,19 @@ exports.validate = (method) => {
         param('userId')
         .exists().withMessage("Required parameter 'userId' not found.")
         .custom( (value) => {
-          itExists(value);
+          return itExists(value);
+        })     
+      ]   
+    }
+
+    case 'userCrowdfunds': {
+
+      return [ 
+
+        param('userId')
+        .exists().withMessage("Required parameter 'userId' not found.")
+        .custom( (value) => {
+          return itExists(value);
         })     
       ]   
     }

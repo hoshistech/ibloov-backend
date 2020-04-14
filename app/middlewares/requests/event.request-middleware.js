@@ -75,7 +75,7 @@ exports.validate = (method) => {
              }),
          ]
       }
-
+ 
       case 'updateEvent': {
 
          return [
@@ -92,7 +92,40 @@ exports.validate = (method) => {
          return [
             
             body('invites')
-            .exists().withMessage("expected invite not found")
+            .exists().withMessage("Required property, 'invites' not provided"),
+
+            param('eventId')
+            .custom( value => {
+               return itExists(value)
+            })
+         ]
+      }
+
+      case 'removeInvite': {
+
+         return [
+            
+            body('email')
+            .exists().withMessage("Required property, 'email' not provided"),
+
+            param('eventId')
+            .custom( value => {
+               return itExists(value)
+            })
+         ]
+      }
+
+      case 'confirmAttendance': {
+
+         return [ 
+            
+            body('status')
+            .exists().withMessage("Required body param, 'status' not provided"),
+
+            param('eventId')
+            .custom( value => {
+               return itExists(value)
+            })
          ]
       }
 

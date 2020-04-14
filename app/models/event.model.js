@@ -61,12 +61,26 @@ var invite = new Schema({
 
     email: {
         type: String,
-        required: true
+        required: function(){
+            
+            return (! this.telephone && ! this.userId);
+        }
+    },
+
+    telephone: {
+        type: String,
+        required: function(){
+            
+            return (! this.email && ! this.userId);
+        }
     },
 
     userId: { //optional. for people on the platform
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+        required: function(){
+            return (! this.email && ! this.telephone);
+        }
     }, 
 
     accepted: {

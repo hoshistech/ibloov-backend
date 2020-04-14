@@ -94,6 +94,12 @@ var UserSchema = new Schema({
         type: [userFollower],
         required: false,
         default: []
+    },
+
+    type: {
+        type: String,
+        enum:["user", "admin"],
+        default: "user"
     }
 
 
@@ -101,6 +107,9 @@ var UserSchema = new Schema({
 
 
 UserSchema.methods.isValidPassword = async function( password ){
+
+    console.log("password in isVali")
+    console.log(password)
 
     try {
 
@@ -112,14 +121,11 @@ UserSchema.methods.isValidPassword = async function( password ){
     }   
 };
 
-UserSchema
-.virtual('fullName')
-.get(function () {
+UserSchema.virtual('fullName').get(function () {
 
     let method = this.authMethod;
    return this[method].firstName + ' ' + this[method].lastName;
 });
-
 
 
 UserSchema.pre('save',  async function(next){

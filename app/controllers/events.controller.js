@@ -1,4 +1,6 @@
 const eventService = require('@services/event.service');
+const userService = require('@services/user.service');
+
 const { sendAccountConfirmationNotification } = require('@services/mail.service');
 const uuidv4 = require('uuid/v4');
 
@@ -87,26 +89,10 @@ update = async (req, res) => {
     let eventId = req.params.eventId;
     let eventData = req.body;
 
-    if( ! eventId){
-        return res.status(400).json({
-            success: false,
-            message: "required event id missing."
-        });
-    }
-
-    let event = await eventService.viewEvent(eventId);
-    
-    if( !event ){
-        return res.status(404).json({
-            success: false,
-            message: "invalid event."
-        });
-    }
-
     try {
         
         let resp = await eventService.updateEvent(eventId, eventData);
-        eventService.addEventHistory(eventId, "EVENT_UPDATE")
+        //eventService.addEventHistory(eventId, "EVENT_UPDATE")
         return res.status(200).json({
             success: true,
             message: "Event information has been updated successfully.",
@@ -159,29 +145,16 @@ softdelete = async (req, res) => {
     let eventId = req.params.eventId;
     let eventData = req.body;
 
-    if( ! eventId){
-        return res.status(400).json({
-            success: false,
-            message: "required event id missing."
-        });
-    }
-
-    let event = await eventService.viewEvent(eventId);
-    if( ! event ){
-        return res.status(404).json({
-            success: false,
-            message: "invalid event."
-        });
-    }
-
     try {
         
         let resp = await eventService.softDeleteEvent(eventId, eventData);
+
         return res.status(200).json({
             success: true,
             message: "Event information has been deleted successfully.",
             data: resp
         });
+
     } catch ( err ) {
         
         return res.status(400).json({
@@ -203,6 +176,7 @@ softdelete = async (req, res) => {
 generateEventCode = (req, res) => {
 
     let code = eventService.generateCode();
+
     res.status(200).json({
         success: true,
         message: "Event code generated successfully",
@@ -222,19 +196,13 @@ follow = async (req, res) => {
     let eventId = req.params.eventId;
     
     try{
-
-        let follower = {
-
-            _id : "316564666875696f3369666a",
-            email: "test@test.com",
-            telephone: "09039015531"
-        }
+        let follower = await userService.viewUser(req.authuser._id);
 
         let result = await eventService.followEvent(eventId, follower ); 
 
         return res.status(200).json({
             success: true,
-            message: "Operation successful",
+            message: `You are now following this event.`,
             data: result
         });
     }
@@ -334,45 +302,23 @@ confirmAttendance = async (req, res) => {
 
     const eventId = req.params.eventId;
     const status = req.body.status;
-    const userId = "1234561"
-
-    if( ! eventId ){
-        return res.status(400).json({
-            success: false,
-            message: "required event id missing."
-        });
-    }
-
-    if( ! status ){
-        return res.status(400).json({
-            success: false,
-            message: "required status missing."
-        });
-    }
-
+    const userId = req.authuser._id
 
     try{
 
-        let event = await eventService.viewEvent(eventId);
-        if( ! event ){
-            return res.status(404).json({
-                success: false,
-                message: "invalid event."
-            });
-        }
-
-        await eventService.confirmEventAttendance( eventId, userId, status.toUpperCase() );
+        let resp = await eventService.confirmEventAttendance( eventId, userId, status.toUpperCase() );
         
         return res.status(200).json({
             success: true,
-            message: "Event invitation accepted successfully!."
+            message: "Event invitation accepted successfully!.",
+            data: resp
         });
     }
-    catch(e){
+    catch( err ){
         return res.status(400).json({
             success: false,
             message: "Error performing this operation.",
-            data: e.toString()
+            data: err.toString()
         });
     }
 }
