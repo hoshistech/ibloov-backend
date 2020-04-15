@@ -30,5 +30,4 @@ router.delete('/:userId',  [ checkAuth, validate("deleteUser"), isValidRequest ]
 router.patch('/:userId', [ checkAuth, validate("updateUser"), isValidRequest ], UserController.update );
 
 
-
 module.exports = router;

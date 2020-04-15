@@ -46,7 +46,7 @@ exports.validate = (method) => {
         param('userId')
         .exists().withMessage("Required parameter 'userId' not found.")
         .custom( (value) => {
-          itExists(value);
+          return itExists(value);
         })     
       ]   
     }
@@ -58,7 +58,7 @@ exports.validate = (method) => {
         param('userId')
         .exists().withMessage("Required parameter 'userId' not found.")
         .custom( (value) => {
-          itExists(value);
+          return itExists(value);
         })     
       ]   
     }
@@ -70,7 +70,7 @@ exports.validate = (method) => {
         param('userId')
         .exists().withMessage("Required parameter 'userId' not found.")
         .custom( (value) => {
-          itExists(value);
+          return itExists(value);
         })     
       ]   
     }
