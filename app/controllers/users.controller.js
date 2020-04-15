@@ -3,6 +3,9 @@ const userService = require('@services/user.service');
 const eventService = require('@services/event.service');
 const wishlistService = require('@services/wishlist.service');
 const crowdfundingService = require('@services/crowdfunding.service');
+const moment = require("moment")
+
+const smsService = require('@services/sms.service');
 
 const uuidv4 = require('uuid/v4');
 
@@ -251,7 +254,7 @@ module.exports = {
 
     events: async (req, res) => {
 
-        let userId = req.params.userId;
+        let userId = req.params.userId || req.authuser._id;
         
         try{
             let events = await eventService.all({userId});
@@ -276,7 +279,7 @@ module.exports = {
 
     wishlists: async (req, res) => {
 
-        let userId = req.params.userId;
+        let userId = req.params.userId || req.authuser._id;
         
         try{
             let wishlists = await wishlistService.all({userId});
@@ -300,7 +303,7 @@ module.exports = {
 
     crowdfunds: async (req, res) => {
 
-        let userId = req.params.userId;
+        let userId = req.params.userId || req.authuser._id;
         
         try{
             let crowdfunds = await crowdfundingService.all({userId});
@@ -320,5 +323,99 @@ module.exports = {
                 data: err.toString()
             });
         }
+    },
+
+    sendTelephoneVerifcationCode: async (req, res) => {
+
+        const userId = req.params.userId;
+        
+        try{
+
+            const user = await userService.viewUser( userId );
+
+            console.log( user );
+
+            const mobilenumber = user.phoneNumber; 
+
+            if( ! mobilenumber){
+
+                return res.status(400).json({
+                    success: false,
+                    message: "Unable to complete this operation. No mobile number found for this user."
+                });
+            }
+            let code = await userService.setVerfificationCode( userId );
+
+            if( ! code ){
+
+                return res.status(400).json({
+                    success: false,
+                    message: "Unable to complete this operation. Error generating verifiacation code."
+                });
+            }
+
+            await smsService.phoneNumberVerification( mobilenumber, code  );
+
+            return res.status(200).json({
+
+                success: true,
+                message: "Code has been generated and sent to user's phone succesfully"
+            });
+        }
+        catch( err ){
+
+            return res.status(400).json({
+                success: false,
+                message: "There was an error performing this operation",
+                data: err.toString()
+            });
+        }
+    },
+
+    verifyTelephoneVerifcationCode: async (req, res) => {
+
+        const userId = req.params.userId;
+        const code = req.params.code;
+
+        try {
+
+            let resp = await userService.verifySmsCode( userId, code);
+
+            if( ! resp ){
+
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid verification code provided."
+                });
+            }
+
+            let codeExpiryDate = resp.local.verificationCodes[0].expiryDate;
+
+            if( moment().isAfter(codeExpiryDate, 'minute') ){
+
+                return res.status(400).json({
+                    success: false,
+                    message: "Error: Verification code has expired."
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: "Verification code validated sucessfully"
+            });
+    
+            
+        } catch ( err ) {
+            
+            return res.status(400).json({
+
+                success: false,
+                message: "An error occured while trying to carry out this operation.",
+                data: err.toString()
+            });
+        }
+
     }
+
+    
 }

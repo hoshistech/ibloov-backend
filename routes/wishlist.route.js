@@ -9,6 +9,8 @@ const { checkAuth } = require("@middleware/auth.middleware");
 const { filterResponse } = require("@middleware/filterResponse.middleware");
 
 
+//router.get('/test', WishListController.test ) ;
+
 router.get('/', [ checkAuth ], WishListController.index ) ;
 
 router.post('/create', [ validate("createWishlist"), isValidRequest, checkAuth ], WishListController.create ) ;
@@ -30,6 +32,8 @@ router.patch('/item/pledge/:wishlistId', [ validate("pledgeItem"), isValidReques
 router.patch('/item/unpledge/:wishlistId', [ validate("unpledgeItem"), isValidRequest, checkAuth ], WishListController.unpledgeItem );
 
 router.delete('/:wishlistId', [ validate("deleteWishlist"), isValidRequest, checkAuth ], WishListController.softdelete );
+
+
 
 
 module.exports = router; 

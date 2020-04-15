@@ -80,9 +80,9 @@ exports.validate = (method) => {
       return [ 
 
         param('userId')
-        .exists().withMessage("Required parameter 'userId' not found.")
+        .optional()
         .custom( (value) => {
-          return itExists(value);
+          if( value ) return itExists(value);
         })     
       ]   
     }
@@ -92,9 +92,9 @@ exports.validate = (method) => {
       return [ 
 
         param('userId')
-        .exists().withMessage("Required parameter 'userId' not found.")
+        .optional()
         .custom( (value) => {
-          return itExists(value);
+          if( value ) return itExists(value);
         })     
       ]   
     }
@@ -104,10 +104,40 @@ exports.validate = (method) => {
       return [ 
 
         param('userId')
-        .exists().withMessage("Required parameter 'userId' not found.")
+        .optional()
+        .custom( (value) => {
+
+          if( value ) return itExists(value);
+          
+        })     
+      ]   
+    }
+
+    case 'sendTelephoneVerifcationCode': {
+
+      return [ 
+
+        param('userId')
+        .exists().withMessage("Required parameter, 'userId' not found.")
         .custom( (value) => {
           return itExists(value);
-        })     
+        })
+
+      ]   
+    } 
+    case 'verifyTelephoneVerifcationCode': {
+
+      return [ 
+
+        param('userId')
+        .exists().withMessage("Required parameter, 'userId' not found.")
+        .custom( (value) => {
+          return itExists(value);
+        }),
+
+        param('code')
+        .exists().withMessage("Required parameter, 'code' not found.")
+
       ]   
     }
   }

@@ -1,5 +1,7 @@
 const User = require('@models/user.model');
 const eventService = require('@services/event.service');
+const moment = require("moment")
+const { randomInt } = require("@helpers/number.helper");
 
 module.exports = {
 
@@ -103,5 +105,47 @@ module.exports = {
         }
         let events = await eventService.all(query, sort);
         return events;
+    },
+
+
+    setVerfificationCode: async ( userId ) => {
+
+        const code = randomInt( 12222, 99999 );
+        let smsExpirationTime = process.env.SMS_VERIFICATION_CODE_DURATION;
+
+        let verificationCode = {
+            code,
+            expiryDate: moment().add( smsExpirationTime, 'm' )
+        }
+
+        let setData = { 'local.verificationCodes' : verificationCode };
+
+        try{
+            await User.findOneAndUpdate( { _id: userId }, { '$addToSet': setData }, { runValidators: true , new: true} );
+
+            return code;
+
+        } catch( err ) {
+
+            throw new Error( err );
+        }
+        
+
+        
+    },
+
+    verifySmsCode: async ( userId, code ) => {
+
+
+        let resp =  await User.findOne( {
+            _id: userId, 
+            "local.verificationCodes": { $elemMatch: { code} }
+            //'playlist.$.videos': { $elemMatch: { 'slug': 'video-2'} }
+        }, {
+            _id: 0,
+            'local.verificationCodes.$': 1
+        })
+        
+        return resp;
     }
 }

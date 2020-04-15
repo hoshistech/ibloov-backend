@@ -39,6 +39,7 @@
     "passport-google-oauth2": "^0.2.0",
     "passport-local": "^1.0.0",
     "pug": "2.0.0-beta11",
+    "twilio": "^3.42.1",
     "uuid": "^3.3.3"
   },
   "devDependencies": {
@@ -53,6 +54,7 @@
     "@models": "app/models",
     "@routes": "routes",
     "@seeders": "app/seeders",
+    "@providers": "app/providers",
     "@helpers": "app/helpers",
     "@config": "config",
     "@services": "app/services",

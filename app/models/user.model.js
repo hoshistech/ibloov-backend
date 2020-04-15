@@ -30,11 +30,11 @@ var UserSchema = new Schema({
 
         lastName: String,
 
-        verificationCode: [{
+        verificationCodes: [{
             code: {
                 type: String
             },
-            expires: {
+            expiryDate: {
                 type: Date
             }
         }],

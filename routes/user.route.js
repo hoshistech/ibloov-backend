@@ -11,19 +11,23 @@ const { checkAuth } = require("@middleware/auth.middleware");
 
 router.get('/', [ checkAuth ], UserController.index );
 
-router.post('/register', [ validate("createUser"), isValidRequest], UserController.create );
+router.post('/register', [ validate("createUser"), isValidRequest ], UserController.create );
+
+router.post('/mobilenumber/sendverificationcode/:userId', [ validate("sendTelephoneVerifcationCode"), isValidRequest ], UserController.sendTelephoneVerifcationCode );
+
+router.get('/mobilenumber/verifycode/:userId/:code', [ validate("verifyTelephoneVerifcationCode"), isValidRequest ], UserController.verifyTelephoneVerifcationCode );
+
+router.get('/wishlists/:userId?', [ checkAuth, validate("userWishlists"), isValidRequest ], UserController.wishlists );
+
+router.get('/events/:userId?', [ checkAuth, validate("userEvents"), isValidRequest ], UserController.events );
+
+router.get('/crowdfunds/:userId?', [ checkAuth, validate("userCrowdfunds"), isValidRequest ], UserController.crowdfunds );
 
 router.get('/:userId', [ checkAuth, validate("viewUser"), isValidRequest ], UserController.view );
 
 router.delete('/:userId',  [ checkAuth, validate("deleteUser"), isValidRequest ], UserController.softdelete );
 
 router.patch('/:userId', [ checkAuth, validate("updateUser"), isValidRequest ], UserController.update );
-
-router.get('/wishlists/:userId', [ checkAuth, validate("userWishlists"), isValidRequest ], UserController.wishlists );
-
-router.get('/events/:userId', [ checkAuth, validate("userEvents"), isValidRequest ], UserController.events );
-
-router.get('/crowdfunds/:userId', [ checkAuth, validate("userCrowdfunds"), isValidRequest ], UserController.crowdfunds );
 
 
 
