@@ -1,5 +1,9 @@
 const { body, param } = require('express-validator');
+
 const eventService = require('@services/event.service');
+const wishlistService = require('@services/wishlist.service');
+
+const moment = require("moment");
 
 
 exports.validate = (method) => {
@@ -14,14 +18,47 @@ exports.validate = (method) => {
 
             body('category', 'Invalid category provided.').exists(),
 
-            body('location', "Required  property, 'location' not provided.")
+            body('address', "Required  body property, 'address' not provided.")
             .exists(),
 
-            body('startDate', 'Invalid event start date provided.')
-            .exists(), //validDate | notInThePast | notGreaterThanEndDate
+            body('startDate')
+            .exists().withMessage('Invalid event start date provided.') //validDate | notInThePast | notGreaterThanEndDate
+            .custom( value => {
+               return isValidStartDate( value );
+            }),
             
-            body('endDate', 'Invalid event start date provided.')
-            .exists()
+            body('endDate') 
+            .exists().withMessage('Invalid event end date provided.')
+            .custom( (value, {req, loc, path }) => {
+
+               if( ! moment(value ).isValid() ) return Promise.reject('Invalid end date provided. please make sure your date is valid.');
+
+               let startDate = req.body.startDate;
+               if ( moment(startDate).isAfter( value, "hour" ) ) return Promise.reject('Invalid end date. End date cannot greater than start date!');
+
+               return true;
+            }),
+
+
+            body("wishlistId")
+            .optional()
+            .custom( ( value, {req, loc, path } )=> {
+
+               if( value ){
+
+                  return wishlistService.viewWishlist(value).then( wishlist => {
+     
+                     if ( ! wishlist ) {
+                       return Promise.reject("Invalid wishlist. Wishlist not found!");
+                     }
+
+                     if( wishlist.userId.toString() != req.authuser._id ){
+                        return Promise.reject("Unable to add this wishlist to this event. Wishist does not belong to this user");
+                     }
+                  });
+               }
+               
+            })
          ]
       }
 
@@ -141,4 +178,14 @@ const itExists = function( value ){
       }
     });
 }
+
+const isValidStartDate = function( value ){
+
+   if( ! moment(value ).isValid() ) return Promise.reject('Invalid start date provided. please make sure your date is valid.');
+
+   if ( moment().isAfter( value, "hour") ) return Promise.reject('Invalid start date. Start date cannot be in the past!');
+
+   return true;
+}
+
 

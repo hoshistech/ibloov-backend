@@ -5,18 +5,20 @@ const CrowdFundingController = require('@controllers/crowdfundings.controller');
 const { validate } = require("@request-middleware/crowdfunding.request-middleware");
 const { isValidRequest } = require("@middleware/isRequestValid.middleware");
 
-router.get('/', CrowdFundingController.index) ;
+const { checkAuth } = require("@middleware/auth.middleware");
 
-router.post('/create', [ validate("createCrowdfund"), isValidRequest ], CrowdFundingController.create );
+router.get('/', [checkAuth], CrowdFundingController.index) ;
 
-router.patch('/:crowdFundingId', [ validate("updateCrowdfund"), isValidRequest ], CrowdFundingController.update );
+router.post('/create', [ checkAuth, validate("createCrowdfund"), isValidRequest ], CrowdFundingController.create );
 
-router.get('/:crowdFundingId', [ validate("viewCrowdfund"), isValidRequest ], CrowdFundingController.view );
+router.patch('/:crowdFundingId', [ checkAuth, validate("updateCrowdfund"), isValidRequest ], CrowdFundingController.update );
 
-router.delete('/:crowdFundingId', [ validate("deleteCrowdfund"), isValidRequest ], CrowdFundingController.softdelete );
+router.get('/:crowdFundingId', [ checkAuth, validate("viewCrowdfund"), isValidRequest ], CrowdFundingController.view );
 
-router.patch('/pledge/:crowdFundingId', [ validate("crowdfundPledge"), isValidRequest ], CrowdFundingController.pledge );
+router.delete('/:crowdFundingId', [ checkAuth, validate("deleteCrowdfund"), isValidRequest ], CrowdFundingController.softdelete );
 
-router.patch('/unpledge/:crowdFundingId', [ validate("crowdfundUnpledge"), isValidRequest ], CrowdFundingController.unpledge );
+router.patch('/pledge/:crowdFundingId', [ checkAuth, validate("crowdfundPledge"), isValidRequest ], CrowdFundingController.pledge );
+
+router.patch('/unpledge/:crowdFundingId', [ checkAuth, validate("crowdfundUnpledge"), isValidRequest ], CrowdFundingController.unpledge );
 
 module.exports = router; 

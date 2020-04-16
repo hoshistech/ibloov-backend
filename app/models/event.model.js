@@ -23,12 +23,26 @@ var coordinator = new Schema({
 
     email: {
         type: String,
-        required: true
+        required: function(){
+            
+            return (! this.telephone && ! this.userId);
+        }
+    },
+
+    telephone: {
+        type: String,
+        required: function(){
+            
+            return (! this.email && ! this.userId);
+        }
     },
 
     userId: { //optional. for people on the platform
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        required: function(){
+            return (! this.email && ! this.telephone);
+        }
     }
 }, { _id : false } )
 
@@ -92,8 +106,6 @@ var invite = new Schema({
 
 var like = new Schema({
 
-    email: String,
-    
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -121,6 +133,10 @@ var EventSchema = new Schema({
     },
 
     category: {
+        type: String
+    },
+
+    description: {
         type: String
     },
 
@@ -206,12 +222,7 @@ var EventSchema = new Schema({
     }],
 
     controls: [{
-        type: String,
-        createdAt: Date,
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
-        }
+        type: String
     }],
 
     followers: {

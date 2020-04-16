@@ -9,29 +9,27 @@ const { checkAuth } = require("@middleware/auth.middleware");
 const { filterResponse } = require("@middleware/filterResponse.middleware");
 
 
-//router.get('/test', WishListController.test ) ;
-
 router.get('/', [ checkAuth ], WishListController.index ) ;
 
-router.post('/create', [ validate("createWishlist"), isValidRequest, checkAuth ], WishListController.create ) ;
+router.post('/create', [  checkAuth, validate("createWishlist"), isValidRequest ], WishListController.create ) ;
 
-router.get('/:wishlistId', [ validate("viewWishlist"), isValidRequest, checkAuth ], WishListController.view );
+router.get('/:wishlistId', [  checkAuth, validate("viewWishlist"), isValidRequest ], WishListController.view );
 
-router.patch('/:wishlistId', [ validate("updateWishlist"), isValidRequest, checkAuth ], WishListController.update );
+router.patch('/:wishlistId', [  checkAuth, validate("updateWishlist"), isValidRequest ], WishListController.update );
 
-router.patch('/invite/add/:wishlistId', [ validate("addInvites"), isValidRequest, checkAuth ], WishListController.addInvites );
+router.patch('/invite/add/:wishlistId', [  checkAuth, validate("addInvites"), isValidRequest ], WishListController.addInvites );
 
-router.patch('/invite/remove/:wishlistId', [ validate("removeInvite"), isValidRequest, checkAuth ], WishListController.removeInvites );
+router.patch('/invite/remove/:wishlistId', [  checkAuth, validate("removeInvite"), isValidRequest ], WishListController.removeInvites );
 
-router.patch('/item/add/:wishlistId', [ validate("addItem"), isValidRequest, checkAuth ], WishListController.addItem );
+router.patch('/item/add/:wishlistId', [  checkAuth, validate("addItem"), isValidRequest ], WishListController.addItem );
 
-router.patch('/item/remove/:wishlistId', [ validate("removeItem"), isValidRequest, checkAuth ], WishListController.removeItem );
+router.patch('/item/remove/:wishlistId', [  checkAuth, validate("removeItem"), isValidRequest ], WishListController.removeItem );
 
-router.patch('/item/pledge/:wishlistId', [ validate("pledgeItem"), isValidRequest, checkAuth ], WishListController.pledgeItem );
+router.patch('/item/pledge/:wishlistId', [  checkAuth, validate("pledgeItem"), isValidRequest ], WishListController.pledgeItem );
 
-router.patch('/item/unpledge/:wishlistId', [ validate("unpledgeItem"), isValidRequest, checkAuth ], WishListController.unpledgeItem );
+router.patch('/item/unpledge/:wishlistId', [  checkAuth, validate("unpledgeItem"), isValidRequest ], WishListController.unpledgeItem );
 
-router.delete('/:wishlistId', [ validate("deleteWishlist"), isValidRequest, checkAuth ], WishListController.softdelete );
+router.delete('/:wishlistId', [  checkAuth, validate("deleteWishlist"), isValidRequest ], WishListController.softdelete );
 
 
 

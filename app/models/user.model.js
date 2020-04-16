@@ -77,6 +77,9 @@ var UserSchema = new Schema({
 
     phoneNumber: {
         type: String,
+        required: function(){
+            this.authMethod == "local"
+        }
         //unique: true
     },
 
@@ -110,7 +113,7 @@ UserSchema.methods.isValidPassword = async function( password ){
 
     try {
 
-        return await bcrypt.compare( password, this.local.password);
+        return await bcrypt.compare( password, this.local.password );
 
     } catch ( err ) {
         

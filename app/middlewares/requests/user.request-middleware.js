@@ -33,6 +33,19 @@ exports.validate = (method) => {
           });
         }),
 
+
+        body('phoneNumber')
+        .exists().withMessage("Required body property 'phoneNumber' not found.")
+        .custom( (value) => {
+
+          return userService.getUser({ phoneNumber: value}).then( user => {
+    
+            if ( user ) {
+              return Promise.reject('This phoneNumber already exists!');
+            }
+          });
+        }),
+
         body('password')
         .exists().withMessage("Required property 'password' not found.")
        

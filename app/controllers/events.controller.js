@@ -59,6 +59,9 @@ create = async (req, res) => {
         let event = req.body;
         event.uuid = uuidv4();
         event.userId = req.authuser._id;
+        event.location = {
+            address: event.address
+        }
         
         let result = await eventService.createEvent(event);
         //sendAccountConfirmationNotification();
