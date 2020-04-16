@@ -140,7 +140,6 @@ module.exports = {
         let resp =  await User.findOne( {
             _id: userId, 
             "local.verificationCodes": { $elemMatch: { code} }
-            //'playlist.$.videos': { $elemMatch: { 'slug': 'video-2'} }
         }, {
             _id: 0,
             'local.verificationCodes.$': 1

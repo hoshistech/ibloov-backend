@@ -32,9 +32,6 @@ module.exports = function(passport){
 
         async (email, password, done) => {
 
-            console.log("password in local authservice");
-            console.log(password);
-
             try {
 
                 let user = await userService.getUser( { email } );

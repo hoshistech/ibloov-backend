@@ -10,8 +10,6 @@ module.exports = {
 
         let filter = req.body;
 
-        console.log("filter", filter);
-
         try{
             let wishlists = await service.all( filter  );
             res.status(200).send({

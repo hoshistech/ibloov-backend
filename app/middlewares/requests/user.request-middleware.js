@@ -125,6 +125,7 @@ exports.validate = (method) => {
 
       ]   
     } 
+    
     case 'verifyTelephoneVerifcationCode': {
 
       return [ 

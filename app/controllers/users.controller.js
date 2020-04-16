@@ -333,8 +333,6 @@ module.exports = {
 
             const user = await userService.viewUser( userId );
 
-            console.log( user );
-
             const mobilenumber = user.phoneNumber; 
 
             if( ! mobilenumber){
@@ -398,6 +396,8 @@ module.exports = {
                     message: "Error: Verification code has expired."
                 });
             }
+
+            await userService.updateUser(userId, { "isPhoneNumberVerified": true });
 
             return res.status(200).json({
                 success: true,

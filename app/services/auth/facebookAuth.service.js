@@ -10,9 +10,6 @@ module.exports = function(passport){
 
         async (accessToken, refreshToken, profile, done) => {
 
-            console.log("profile");
-            console.log(profile);
-
             try {
 
                 let user = await userService.getUser( {"facebook.id": profile.id} )
