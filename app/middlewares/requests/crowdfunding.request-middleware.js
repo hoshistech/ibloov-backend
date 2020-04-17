@@ -10,7 +10,10 @@ exports.validate = (method) => {
 
             return [
 
-                body('name', 'Invalid email.').exists()
+                body('name', 'Invalid name.').exists(),
+
+                body('amount')
+                .exists().withMessage("Required body parameter, 'amount' not found")
             ]
         }
 

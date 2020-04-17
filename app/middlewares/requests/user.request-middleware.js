@@ -47,7 +47,7 @@ exports.validate = (method) => {
         }),
 
         body('password')
-        .exists().withMessage("Required property 'password' not found.")
+        .exists().withMessage("Required body property 'password' not found.")
        
       ]   
     }

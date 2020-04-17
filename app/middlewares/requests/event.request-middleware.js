@@ -56,10 +56,24 @@ exports.validate = (method) => {
                         return Promise.reject("Unable to add this wishlist to this event. Wishist does not belong to this user");
                      }
                   });
+               } 
+            }),
+
+            body("isPaid")
+            .optional()
+            .custom( ( value, { req, loc, path}) => {
+
+               if( typeof value !== 'boolean') return Promise.reject("Invalid 'isPaid' value provided. boolean expected");
+
+               if( value ){
+                  if( ! req.body.amount ) return Promise.reject("Required body parameter, 'amount' required for paid events ");
                }
-               
+
+               return true;
             })
          ]
+
+         
       }
 
       case 'viewEvent': {

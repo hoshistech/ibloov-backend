@@ -14,12 +14,16 @@ var sponsor = new Schema({
     }
 }, { _id : false } )
 
-var coordinator = new Schema({
+var image = new Schema({
 
-    name: {
+    url: {
         type: String,
-        required: true
-    },
+        required: true,
+        max: 255
+    }
+}, { _id : false } )
+
+var coordinator = new Schema({
 
     email: {
         type: String,
@@ -43,13 +47,18 @@ var coordinator = new Schema({
         required: function(){
             return (! this.email && ! this.telephone);
         }
+    },
+
+    allowNoifications: {
+        type: Boolean,
+        enum: [true, false],
+        default: true
     }
+
 }, { _id : false } )
 
 var follower = new Schema({
 
-    email: String, //maybe
-    telephone: String, //maybe
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -63,8 +72,10 @@ var follower = new Schema({
 
     allowNoifications: {
         type: Boolean,
+        enum: [true, false],
         default: true
     }
+
 }, { _id : false } )
 
 var invite = new Schema({
@@ -136,8 +147,35 @@ var EventSchema = new Schema({
         type: String
     },
 
+    images: {
+        type: [ image ],
+        default: []
+    },
+
+    isPaid: {
+        type: Boolean,
+        default: false
+    },
+    
+    amount: {
+        type: Number,
+        required: function(){
+            return this.isPaid === true;
+        },
+        default: null
+    },
+
+    currency: {
+        type: String,
+        required: function(){
+            return this.isPaid === true;
+        },
+        default: null
+    },
+
     description: {
-        type: String
+        type: String,
+        default: null
     },
 
     location: {
@@ -184,7 +222,7 @@ var EventSchema = new Schema({
     status: {
         type: String,
         default: "UPCOMING",
-        allowedValues: ["CANCELLED", "LIVE", "UPCOMING", "SUSPENDED"],
+        enum: [ "CANCELLED", "LIVE", "UPCOMING", "SUSPENDED" ],
         required: true
     },
 
@@ -272,13 +310,22 @@ var EventSchema = new Schema({
     },
 
     frequency: {
-        type: String //for recurring events - monthly, daily, weekly, yearly, fornightly etc.
+        type: String,
+        enum: ["DAILY", "MONTHLY", "WEEKLY", "YEARLY"],
+        default: null
     }, 
 
     publish: { //determines if the event should be shown or not 
         type: Boolean,
         default: false
+    },
+
+    allowNoifications: {
+        type: Boolean,
+        enum: [true, false],
+        default: true
     }
+
 
 }, {timestamps: true,  versionKey: false} );
 

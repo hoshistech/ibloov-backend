@@ -37,7 +37,7 @@ module.exports = {
     create: async (req, res) => {
 
         let crowdFunding = req.body;
-        crowdFunding.userId = "5e904bcc9d30d25180059571"; 
+        crowdFunding.userId = req.authuser._id; 
         crowdFunding.uuid = uuidv4();
 
         try{

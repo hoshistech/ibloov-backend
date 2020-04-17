@@ -320,7 +320,7 @@ module.exports = {
         let itemId = req.body.itemId;
         let pledgeInfo = {};
 
-        pledgeInfo.userId = "5e74a056a1d062242108b216";
+        pledgeInfo.userId = req.authuser._id;
 
         try {
             
