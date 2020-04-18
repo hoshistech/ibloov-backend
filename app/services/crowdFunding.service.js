@@ -37,7 +37,8 @@ module.exports = {
      */
     viewCrowdFunding: async (crowdFundingId) => {
 
-        return await CrowdFunding.findById(crowdFundingId);
+        return await CrowdFunding.findById(crowdFundingId)
+        .populate('userId', '_id avatar local.firstName local.lastName');
     },
 
 

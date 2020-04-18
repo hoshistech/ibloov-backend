@@ -10,7 +10,7 @@ var donor = new Schema({
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "users"
     },
     email: {
         type: String,
@@ -68,7 +68,7 @@ var CrowdFundingSchema = new Schema({
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "users",
         required: function(){
 
             return this.eventId !== null 
@@ -84,7 +84,7 @@ var CrowdFundingSchema = new Schema({
         comment: String,
         userId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "users"
         },
         createdAt: String
     }],

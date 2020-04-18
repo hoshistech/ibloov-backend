@@ -6,7 +6,7 @@ var influencerEvent = new Schema({
 
     eventId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Event",
+        ref: "events",
         required: true
     },
     eventName: String
@@ -27,7 +27,7 @@ var influencerFollower = new Schema({
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:"User",
+        ref: "users",
         required: true
     },
     email: {
@@ -65,7 +65,7 @@ var InfluencerSchema = new Schema({
     userId: {
 
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "users",
         required: true,
         unique: true,
         index: true

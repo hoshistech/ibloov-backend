@@ -28,7 +28,7 @@ var CategorySchema = new Schema({
     deletedBy: {
         type: mongoose.Schema.Types.ObjectId,
         default: null,
-        ref: "User"
+        ref: "users"
     }
 
 }, {timestamps: true, versionKey: false} );

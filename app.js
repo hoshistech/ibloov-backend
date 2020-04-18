@@ -31,6 +31,7 @@ const InfluencerRouter = require("@routes/influencer.route");
 const ShoppingRouter = require("@routes/shopping.route");
 const CategoryRouter = require("@routes/category.route");
 const StoageRouter  = require("@routes/storage.route");
+const LocationRouter  = require("@routes/location.route");
 
 //seeders
 const eventSeederRouter = require('@routes/seeders/event.route');
@@ -103,7 +104,9 @@ app.use('/auth', AuthRouter);
 app.use('/v1/influencer', InfluencerRouter);
 app.use('/v1/shopping', ShoppingRouter);
 app.use('/v1/category', CategoryRouter);
+
 app.use('/v1/do/', StoageRouter);
+app.use('/v1/location/', LocationRouter);
 
 //seeders
 app.use('/seeders/event', eventSeederRouter);

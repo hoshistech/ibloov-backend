@@ -37,8 +37,9 @@ module.exports = {
      */
     viewWishlist: async (wishlistId) => {
 
-        let wishlist = await Wishlist.findById(wishlistId);
-        return wishlist;
+        return await Wishlist.findById(wishlistId)
+        .populate('userId', '_id avatar local.firstName local.lastName');
+        
     },
 
 

@@ -36,8 +36,15 @@ module.exports = {
      */
     viewEvent: async (eventId) => {
 
-        let event = await Event.findById(eventId);
-        return event;
+        return await Event.findById(eventId)
+        .populate('userId', '_id avatar local.firstName local.lastName')
+        .populate('followers.userId', '_id avatar local.firstName local.lastName email')
+        .populate('likes.userId', '_id avatar local.firstName local.lastName email')
+        .populate('invitees.userId', '_id avatar local.firstName local.lastName email')
+        .populate('coordinators.userId', '_id avatar local.firstName local.lastName email')
+        .populate('wishlistId', '_id name')
+        .populate('crowdfundingId', '_id name');
+       
     },
 
 

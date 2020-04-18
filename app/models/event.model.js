@@ -43,7 +43,7 @@ var coordinator = new Schema({
 
     userId: { //optional. for people on the platform
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "users",
         required: function(){
             return (! this.email && ! this.telephone);
         }
@@ -62,7 +62,7 @@ var follower = new Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: "User"
+        ref: "users"
     },
 
     date: {
@@ -102,7 +102,7 @@ var invite = new Schema({
 
     userId: { //optional. for people on the platform
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "users",
         required: function(){
             return (! this.email && ! this.telephone);
         }
@@ -120,7 +120,7 @@ var like = new Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: "User"
+        ref: "users"
     },
 
     date: {
@@ -254,7 +254,7 @@ var EventSchema = new Schema({
         comment: String,
         userId: { //optional. for people on the platform
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "users"
         },
         createdAt: Date
     }],
@@ -283,24 +283,24 @@ var EventSchema = new Schema({
     deletedBy: {
         type: mongoose.Schema.Types.ObjectId,
         default: null,
-        ref: "User"
+        ref: "users"
     },
 
     wishlistId: {
         type: mongoose.Schema.Types.ObjectId, //maybe this should be an objectId type
-        ref: "Wishlist",
+        ref: "wishlists",
         default: null
     },
 
     userId: {
         type: mongoose.Schema.Types.ObjectId, //maybe this should be an objectId type
-        ref: "User",
+        ref: "users",
         required: true
     },
     
     crowdfundingId: {
         type: mongoose.Schema.Types.ObjectId, //maybe this should be an objectId type
-        ref: "Crowdfund",
+        ref: "crowdfunds",
         default: null
     },
 
@@ -311,7 +311,10 @@ var EventSchema = new Schema({
 
     frequency: {
         type: String,
-        enum: ["DAILY", "MONTHLY", "WEEKLY", "YEARLY"],
+        enum: ["DAILY", "MONTHLY", "WEEKLY", "YEARLY", null],
+        required: function(){
+            this.isRecurring == true
+        },
         default: null
     }, 
 
@@ -324,6 +327,14 @@ var EventSchema = new Schema({
         type: Boolean,
         enum: [true, false],
         default: true
+    },
+
+    allowedPaymentChannels: {
+        type: Array,
+        required: function(){
+            this.isPaid === true
+        },
+        default: []
     }
 
 

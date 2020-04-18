@@ -2,6 +2,7 @@ const { body, param } = require('express-validator');
 
 const eventService = require('@services/event.service');
 const wishlistService = require('@services/wishlist.service');
+const crowdfundingService = require('@services/crowdfunding.service');
 
 const moment = require("moment");
 
@@ -18,7 +19,7 @@ exports.validate = (method) => {
 
             body('category', 'Invalid category provided.').exists(),
 
-            body('address', "Required  body property, 'address' not provided.")
+            body('address', "Required body property, 'address' not provided.")
             .exists(),
 
             body('startDate')
@@ -39,7 +40,6 @@ exports.validate = (method) => {
                return true;
             }),
 
-
             body("wishlistId")
             .optional()
             .custom( ( value, {req, loc, path } )=> {
@@ -52,8 +52,27 @@ exports.validate = (method) => {
                        return Promise.reject("Invalid wishlist. Wishlist not found!");
                      }
 
-                     if( wishlist.userId.toString() != req.authuser._id ){
+                     if( wishlist.userId._id.toString() != req.authuser._id ){
                         return Promise.reject("Unable to add this wishlist to this event. Wishist does not belong to this user");
+                     }
+                  });
+               } 
+            }),
+
+            body("crowdfundingId")
+            .optional()
+            .custom( ( value, {req, loc, path } )=> {
+
+               if( value ){
+
+                  return crowdfundingService.viewCrowdFunding(value).then( crowdfund => {
+     
+                     if ( ! crowdfund ) { 
+                       return Promise.reject("Invalid crowdfund. C rowdfund not found!");
+                     }
+
+                     if( crowdfund.userId._id.toString() != req.authuser._id ){
+                        return Promise.reject("Unable to add this crowdfund to this event. Crowdfund does not belong to this user");
                      }
                   });
                } 
@@ -66,14 +85,14 @@ exports.validate = (method) => {
                if( typeof value !== 'boolean') return Promise.reject("Invalid 'isPaid' value provided. boolean expected");
 
                if( value ){
-                  if( ! req.body.amount ) return Promise.reject("Required body parameter, 'amount' required for paid events ");
+                  if( ! req.body.amount ) return Promise.reject("Body parameter, 'amount' is required for paid events ");
+                  
+                  if( ! req.body.currency ) return Promise.reject("Body parameter, 'currency' is required for paid events "); 
                }
 
                return true;
             })
-         ]
-
-         
+         ] 
       }
 
       case 'viewEvent': {

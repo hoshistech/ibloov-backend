@@ -7,7 +7,7 @@ var userFollower = new Schema({
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:"User",
+        ref:"users",
         required: true
     },
     createdAt: {
@@ -103,7 +103,14 @@ var UserSchema = new Schema({
         type: String,
         enum:["user", "admin"],
         default: "user"
-    }
+    },
+
+    avatar: {
+        type: String,
+        required: false
+    },
+
+    
 
 
 }, {timestamps: true,  versionKey: false} );

@@ -15,7 +15,7 @@ var invite = new Schema({
 
     userId: { //optional. for people on the platform
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "users",
     }, 
 
     accepted: {
@@ -30,7 +30,7 @@ var pledge = new Schema({
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        //ref: "User"
+        //ref: "users"
     },
 
     quantity: {
@@ -116,7 +116,7 @@ var WishListSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: false,
         default: null,
-        ref: "Event"
+        ref: "events"
     },
 
     items: {
@@ -144,7 +144,7 @@ var WishListSchema = new Schema({
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "users",
         required: function(){
 
             return this.eventId !== null
@@ -153,7 +153,7 @@ var WishListSchema = new Schema({
 
     updatedBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "users"
     },
 
     history: [{
@@ -161,7 +161,7 @@ var WishListSchema = new Schema({
         comment: String,
         userId: { //optional. for people on the platform
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "users"
         },
         createdAt: Date
     }],
@@ -174,7 +174,7 @@ var WishListSchema = new Schema({
     deletedBy: {
         type: mongoose.Schema.Types.ObjectId,
         default: null,
-        ref: "User"
+        ref: "users"
     },
 
     allowcashRedemption: {
