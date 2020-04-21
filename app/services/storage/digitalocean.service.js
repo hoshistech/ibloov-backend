@@ -14,7 +14,6 @@ const s3 = new AWS.S3({
 });
 
 
-
 const upload = multer({
 
     storage: multerS3({
@@ -28,7 +27,6 @@ const upload = multer({
         }
     })
 }).array('upload', 1);
-
 
 
 module.exports = upload;
