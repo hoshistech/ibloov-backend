@@ -110,7 +110,7 @@ module.exports = {
 
     setVerfificationCode: async ( userId ) => {
 
-        const code = randomInt( 12222, 99999 );
+        const code = randomInt( 1222, 9999 );
         let smsExpirationTime = process.env.SMS_VERIFICATION_CODE_DURATION;
 
         let verificationCode = {

@@ -9,6 +9,12 @@ var CategorySchema = new Schema({
         required: true
     },
 
+    meta: {
+        icon: String,
+        backgroundColor: String,
+        textColour: String
+    },
+
     scope: {
         type: String,
         required: true
