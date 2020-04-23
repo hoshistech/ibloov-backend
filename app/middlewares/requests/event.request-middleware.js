@@ -136,6 +136,16 @@ exports.validate = (method) => {
          ]
       }
 
+      case 'toggleFollowEvent': {
+
+         return [
+            
+            param('eventId').custom( value => {
+               return itExists(value);
+             }),
+         ]
+      }
+
       case 'deleteEvent': {
 
          return [

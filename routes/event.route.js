@@ -29,6 +29,8 @@ router.patch('/follow/:eventId', [ checkAuth, validate("followEvent"), isValidRe
 
 router.patch('/unfollow/:eventId', [ checkAuth, validate("unfollowEvent"), isValidRequest ], EventController.unfollow );
 
+router.patch('/togglefollow/:eventId', [ checkAuth, validate("toggleFollowEvent"), isValidRequest ], EventController.toggleFollow );
+
 router.post('/invite/setattendingstatus/:eventId', [ checkAuth, validate("confirmAttendance"), isValidRequest ], EventController.confirmAttendance );
 
 router.patch('/notifications/mute/:eventId', [ checkAuth, validate("muteEventNotification"), isValidRequest ], EventController.muteNotifications ); 

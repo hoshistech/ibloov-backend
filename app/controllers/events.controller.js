@@ -120,7 +120,11 @@ view = async (req, res) => {
     let eventId = req.params.eventId;
 
     try {
-        let event = await eventService.viewEvent(eventId);
+        let event = await eventService.viewEvent(eventId, true);
+        event["isFollowing"] = await eventService.isFollowingEvent( eventId, req.authuser._id);
+
+        console.log( "event.isFollowing" )
+        console.log( event.isFollowing )
 
         return res.status(200).json({
             success: true,
@@ -199,9 +203,8 @@ follow = async (req, res) => {
     let eventId = req.params.eventId;
     
     try{
-        let follower = await userService.viewUser(req.authuser._id);
-
-        let result = await eventService.followEvent(eventId, follower ); 
+        let followerId = req.authuser._id;
+        let result = await eventService.followEvent( eventId, followerId ); 
 
         return res.status(200).json({
             success: true,
@@ -270,13 +273,8 @@ unfollow = async (req, res) => {
     
     try{
         
-        let follower = {
-            userId: "316564666875696f3369666a",
-            email: "test@test.com",
-            telephone: "09039015531"
-        }
-
-        let result = await eventService.unfollowEvent(eventId, follower.userId); 
+        let userId = req.authuser._id; 
+        let result = await eventService.unfollowEvent( eventId, userId ); 
 
         return res.status(200).json({
 
@@ -296,6 +294,47 @@ unfollow = async (req, res) => {
     
 },
 
+
+toggleFollow = async( req, res) => {
+
+    let eventId = req.params.eventId;
+
+    try{
+        const userId = req.authuser._id;
+        let message;
+        let data;
+
+        let isFollowing = await eventService.isFollowingEvent( eventId, userId);
+
+        if( isFollowing ){
+
+            data = await eventService.unfollowEvent( eventId, userId );
+            message = "You have unfollowed this event successfully";
+
+        } else {
+            data = await eventService.followEvent( eventId, userId );
+            message = "You have followed this event successfully";
+        } 
+
+        data.isFollowing = await eventService.isFollowingEvent( eventId, userId );
+    
+
+        return res.status(200).json({
+            success: true,
+            message,
+            data
+        });
+    }
+    catch( err ){
+
+        return res.status(400).json({
+
+            success: false,
+            message: "There was an error performing this operation",
+            data: err.toString()
+        });
+    }
+}
 
 /**
  * @RESTCONTROLLER
@@ -422,4 +461,4 @@ removeInvites = async ( req, res) => {
 
 
 
-module.exports = {index, create, view, update, softdelete, generateEventCode, follow, unfollow, confirmAttendance, muteNotifications, live, addInvites, removeInvites}
+module.exports = {index, create, view, update, softdelete, generateEventCode, follow, unfollow, confirmAttendance, muteNotifications, live, addInvites, removeInvites, toggleFollow}

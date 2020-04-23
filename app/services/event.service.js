@@ -34,7 +34,7 @@ module.exports = {
      * returns a single instance of an event
      * @param eventId String
      */
-    viewEvent: async (eventId) => {
+    viewEvent: async (eventId, lean = false) => {
 
         return await Event.findById(eventId)
         .populate('userId', '_id avatar local.firstName local.lastName')
@@ -43,7 +43,8 @@ module.exports = {
         .populate('invitees.userId', '_id avatar local.firstName local.lastName email')
         .populate('coordinators.userId', '_id avatar local.firstName local.lastName email')
         .populate('wishlistId', '_id name')
-        .populate('crowdfundingId', '_id name');
+        .populate('crowdfundingId', '_id name')
+        .lean();
        
     },
 
@@ -140,20 +141,17 @@ module.exports = {
      * @param eventId String
      * @param user object
      */
-    followEvent: async( eventId, user ) => {
+    followEvent: async( eventId, userId ) => {
 
         let follower = {
-            userId: user._id,
-            name: user.fullName,
-            email: user.email,
-            telephone:  user.telephone,
-            createdAt: new Date(),
+            userId,
+            createdAt: new Date(), 
         };
 
         let setData = { 'followers': follower };
 
         return await Event.findOneAndUpdate( { _id: eventId } , 
-        { '$addToSet': setData }, { runValidators: true , new: true} );
+        { '$addToSet': setData }, { runValidators: true , new: true } ).lean();
 
     },
 
@@ -182,7 +180,7 @@ module.exports = {
     unfollowEvent: async (eventId, userId) => {
 
         return await Event.findByIdAndUpdate( eventId, { $pull: { 'followers':  {"userId": userId }  } }, 
-        {  runValidators: true, new: true} );
+        {  runValidators: true, new: true} ).lean();
     
     },
 
