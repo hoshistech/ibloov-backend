@@ -335,6 +335,10 @@ var EventSchema = new Schema({
             this.isPaid === true
         },
         default: []
+    },
+
+    qrCode: {
+        type: String
     }
 
 

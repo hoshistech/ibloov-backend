@@ -26,33 +26,34 @@ describe('Events', () => {
     before( function(done){
 
         modelHelper.removeAll( UserService.model ).then( () => {
-            //done();
+            
+            let user = {};
+            let local = {
+
+                "firstName": "Toks",
+                "lastName": "Ojo",
+                "password": "password"
+            }
+
+            user.email = "test6@test.com"
+            user.local = local;
+            user.authMethod = "local";
+
+            UserService.createUser(user)
+            .then( data => {
+
+                authUser = data;
+                AuthService.signToken( data )
+                .then( resp => {
+
+                    testSessionToken = resp
+                    done();
+
+                });
+            })
         })
 
-        let user = {};
-        let local = {
-
-            "firstName": "Toks",
-            "lastName": "Ojo",
-            "password": "password"
-        }
-
-        user.email = "test6@test.com"
-        user.local = local;
-        user.authMethod = "local";
-
-        UserService.createUser(user)
-        .then( data => {
-
-            authUser = data;
-            AuthService.signToken( data )
-            .then( resp => {
-
-                testSessionToken = resp
-                done();
-
-            });
-        })
+        
     })
 
     beforeEach( function(done){ //Before each test we empty the database
@@ -62,7 +63,6 @@ describe('Events', () => {
         })
         
     });
-
 
     describe('GET EVENTS', () => {
 

@@ -1,4 +1,5 @@
 const Event = require('@models/event.model');
+const QRCode = require('qrcode');
 
 module.exports = {
 
@@ -26,6 +27,8 @@ module.exports = {
     createEvent: async (eventData ) =>{
 
         let event = new Event(eventData);
+        event.qrCode = await QRCode.toDataURL( eventData.uuid );
+
         return await event.save();
     },
 
@@ -34,7 +37,7 @@ module.exports = {
      * returns a single instance of an event
      * @param eventId String
      */
-    viewEvent: async (eventId, lean = false) => {
+    viewEvent: async (eventId) => {
 
         return await Event.findById(eventId)
         .populate('userId', '_id avatar local.firstName local.lastName')
