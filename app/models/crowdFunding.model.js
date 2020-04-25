@@ -8,23 +8,36 @@ var donor = new Schema({
         type: String,
         required: true
     },
+
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users"
     },
+
     email: {
         type: String,
         required: true
     },
+
     pledge: {
         type: Number,
         required: true
     },
+
     date: {
         type: Date,
         default: Date.now()
     }
 })
+
+var crowdfundImage = new Schema({
+
+    url: {
+        type: String,
+        required: true,
+        max: 255
+    }
+}, { _id : false } )
 
 var CrowdFundingSchema = new Schema({
 
@@ -97,14 +110,17 @@ var CrowdFundingSchema = new Schema({
     deletedBy: {
         type: mongoose.Schema.Types.ObjectId,
         default: null
-    }
+    },
+
+    images: {
+        type: [ crowdfundImage ],
+        default: []
+    },
 
 }, { timestamps: true,  versionKey: false} );
 
 CrowdFundingSchema.index( { "name": 1, "userId": 1 }, {unique: true} );
 
-
 let CrowdfundingSchema = mongoose.model('crowdfunds', CrowdFundingSchema);
-
 
 module.exports = CrowdfundingSchema;
