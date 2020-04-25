@@ -19,12 +19,12 @@ module.exports = {
                 data: crowdFundings
             });
         }
-        catch(e){
+        catch( err ){
 
             res.status(400).send({
                 success: false,
                 message: "error performing this operation",
-                data: e.toString()
+                data: err.toString()
             });
         }
         
@@ -41,19 +41,19 @@ module.exports = {
         crowdFunding.uuid = uuidv4();
 
         try{
-            await crowdFundingService.createCrowdFunding(crowdFunding);
+            let resp = await crowdFundingService.createCrowdFunding(crowdFunding);
             res.status(201).send({
                 success: true,
                 message: "CrowdFunding created successfully",
-                data: crowdFunding
+                data: resp
             });
         }
-        catch(e){
+        catch( err ){
 
             res.status(400).send({
                 success: false,
                 message: "Error performing this operation",
-                data: e.toString()
+                data: err.toString()
             });
         }
     },
@@ -100,18 +100,23 @@ module.exports = {
 
         try {
             let crowdFunding = await crowdFundingService.viewCrowdFunding(crowdFundingId);
+            let totalDonations = crowdFunding.totalDonated;
+            
+            let data = crowdFunding.toJSON();
+            data.totalDonations = totalDonations;
 
             return res.status(200).json({
                 success: true,
                 message: "CrowdFunding retreived successfully.",
-                data: crowdFunding
+                data
             });
             
-        } catch (e) {
+        } catch ( err ) {
+
             return res.status(400).json({
                 success: false,
                 message: "Error occured while performing this operation.",
-                data: e
+                data: err.toString()
             });
         }
     },
@@ -123,22 +128,23 @@ module.exports = {
     softdelete: async (req, res) => { 
 
         let crowdFundingId = req.params.crowdFundingId;
+        let userId = req.authuser._id;
 
         try {
             
-            let resp = await crowdFundingService.softDeleteCrowdFunding(crowdFundingId);
+            let resp = await crowdFundingService.softDeleteCrowdFunding(crowdFundingId, userId);
             return res.status(200).json({
                 success: true,
                 message: "CrowdFunding information has been deleted successfully.",
                 data: resp
             });
 
-        } catch (e) {
+        } catch ( err ) {
             
             return res.status(400).json({
                 success: false,
                 message: "Error occured while trying to update this crowdFunding.",
-                data: e.toString()
+                data: err.toString()
             });
         }
     },
@@ -151,44 +157,24 @@ module.exports = {
 
         let crowdFundingId = req.params.crowdFundingId;
         let pledge = parseFloat( req.body.pledge );
-
-        if( ! crowdFundingId){
-            return res.status(400).json({
-                success: false,
-                message: "required crowdFunding id missing."
-            });
-        }
-
-        if( ! pledge){
-            return res.status(400).json({
-                success: false,
-                message: "required pledge amount missing."
-            });
-        }
+        let userId = req.authuser._id;
 
         try {
 
-            let crowdFunding = await crowdFundingService.viewCrowdFunding(crowdFundingId);
+            let resp = await crowdFundingService.pledge(crowdFundingId, pledge, userId);
 
-            if( ! crowdFunding ){
-                return res.status(404).json({
-                    success: false,
-                    message: "invalid crowdFunding. Crowdfunding instance not found!"
-                });
-            }
-
-            let resp = await crowdFundingService.pledge(crowdFundingId, pledge);
             return res.status(200).json({
                 success: true,
                 message: "Pledge has been added successfully.",
                 data: resp
             });
-        } catch (e) {
+
+        } catch ( err ) {
             
             return res.status(400).json({
                 success: false,
                 message: "Error occured while trying to update this crowdFunding.",
-                data: e
+                data: err.toString()
             });
         }
     },
@@ -200,6 +186,7 @@ module.exports = {
     unpledge: async (req, res) => { 
 
         let crowdFundingId = req.params.crowdFundingId;
+        let userId = req.authuser._id;
 
         if( ! crowdFundingId ){
             return res.status(400).json({
@@ -210,15 +197,6 @@ module.exports = {
 
         try {
             
-            let crowdFunding = await crowdFundingService.viewCrowdFunding(crowdFundingId);
-            if( ! crowdFunding ){
-                return res.status(404).json({
-                    success: false,
-                    message: "invalid crowdFunding. Crowdfunding instance not found!"
-                });
-            }
-
-            let userId = "userId";
             let resp = await crowdFundingService.unPledge(crowdFundingId, userId);
             return res.status(200).json({
                 success: true,
@@ -226,12 +204,12 @@ module.exports = {
                 data: resp
             });
 
-        } catch (e) {
+        } catch ( err ) {
             
             return res.status(400).json({
                 success: false,
                 message: "Error occured while trying to update this crowdFunding.",
-                data: e.toString()
+                data: err.toString()
             });
         }
     }

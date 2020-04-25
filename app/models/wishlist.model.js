@@ -126,7 +126,7 @@ var WishListSchema = new Schema({
         required: false,
         default: null,
         ref: "events"
-    },
+    }, 
  
     items: {
         type: [ item ],

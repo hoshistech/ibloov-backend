@@ -10,7 +10,11 @@ exports.validate = (method) => {
 
             return [
 
-                body('name', 'Invalid name.').exists(),
+                body('name')
+                .exists().withMessage("Required body parameter, 'name' not found"),
+
+                body('currency')
+                .exists().withMessage("Required body parameter, 'currency' not found."),
 
                 body('amount')
                 .exists().withMessage("Required body parameter, 'amount' not found")
@@ -50,6 +54,9 @@ exports.validate = (method) => {
         case 'crowdfundPledge': {
 
             return [
+
+                body("pledge")
+                .exists("Required body paramter 'pledge' not found."),
 
                 param('crowdFundingId').custom(value => {
                     return itExists(value);

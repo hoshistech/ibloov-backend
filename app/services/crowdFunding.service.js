@@ -59,9 +59,9 @@ module.exports = {
      * @param crowdFundingId integer
      *
      */
-    softDeleteCrowdFunding: async (crowdFundingId) => {
+    softDeleteCrowdFunding: async (crowdFundingId, userId) => {
 
-        const updateData = { deletedAt: Date.now(), deletedBy: '1edfhuio3ifj' };
+        const updateData = { deletedAt: Date.now(), deletedBy: userId };
         return await module.exports.updateCrowdFunding(crowdFundingId, updateData); 
     },
 
@@ -73,28 +73,30 @@ module.exports = {
      * @param amount Number - amount to be pledged.
      * 
      */
-    pledge: async (crowdFundingId, amount) => {
+    pledge: async (crowdFundingId, amount, userId) => {
 
-        const userId = "userId";
         const crowdFunding = await CrowdFunding.findOne( { _id: crowdFundingId, "donors.userId": userId });
 
         if( ! crowdFunding ){
 
             const donor = { 
-                name: "name",
-                email: "email",
+            
                 pledge: amount,
                 userId
             }
 
-            return await CrowdFunding.findByIdAndUpdate( crowdFundingId , { '$addToSet': { 'donors': donor } });
+            return await CrowdFunding.findByIdAndUpdate( crowdFundingId , 
+                //{ '$addToSet': { 'donors': donor }, $inc: { totalDonations: amount } }, 
+                { '$addToSet': { 'donors': donor } }, 
+                { runValidators: true, new: true }  );
         } 
         else {
 
             return await CrowdFunding
             .findOneAndUpdate( { _id: crowdFundingId, "donors.userId": userId } , 
-            { $set : { 'donors.$.pledge' : amount }}, 
-            { runValidators: true } );
+            { $set : { 'donors.$.pledge' : amount } }, 
+            //{ $set : { 'donors.$.pledge' : amount },  $inc: { totalDonations: amount } }, 
+            { runValidators: true, new: true } );
         }
     },
 
