@@ -104,6 +104,15 @@ var item = new Schema({
 
 })
 
+var wishlistImage = new Schema({
+
+    url: {
+        type: String,
+        required: true,
+        max: 255
+    }
+}, { _id : false } )
+
 var WishListSchema = new Schema({
 
     name: {
@@ -118,7 +127,7 @@ var WishListSchema = new Schema({
         default: null,
         ref: "events"
     },
-
+ 
     items: {
         type: [ item ],
         required: false
@@ -175,6 +184,11 @@ var WishListSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         default: null,
         ref: "users"
+    },
+
+    images: {
+        type: [ wishlistImage ],
+        default: []
     },
 
     allowcashRedemption: {
