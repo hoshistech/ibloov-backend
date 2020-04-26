@@ -188,13 +188,6 @@ module.exports = {
         let crowdFundingId = req.params.crowdFundingId;
         let userId = req.authuser._id;
 
-        if( ! crowdFundingId ){
-            return res.status(400).json({
-                success: false,
-                message: "required crowdFunding id missing."
-            });
-        }
-
         try {
             
             let resp = await crowdFundingService.unPledge(crowdFundingId, userId);

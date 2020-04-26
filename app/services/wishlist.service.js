@@ -14,7 +14,7 @@ module.exports = {
         //const {limit, sort} =  options;
         //query["deletedAt"] = null;
     
-        let wishlist = await Wishlist.find(query);
+        let wishlist = await Wishlist.find(query).sort({ createdAt: -1 });
         return wishlist;
     },
 

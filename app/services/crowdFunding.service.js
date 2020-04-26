@@ -12,10 +12,10 @@ module.exports = {
     all: async ( query = {}, options = {} ) => {
 
         //const {limit, sort} =  options;
-        query["deletedAt"] = null;
+        //query["deletedAt"] = null;
         // query["dueDate"] = { "$gte": new Date };
 
-        let crowdFunding = await CrowdFunding.find(query);
+        let crowdFunding = await CrowdFunding.find(query).sort({ createdAt: -1 });
         return crowdFunding;
     },
 

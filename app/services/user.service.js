@@ -16,7 +16,7 @@ module.exports = {
 
         //const {limit, sort} = options;
         query["deletedAt"] = null;
-        let users = await User.find(query);
+        let users = await User.find(query).sort({ createdAt: -1 });
         return users;
     },
 

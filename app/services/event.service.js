@@ -15,7 +15,7 @@ module.exports = {
         //const {limit, sort} =  options;
         //query["isPrivate"] = false;
 
-        let events = await Event.find(query);
+        let events = await Event.find(query).sort({ createdAt: -1 });
         return events;
     },
 

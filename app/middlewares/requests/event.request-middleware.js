@@ -3,7 +3,6 @@ const { body, param } = require('express-validator');
 const eventService = require('@services/event.service');
 const wishlistService = require('@services/wishlist.service');
 const crowdfundingService = require('@services/crowdfunding.service');
-
 const moment = require("moment");
 
 
@@ -221,6 +220,7 @@ const itExists = function( value ){
       }
     });
 }
+
 
 const isValidStartDate = function( value ){
 

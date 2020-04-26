@@ -67,10 +67,17 @@ var CrowdFundingSchema = new Schema({
         default: null
     },
 
-    dueDate: { // for crowdfundings tied to an event, consider setting the expiry date to x day(s) before the event
+    startDate: {
         type: Date,
-        //required: true
+        default: function(){
+            return (! this.startDate) ? Date.now() : this.startDate
+        }
     },
+
+    endDate: {
+        type: Date,
+        required: true
+    }, 
 
     donors: {
         type: [ donor ],
@@ -124,7 +131,6 @@ var CrowdFundingSchema = new Schema({
 }, { timestamps: true,  versionKey: false} );
 
 CrowdFundingSchema.index( { "name": 1, "userId": 1 }, {unique: true} );
-
 
 CrowdFundingSchema.virtual('totalDonated').get(function () {
 
