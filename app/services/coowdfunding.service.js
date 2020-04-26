@@ -14,7 +14,7 @@ module.exports = {
         //const {limit, sort} =  options;
         //query["deletedAt"] = null;
         // query["dueDate"] = { "$gte": new Date };
-
+        console.log(query);
         let crowdFunding = await CrowdFunding.find(query).sort({ createdAt: -1 });
         return crowdFunding;
     },

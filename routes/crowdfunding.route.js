@@ -7,7 +7,7 @@ const { isValidRequest } = require("@middleware/isRequestValid.middleware");
 
 const { checkAuth } = require("@middleware/auth.middleware");
 
-router.get('/', [checkAuth], CrowdFundingController.index) ;
+router.get('/', [ checkAuth ], CrowdFundingController.index) ;
 
 router.post('/create', [ checkAuth, validate("createCrowdfund"), isValidRequest ], CrowdFundingController.create );
 
