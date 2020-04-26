@@ -93,10 +93,11 @@ var CrowdFundingSchema = new Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
-        required: function(){
+        required: true
+        // required: function(){
 
-            return this.eventId !== null 
-        }
+        //     return this.eventId !== null 
+        // }
     },
 
     updatedBy: {

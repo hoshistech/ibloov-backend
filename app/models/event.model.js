@@ -156,7 +156,7 @@ var EventSchema = new Schema({
         type: Boolean,
         default: false
     },
-    
+     
     amount: {
         type: Number,
         required: function(){
@@ -287,19 +287,19 @@ var EventSchema = new Schema({
     },
 
     wishlistId: {
-        type: mongoose.Schema.Types.ObjectId, //maybe this should be an objectId type
+        type: mongoose.Schema.Types.ObjectId, 
         ref: "wishlists",
         default: null
     },
 
     userId: {
-        type: mongoose.Schema.Types.ObjectId, //maybe this should be an objectId type
+        type: mongoose.Schema.Types.ObjectId,
         ref: "users",
         required: true
     },
     
     crowdfundingId: {
-        type: mongoose.Schema.Types.ObjectId, //maybe this should be an objectId type
+        type: mongoose.Schema.Types.ObjectId,
         ref: "crowdfunds",
         default: null
     },

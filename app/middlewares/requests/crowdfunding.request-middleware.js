@@ -40,7 +40,7 @@ exports.validate = (method) => {
      
                     let startDate = req.body.startDate || Date.now();
                     let startDateText = req.body.startDate ? "startDate" : "today";
-                    if ( moment(startDate).isAfter( value, "hour" ) ) return Promise.reject(`Invalid end date. End date cannot greater than ${startDateText}!`);
+                    if ( moment(startDate).isAfter( value, "hour" ) ) return Promise.reject(`Invalid end date. End date cannot be a date before ${startDateText}!`);
      
                     return true;
                 }),

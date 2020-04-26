@@ -29,7 +29,7 @@ module.exports = {
         let crowdFunding = new CrowdFunding(crowdFundingData);
         return await crowdFunding.save(); 
     },
-
+ 
 
     /**
      * returns a single instance of a crowdFund
