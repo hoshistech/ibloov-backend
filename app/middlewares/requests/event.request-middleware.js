@@ -22,7 +22,7 @@ exports.validate = (method) => {
             .exists(),
 
             body('startDate')
-            .exists().withMessage('Invalid event start date provided.') //validDate | notInThePast | notGreaterThanEndDate
+            .exists().withMessage('Invalid event start date provided.')
             .custom( value => {
                return isValidStartDate( value );
             }),
@@ -164,7 +164,6 @@ exports.validate = (method) => {
              }),
          ]
       }
-
 
       case 'addInvite': {
 

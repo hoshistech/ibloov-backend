@@ -1,5 +1,7 @@
 const Event = require('@models/event.model');
 const QRCode = require('qrcode');
+const { setDefaultOptions  } = require('@helpers/request.helper');
+
 
 module.exports = {
 
@@ -10,10 +12,12 @@ module.exports = {
      * @param query object 
      * @param options object
      */
-    all: async ( query, options ) =>{
+    all: async ( query, options ) => {
 
         let sort = {};
-        const {limit, skip, sortBy, orderBy } = options;
+        options = options || setDefaultOptions();
+
+        const { limit, skip, sortBy, orderBy } = options;
         sort[ sortBy ] = orderBy;
         
         let events = await Event.find(query)
@@ -57,7 +61,7 @@ module.exports = {
         .populate('coordinators.userId', '_id avatar local.firstName local.lastName email')
         .populate('wishlistId', '_id name')
         .populate('crowdfundingId', '_id name')
-        .lean();
+        .lean(); //find a way to avoid using .lean() here
     
     },
 
@@ -298,23 +302,24 @@ module.exports = {
      * 
      * @return Event Array.
      */
-    liveEvents: async() => {
+    liveEvents: async(filter = {}, options) => {
 
-        let filter = {};
         let dateFilter = {};
         let recurringFilter = {};
 
         dateFilter["startDate"] = { "$lte" : new Date() };
         dateFilter["endDate"] = { "$gte" : new Date() };
+        dateFilter["deletedAt"] = null;
         
         //this should only compare the month and the day - year should be excluded
         recurringFilter["isRecurring"] = true
         recurringFilter["startDate"] = { "$lte" : new Date()}
         recurringFilter["endDate"]  = { "$gte" : new Date() }
+        recurringFilter["deletedAt"] = null;
 
-        filter["$or"] = [ dateFilter, recurringFilter ]
+        filter["$or"] = [ dateFilter, recurringFilter ];
 
-       return module.exports.all(filter);
+       return module.exports.all(filter, options);
     },
 
 

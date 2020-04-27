@@ -20,5 +20,17 @@ module.exports = {
 
         const match = (({ sortBy, orderBy, skip, limit, ...o }) => o)(req.query) 
         return match;
+    },
+
+    setDefaultOptions: () => {
+
+        let options = {};
+
+        options["sortBy"] = "createdAt";
+        options["orderBy"] = -1
+        options["limit"] =  maxLimit;
+        options["skip"] = 0;
+
+        return options;
     }
 }

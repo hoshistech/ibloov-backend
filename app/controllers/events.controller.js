@@ -106,7 +106,7 @@ view = async (req, res) => {
     let eventId = req.params.eventId;
 
     try {
-        let event = await eventService.viewEvent(eventId, true);
+        let event = await eventService.viewEvent(eventId);
         event["isFollowing"] = await eventService.isFollowingEvent( eventId, req.authuser._id);
 
         return res.status(200).json({
@@ -354,8 +354,11 @@ confirmAttendance = async (req, res) => {
  */
 live = async (req, res) => {
 
+    let filter = getMatch(req);
+    let options = getOptions(req); 
+
     try{
-        let events = await eventService.liveEvents();
+        let events = await eventService.liveEvents( filter, options );
         
         return res.status(200).json({
             success: true,
@@ -363,11 +366,11 @@ live = async (req, res) => {
             data: events
         });
     }
-    catch(e){
+    catch( err ){
         return res.status(400).json({
             success: false,
             message: "Error performing this operation.",
-            data: e.toString()
+            data: err.toString()
         });
     }
 }

@@ -1,4 +1,5 @@
 const Influencer = require('@models/influencer.model');
+const { setDefaultOptions  } = require('@helpers/request.helper');
 
 module.exports = {
 
@@ -13,6 +14,8 @@ module.exports = {
     all: async ( query, options ) =>{
 
         let sort = {};
+        options = options || setDefaultOptions();
+        
         const {limit, skip, sortBy, orderBy } = options;
         sort[ sortBy ] = orderBy;
     

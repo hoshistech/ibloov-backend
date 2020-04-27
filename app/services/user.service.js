@@ -2,6 +2,7 @@ const User = require('@models/user.model');
 const eventService = require('@services/event.service');
 const moment = require("moment")
 const { randomInt } = require("@helpers/number.helper");
+const { setDefaultOptions  } = require('@helpers/request.helper');
 
 module.exports = {
 
@@ -15,6 +16,8 @@ module.exports = {
     all: async ( query, options) =>{
 
         let sort = {};
+        options = options || setDefaultOptions();
+        
         const { limit, skip, sortBy, orderBy } = options;
         sort[ sortBy ] = orderBy;
 
