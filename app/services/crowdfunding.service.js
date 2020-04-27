@@ -9,15 +9,17 @@ module.exports = {
      * @param query object 
      * @param options object
      */
-    all: async ( query = {}, options = {} ) => {
+    all: async ( query , options ) => {
 
-        //const {limit, sort} =  options;
-        //query["deletedAt"] = null;
-        // query["dueDate"] = { "$gte": new Date };
-        console.log(query);
+        let sort = {};
+        const {limit, skip, sortBy, orderBy } = options;
+        sort[ sortBy ] = orderBy;
+        
         let crowdFunding = await CrowdFunding.find(query)
+        .sort(sort)
+        .limit(limit)
+        .skip(skip)
         .populate('userId', '_id avatar local.firstName local.lastName')
-        .sort({ createdAt: -1 });
         return crowdFunding;
     },
 

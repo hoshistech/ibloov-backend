@@ -12,11 +12,17 @@ module.exports = {
      * @param query object 
      * @param options object
      */
-    all: async ( query = {}, options = {} ) =>{
+    all: async ( query, options) =>{
 
-        //const {limit, sort} = options;
-        query["deletedAt"] = null;
-        let users = await User.find(query).sort({ createdAt: -1 });
+        let sort = {};
+        const { limit, skip, sortBy, orderBy } = options;
+        sort[ sortBy ] = orderBy;
+
+        let users = await User.find(query)
+        .sort(sort)
+        .limit(limit)
+        .skip(skip)
+
         return users;
     },
 

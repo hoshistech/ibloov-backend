@@ -3,11 +3,11 @@ const userService = require('@services/user.service');
 const eventService = require('@services/event.service');
 const wishlistService = require('@services/wishlist.service');
 const crowdfundingService = require('@services/crowdfunding.service');
-const moment = require("moment")
-
 const smsService = require('@services/sms.service');
 
 const uuidv4 = require('uuid/v4');
+
+const { getOptions, getMatch } = require('@helpers/request.helper');
 
 
 module.exports = {
@@ -18,9 +18,13 @@ module.exports = {
  */
     index: async (req, res) => {
 
+        let filter = getMatch(req);
+        let options = getOptions(req);
+        filter["deletedAt"] = null;
+
         try {
 
-            let users = await userService.all();
+            let users = await userService.all(filter, options);
             return res.status(200).json({
 
                 success: true,
@@ -34,7 +38,7 @@ module.exports = {
 
                 success: false,
                 message: "Error occured while trying to perform this operation",
-                data: users
+                data: err.toString()
             }); 
         }
     },

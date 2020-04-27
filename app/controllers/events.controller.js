@@ -1,33 +1,19 @@
 const eventService = require('@services/event.service');
-const userService = require('@services/user.service');
-
-const { sendAccountConfirmationNotification } = require('@services/mail.service');
 const uuidv4 = require('uuid/v4');
+const { getOptions, getMatch } = require('@helpers/request.helper');
 
 
 /**
  * get events
- */
+ */ 
 index = async (req, res) => {
 
-    let filter = { deletedAt: null };
-
-    //dont change this line
-    //it forces withDeleted to be false as long as it is not true
-
-    //const {withdeleted, unpublished, category} = req.query;
-    const {category} = req.query;
-    
-    // let withDeleted = ( withdeleted !== "true" ) ? false : true
-    // let withUnPublished = ( unpublished !== "true" ) ? false : true;
-
-    if( category ) filter["category"] = category;
-    
-    // if( ! withDeleted ) filter["deletedAt"] = null
-    // if( ! withUnPublished ) filter["publish"] = true
+    let filter = getMatch(req);
+    let options = getOptions(req);
+    filter["deletedAt"] = null; 
  
     try{
-        let events = await eventService.all(filter);
+        let events = await eventService.all(filter, options);
         res.status(200).send({
             success: true,
             message: "events retreived succesfully",
@@ -122,9 +108,6 @@ view = async (req, res) => {
     try {
         let event = await eventService.viewEvent(eventId, true);
         event["isFollowing"] = await eventService.isFollowingEvent( eventId, req.authuser._id);
-
-        console.log( "event.isFollowing" )
-        console.log( event.isFollowing )
 
         return res.status(200).json({
             success: true,

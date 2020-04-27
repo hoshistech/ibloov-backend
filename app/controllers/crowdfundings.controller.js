@@ -1,6 +1,6 @@
 const crowdFundingService = require('@services/crowdfunding.service');
 const uuidv4 = require('uuid/v4');
-
+const { getOptions, getMatch } = require('@helpers/request.helper');
 
 module.exports = {
 
@@ -11,25 +11,13 @@ module.exports = {
      */
     index: async (req, res) => {
 
-        let filter = { deletedAt: null };
-
-        //dont change this line
-        //it forces withDeleted to be false as long as it is not true
-
-        //const {withdeleted, unpublished, category} = req.query;
-        const {category} = req.query;
-        
-        // let withDeleted = ( withdeleted !== "true" ) ? false : true
-        // let withUnPublished = ( unpublished !== "true" ) ? false : true;
-
-        if( category ) filter["category"] = category;
-        
-        // if( ! withDeleted ) filter["deletedAt"] = null
-        // if( ! withUnPublished ) filter["publish"] = true
+        let filter = getMatch(req);
+        let options = getOptions(req);
+        filter["deletedAt"] = null;
 
         try{
             
-            let crowdFundings = await crowdFundingService.all( filter );
+            let crowdFundings = await crowdFundingService.all( filter, options );
             res.status(200).send({
                 success: true,
                 message: "crowdFundings retreived succesfully",
@@ -117,10 +105,7 @@ module.exports = {
 
         try {
             let crowdFunding = await crowdFundingService.viewCrowdFunding(crowdFundingId);
-            let totalDonations = crowdFunding.totalDonated;
-            
-            let data = crowdFunding.toJSON();
-            data.totalDonations = totalDonations;
+            let data = crowdFunding;
 
             return res.status(200).json({
                 success: true,

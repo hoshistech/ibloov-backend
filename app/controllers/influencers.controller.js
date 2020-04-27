@@ -2,6 +2,7 @@ const influencerService = require('@services/influencer.service');
 const mailer = require('@services/mail.service');
 const uuidv4 = require('uuid/v4');
 const userService = require('@services/user.service');
+const { getOptions, getMatch } = require('@helpers/request.helper');
 
 module.exports = {
 
@@ -13,8 +14,12 @@ module.exports = {
      */
     index: async (req, res) => {
 
+        let filter = getMatch(req);
+        let options = getOptions(req);
+        filter["deletedAt"] = null; 
+
         try {
-            let influencers = await influencerService.all();
+            let influencers = await influencerService.all(filter, options);
 
             res.status(200).send({
                 success: true,

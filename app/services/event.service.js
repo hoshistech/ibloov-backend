@@ -10,12 +10,23 @@ module.exports = {
      * @param query object 
      * @param options object
      */
-    all: async ( query = {}, options = {} ) =>{
+    all: async ( query, options ) =>{
 
-        //const {limit, sort} =  options;
-        //query["isPrivate"] = false;
-
-        let events = await Event.find(query).sort({ createdAt: -1 });
+        let sort = {};
+        const {limit, skip, sortBy, orderBy } = options;
+        sort[ sortBy ] = orderBy;
+        
+        let events = await Event.find(query)
+        .sort(sort)
+        .limit(limit)
+        .skip(skip)
+        .populate('userId', '_id avatar local.firstName local.lastName')
+        .populate('followers.userId', '_id avatar local.firstName local.lastName email')
+        .populate('likes.userId', '_id avatar local.firstName local.lastName email')
+        .populate('invitees.userId', '_id avatar local.firstName local.lastName email')
+        .populate('coordinators.userId', '_id avatar local.firstName local.lastName email')
+        .populate('wishlistId', '_id name')
+        .populate('crowdfundingId', '_id name');
         return events;
     },
 
@@ -28,7 +39,6 @@ module.exports = {
 
         let event = new Event(eventData);
         event.qrCode = await QRCode.toDataURL( eventData.uuid );
-
         return await event.save();
     },
 

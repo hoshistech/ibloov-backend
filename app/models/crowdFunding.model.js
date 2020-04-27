@@ -127,9 +127,9 @@ var CrowdFundingSchema = new Schema({
     images: {
         type: [ crowdfundImage ],
         default: []
-    },
+    }, 
 
-}, { timestamps: true,  versionKey: false} );
+}, { timestamps: true,  versionKey: false, toJSON: { virtuals: true } } );
 
 CrowdFundingSchema.index( { "name": 1, "userId": 1 }, {unique: true} );
 

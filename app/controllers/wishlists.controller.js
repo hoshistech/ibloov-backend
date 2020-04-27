@@ -1,17 +1,18 @@
 const service = require('@services/wishlist.service');
 const uuidv4 = require('uuid/v4');
-
-//const { addHistory } = require('@helpers/event.helper');
+const { getOptions, getMatch } = require('@helpers/request.helper');
 
 
 module.exports = {
 
     index: async (req, res) => {
 
-        let filter = req.body;
+        let filter = getMatch(req);
+        let options = getOptions(req);
+        filter["deletedAt"] = null;
 
         try{
-            let wishlists = await service.all( filter  );
+            let wishlists = await service.all( filter, options );
             res.status(200).send({
 
                 success: true,
@@ -19,15 +20,14 @@ module.exports = {
                 data: wishlists
             });
         }
-        catch(e){
+        catch( err ){
 
             res.status(400).send({
                 success: false,
                 message: "error performing this operation",
-                data: e.toString()
+                data: err.toString()
             });
         }
-        
     },
 
 

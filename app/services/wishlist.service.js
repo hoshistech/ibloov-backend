@@ -9,15 +9,19 @@ module.exports = {
      * @param query object 
      * @param options object
      */
-    all: async ( query = {}, options = {} ) =>{
+    all: async ( query, options ) =>{
 
-        //const {limit, sort} =  options;
-        //query["deletedAt"] = null;
-    
-        let wishlist = await Wishlist.find(query)
+        let sort = {};
+        const {limit, skip, sortBy, orderBy } = options;
+        sort[ sortBy ] = orderBy;
+          
+        let wishlists = await Wishlist.find(query)
+        .sort(sort)
+        .limit(limit)
+        .skip(skip)
         .populate('userId', '_id avatar local.firstName local.lastName')
-        .sort({ createdAt: -1 });
-        return wishlist;
+        
+        return wishlists;
     },
 
     /**

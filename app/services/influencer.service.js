@@ -9,13 +9,22 @@ module.exports = {
      * @param query object 
      * @param options object
      * 
-     * @TODO - add query["deletedAt"] = null; to the influencer controller to filter out deleted infuencers
      */
-    all: async ( query = {}, options = {} ) =>{
+    all: async ( query, options ) =>{
 
-        //const {limit, sort} =  options;
-        //query["deletedAt"] = null;
-        let influencers = await Influencer.find(query);
+        let sort = {};
+        const {limit, skip, sortBy, orderBy } = options;
+        sort[ sortBy ] = orderBy;
+    
+        let influencers = await Influencer.find(query)
+        .sort(sort)
+        .limit(limit)
+        .skip(skip)
+        .populate('userId', '_id avatar email local.firstName local.lastName')
+        .populate('events.eventId', '_id name startDate, endDate')
+        .populate('followers.userId', '_id avatar email local.firstName local.lastName')
+        .populate('wishlists.wishlistId', '_id name')
+
         return influencers;
     },
 

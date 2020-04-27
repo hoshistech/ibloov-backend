@@ -8,10 +8,8 @@ var influencerEvent = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "events",
         required: true
-    },
-    eventName: String
+    }
 }, { _id : false })
-
 
 var influencerWishlist = new Schema({
 
@@ -19,8 +17,7 @@ var influencerWishlist = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Wishlist",
         required: true
-    },
-    wishlistName: String
+    }
 }, { _id : false } )
 
 var influencerFollower = new Schema({
@@ -29,12 +26,6 @@ var influencerFollower = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
         required: true
-    },
-    email: {
-        type: String
-    },
-    fullName: {
-        type: String
     },
     createdAt: {
         type: Date,
@@ -110,6 +101,7 @@ var InfluencerSchema = new Schema({
     
     deletedBy: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
         default: null
     },
 
