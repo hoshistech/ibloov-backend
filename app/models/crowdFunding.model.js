@@ -46,9 +46,9 @@ var CrowdFundingSchema = new Schema({
         type: String
     },
 
-    totalDonations: {
-        type: Number
-    },
+    description: {
+        type: String
+    },  
 
     currency: {
         type: String,
