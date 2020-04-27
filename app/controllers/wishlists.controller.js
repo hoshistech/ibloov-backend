@@ -91,11 +91,11 @@ module.exports = {
                 data: wishlist
             });
             
-        } catch (e) {
+        } catch ( err ) {
             return res.status(400).json({
                 success: false,
                 message: "Error occured while performing this operation.",
-                data: e.toString()
+                data: err.toString()
             });
         }
     },

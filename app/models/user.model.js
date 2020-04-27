@@ -107,12 +107,10 @@ var UserSchema = new Schema({
 
     avatar: {
         type: String,
-        required: false
-    },
-
+        required: false,
+        default: null
+    }
     
-
-
 }, {timestamps: true,  versionKey: false} );
 
 
