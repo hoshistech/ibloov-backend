@@ -14,7 +14,9 @@ module.exports = {
         //const {limit, sort} =  options;
         //query["deletedAt"] = null;
     
-        let wishlist = await Wishlist.find(query).sort({ createdAt: -1 });
+        let wishlist = await Wishlist.find(query)
+        .populate('userId', '_id avatar local.firstName local.lastName')
+        .sort({ createdAt: -1 });
         return wishlist;
     },
 

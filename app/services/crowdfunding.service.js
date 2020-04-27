@@ -15,7 +15,9 @@ module.exports = {
         //query["deletedAt"] = null;
         // query["dueDate"] = { "$gte": new Date };
         console.log(query);
-        let crowdFunding = await CrowdFunding.find(query).sort({ createdAt: -1 });
+        let crowdFunding = await CrowdFunding.find(query)
+        .populate('userId', '_id avatar local.firstName local.lastName')
+        .sort({ createdAt: -1 });
         return crowdFunding;
     },
 
