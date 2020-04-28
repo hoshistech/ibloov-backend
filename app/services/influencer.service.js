@@ -24,7 +24,7 @@ module.exports = {
         .limit(limit)
         .skip(skip)
         .populate('userId', '_id avatar email local.firstName local.lastName')
-        .populate('events.eventId', '_id name startDate, endDate')
+        .populate('events.eventId', '_id name startDate')
         .populate('followers.userId', '_id avatar email local.firstName local.lastName')
         .populate('wishlists.wishlistId', '_id name')
 

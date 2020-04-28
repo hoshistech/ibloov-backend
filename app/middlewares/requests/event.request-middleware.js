@@ -27,17 +27,17 @@ exports.validate = (method) => {
                return isValidStartDate( value );
             }),
             
-            body('endDate') 
-            .exists().withMessage('Invalid event end date provided.')
-            .custom( (value, {req, loc, path }) => {
+            // body('endDate') 
+            // .exists().withMessage('Invalid event end date provided.')
+            // .custom( (value, {req, loc, path }) => {
 
-               if( ! moment(value ).isValid() ) return Promise.reject('Invalid end date provided. please make sure your date is valid.');
+            //    if( ! moment(value ).isValid() ) return Promise.reject('Invalid end date provided. please make sure your date is valid.');
 
-               let startDate = req.body.startDate;
-               if ( moment(startDate).isAfter( value, "hour" ) ) return Promise.reject('Invalid end date. End date cannot greater than start date!');
+            //    let startDate = req.body.startDate;
+            //    if ( moment(startDate).isAfter( value, "hour" ) ) return Promise.reject('Invalid end date. End date cannot greater than start date!');
 
-               return true;
-            }),
+            //    return true;
+            // }),
 
             body("wishlistId")
             .optional()
@@ -136,6 +136,16 @@ exports.validate = (method) => {
       }
 
       case 'toggleFollowEvent': {
+
+         return [
+            
+            param('eventId').custom( value => {
+               return itExists(value);
+             }),
+         ]
+      }
+
+      case 'toggleLikeEvent': {
 
          return [
             

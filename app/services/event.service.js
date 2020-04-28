@@ -1,5 +1,6 @@
 const Event = require('@models/event.model');
 const QRCode = require('qrcode');
+const moment = require("moment");
 const { setDefaultOptions  } = require('@helpers/request.helper');
 
 
@@ -39,10 +40,11 @@ module.exports = {
      * creates a new event
      * @param eventData object
      */
-    createEvent: async (eventData ) =>{
+    createEvent: async ( eventData ) =>{
 
         let event = new Event(eventData);
         event.qrCode = await QRCode.toDataURL( eventData.uuid );
+        event.coordinators.push({ userId: eventData.userId });
         return await event.save();
     },
 
@@ -158,7 +160,7 @@ module.exports = {
      * @param eventId String
      * @param user object
      */
-    followEvent: async( eventId, userId ) => {
+    followEvent: async ( eventId, userId ) => {
 
         let follower = {
             userId,
@@ -172,9 +174,8 @@ module.exports = {
 
     },
 
-    
     /**
-     * check if a user is followiig an event
+     * check if a user is following an event
      * 
      * @param eventId string
      * @param userId string
@@ -196,7 +197,56 @@ module.exports = {
      */
     unfollowEvent: async (eventId, userId) => {
 
-        return await Event.findByIdAndUpdate( eventId, { $pull: { 'followers':  {"userId": userId }  } }, 
+        return await Event.findByIdAndUpdate( eventId, { $pull: { 'followers':  { "userId": userId }  } }, 
+        {  runValidators: true, new: true} ).lean();
+    
+    },
+
+
+    /**
+     * check if a user has liked an event
+     * 
+     * @param eventId string
+     * @param userId string
+     * 
+     * @return boolean
+     */
+    hasLikedEvent: async (eventId, userId) => {
+
+        let event = await Event.findOne({ _id: eventId, 'likes.userId': userId });
+        return event ? true : false;
+    },
+    
+    /**
+     * Allows a user to like an event
+     * 
+     * @param eventId String
+     * @param userId String
+     */
+    likeEvent: async ( eventId, userId ) => {
+
+        let liker = {
+            userId,
+            createdAt: new Date(), 
+        };
+
+        let setData = { 'likes': liker };
+
+        return await Event.findOneAndUpdate( { _id: eventId } , 
+        { '$addToSet': setData }, { runValidators: true , new: true } ).lean();
+
+    },
+
+
+    /**
+     * Allows a user to unlike an event
+     * 
+     * @param eventId String
+     * @param userId String
+     */
+    unlikeEvent: async ( eventId, userId ) => {
+
+        return await Event.findByIdAndUpdate( eventId, { $pull: { 'likes':  { "userId": userId }  } }, 
         {  runValidators: true, new: true} ).lean();
     
     },
@@ -297,27 +347,15 @@ module.exports = {
     /**
      * Returns a list of live events
      * Live events are events that are currently taking place.
-     * They include events that are happening right now or have been set to reoccur every year at a said datetime
-     * live events also inclusdes events that have been set to recurring events for a particular day.
+     * They include events that are happening right now
      * 
      * @return Event Array.
      */
-    liveEvents: async(filter = {}, options) => {
+    liveEvents: async(filter, options) => {
 
-        let dateFilter = {};
-        let recurringFilter = {};
-
-        dateFilter["startDate"] = { "$lte" : new Date() };
-        dateFilter["endDate"] = { "$gte" : new Date() };
-        dateFilter["deletedAt"] = null;
-        
-        //this should only compare the month and the day - year should be excluded
-        recurringFilter["isRecurring"] = true
-        recurringFilter["startDate"] = { "$lte" : new Date()}
-        recurringFilter["endDate"]  = { "$gte" : new Date() }
-        recurringFilter["deletedAt"] = null;
-
-        filter["$or"] = [ dateFilter, recurringFilter ];
+        let fiveHrsAgo = moment().subtract(5, 'h').toDate();
+        filter["startDate"] = { $lte: new Date(), $gte: fiveHrsAgo }
+        filter["deletedAt"] = null;
 
        return module.exports.all(filter, options);
     },

@@ -53,7 +53,13 @@ var coordinator = new Schema({
         type: Boolean,
         enum: [true, false],
         default: true
-    }
+    },
+
+
+    createdAt: {
+        type: Date,
+        default: Date.now()
+    },
 
 }, { _id : false } )
 
@@ -65,7 +71,7 @@ var follower = new Schema({
         ref: "users"
     },
 
-    date: {
+    createdAt: {
         type: Date,
         default: Date.now()
     },
@@ -112,7 +118,13 @@ var invite = new Schema({
         type: String,
         enum: ["YES", "NO", "MAYBE", null],
         default: null,
+    },
+
+    createdAt: {
+        type: Date,
+        default: Date.now()
     }
+
 }, { _id : false } )
 
 var like = new Schema({
@@ -123,7 +135,7 @@ var like = new Schema({
         ref: "users"
     },
 
-    date: {
+    createdAt: {
         type: Date,
         default: Date.now()
     },
@@ -132,6 +144,7 @@ var like = new Schema({
         type: Boolean,
         default: true
     }
+
 }, { _id: false } )
 
 var EventSchema = new Schema({
@@ -205,10 +218,10 @@ var EventSchema = new Schema({
         required: true
     },
 
-    endDate: {
-        type: Date,
-        required: true
-    },
+    // endDate: {
+    //     type: Date,
+    //     required: true
+    // },
 
     isPrivate: {
         type: Boolean,

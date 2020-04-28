@@ -75,7 +75,7 @@ const eventFactory =  ( eventCodeCount ) => {
         location: locations[ randomInt( 0, locations.length - 1) ],
         uuid: faker.random.uuid(),
         startDate: isSameDay ? eventDay : faker.date.future() ,
-        endDate: isSameDay ? eventDay : faker.date.future(),
+        //endDate: isSameDay ? eventDay : faker.date.future(),
         isPrivate,
         createdBy,
         status: "UPCOMING",
