@@ -144,7 +144,8 @@ var EventSchema = new Schema({
     },
 
     category: {
-        type: String
+        type: String,
+        lowercase: true
     },
 
     images: {
@@ -216,7 +217,8 @@ var EventSchema = new Schema({
     },
 
     updatedBy: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        default: null
     },
 
     status: {
@@ -229,7 +231,7 @@ var EventSchema = new Schema({
     eventCode: [{
         type: String,
         description: String
-    }], //should have a maximum of x possible generations
+    }],
 
     sponsors: {
         type:[sponsor],

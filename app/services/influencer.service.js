@@ -198,5 +198,14 @@ module.exports = {
 
         return await module.exports.updateInfluencer( influencerId, verificationUpdate); 
         
+    },
+
+
+    isLegible: async ( influencerId ) => {
+
+        //influencer must have at least x number of followers
+        //must have been on the platform for x period
+        //followers must be organic 
+        
     }
 }
