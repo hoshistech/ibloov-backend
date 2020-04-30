@@ -13,7 +13,7 @@ module.exports = {
      * @param query object 
      * @param options object
      */
-    all: async ( query, options ) => {
+    all: async ( query, options, select ) => {
 
         let sort = {};
         options = options || setDefaultOptions();
@@ -32,6 +32,7 @@ module.exports = {
         .populate('coordinators.userId', '_id avatar local.firstName local.lastName email')
         .populate('wishlistId', '_id name')
         .populate('crowdfundingId', '_id name');
+
         return events;
     },
 
@@ -287,7 +288,7 @@ module.exports = {
      * @param eventId String
      * 
      */
-    generateInviteLink: async( ) => {
+    generateInviteLink: async() => {
 
         const baseUrl = process.env.FRONTEND_BASE_URL;
         randomString = (+new Date).toString(36).slice();
@@ -391,6 +392,18 @@ module.exports = {
             }
         )
 
+    },
+
+
+    likedByUser: async ( userId ) => {
+
+        query = {
+            "likes.userId": userId, "deletedAt": null
+        };
+
+        let events = await Event.find(query)
+        .select("_id name")
+        return events;
     },
 
 

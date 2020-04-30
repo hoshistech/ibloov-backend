@@ -1,6 +1,10 @@
 const User = require('@models/user.model');
+const moment = require("moment");
+
+//services
 const eventService = require('@services/event.service');
-const moment = require("moment")
+
+//helpers
 const { randomInt } = require("@helpers/number.helper");
 const { setDefaultOptions  } = require('@helpers/request.helper');
 
@@ -105,15 +109,7 @@ module.exports = {
      */
     getLikedEvents: async (userId) => {
 
-        query = {
-
-        };
-
-        options = {
-            sort: -1
-        }
-        let events = await eventService.all(query, sort);
-        return events;
+        return await eventService.likedByUser( userId );
     },
 
 

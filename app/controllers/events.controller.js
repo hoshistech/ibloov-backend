@@ -1,6 +1,9 @@
 const eventService = require('@services/event.service');
+const userService = require('@services/user.service');
+
 const uuidv4 = require('uuid/v4');
 const { getOptions, getMatch } = require('@helpers/request.helper');
+
 
 
 module.exports = {
@@ -13,13 +16,19 @@ module.exports = {
         let filter = getMatch(req);
         let options = getOptions(req);
         filter["deletedAt"] = null; 
+        let resp = {};
     
         try{
             let events = await eventService.all(filter, options);
+            let likedEvents = await userService.getLikedEvents( req.authuser._id );
+
+            resp["events"] = events;
+            resp["likedEvents"] = likedEvents ;
+
             res.status(200).send({
                 success: true,
                 message: "events retreived succesfully",
-                data: events
+                data: resp
             });
         }
         catch(e){
