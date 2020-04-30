@@ -31,7 +31,8 @@ module.exports = {
         .populate('invitees.userId', '_id avatar local.firstName local.lastName email')
         .populate('coordinators.userId', '_id avatar local.firstName local.lastName email')
         .populate('wishlistId', '_id name')
-        .populate('crowdfundingId', '_id name');
+        .populate('crowdfundingId', '_id name')
+        .lean()
 
         return events;
     },

@@ -366,7 +366,7 @@ var EventSchema = new Schema({
     }
 
 
-}, {timestamps: true,  versionKey: false} );
+}, {timestamps: true,  versionKey: false, toJSON: { virtuals: true } } );
 
 
 /**
@@ -378,6 +378,11 @@ EventSchema.methods.getNotifiableUsers = function() {
 
     //return this.events;
 };
+
+EventSchema.virtual('isFollowing').get(function () {
+
+    //
+});
 
 
 EventSchema.index({ "location": "2dsphere" });

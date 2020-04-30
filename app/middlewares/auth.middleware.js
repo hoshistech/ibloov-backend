@@ -32,7 +32,6 @@ verifyToken = function( req, res, next ){
             })
         }
 
-        //userService.getUser( { email: data.user.email })
         userService.getUser( { _id: data.user._id })
         .then( user => {
 

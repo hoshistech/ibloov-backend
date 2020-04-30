@@ -105,12 +105,11 @@ module.exports = {
 
         try {
             let crowdFunding = await crowdFundingService.viewCrowdFunding(crowdFundingId);
-            let data = crowdFunding;
 
             return res.status(200).json({
                 success: true,
                 message: "CrowdFunding retreived successfully.",
-                data
+                data: crowdFunding
             });
             
         } catch ( err ) {

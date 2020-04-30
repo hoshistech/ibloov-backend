@@ -20,9 +20,21 @@ module.exports = {
     
         try{
             let events = await eventService.all(filter, options);
+
+            //revisit this
+            const setFollowingStatus = async () => {
+
+                return Promise.all(  events.map( async event => {
+                    let isFollowing = await eventService.isFollowingEvent( event._id, req.authuser._id );
+                    event["isFollowing"] = isFollowing;
+                    return event;
+                }))
+            }
+
+            let result =  await setFollowingStatus();
             let likedEvents = await userService.getLikedEvents( req.authuser._id );
 
-            resp["events"] = events;
+            resp["events"] = result;
             resp["likedEvents"] = likedEvents ;
 
             res.status(200).send({
@@ -126,11 +138,11 @@ module.exports = {
                 data: event
             });
             
-        } catch (e) {
+        } catch ( err ) {
             return res.status(400).json({
                 success: false,
                 message: "Error occured while performing this operation.",
-                data: e
+                data: err.toString()
             });
         }
     },
