@@ -287,11 +287,11 @@ module.exports = {
      * @param eventId String
      * 
      */
-    generateInviteLink: async( eventId ) => {
+    generateInviteLink: async( ) => {
 
-        const baseUrl = process.env.baseUrl;
-        const event = module.exports.viewEvent(eventId);
-        let link = `${baseUrl}/event/invite/${event.uuid}`;
+        const baseUrl = process.env.FRONTEND_BASE_URL;
+        randomString = (+new Date).toString(36).slice();
+        let link = `${baseUrl}/event/invite/${randomString}`;
         return link
     },
 
@@ -353,8 +353,10 @@ module.exports = {
      */
     liveEvents: async(filter, options) => {
 
-        let fiveHrsAgo = moment().subtract(5, 'h').toDate();
-        filter["startDate"] = { $lte: new Date(), $gte: fiveHrsAgo }
+        let beforeNow = moment().subtract( 24, 'h').toDate();
+        let AfterNow =  moment().add( 24, 'h').toDate();
+
+        filter["startDate"] = { $lte: AfterNow, $gte: beforeNow }
         filter["deletedAt"] = null;
 
        return module.exports.all(filter, options);

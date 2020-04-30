@@ -447,6 +447,7 @@ module.exports = {
 
     },
 
+
     toggleLike: async( req, res) => {
 
         let eventId = req.params.eventId;
@@ -484,4 +485,27 @@ module.exports = {
             });
         }
     },
+
+
+    inviteLink: async( req, res) => {
+
+        try {
+            let link = await eventService.generateInviteLink();
+            return res.status(200).json({
+
+                success: true,
+                message: "Operation successful",
+                data: link
+            });
+            
+        } catch ( err ) {
+            
+            return res.status(200).json({
+
+                success: false,
+                message: "There was an error performing this operation.",
+                data: err.toString()
+            });
+        }
+    }
 }

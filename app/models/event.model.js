@@ -241,6 +241,15 @@ var EventSchema = new Schema({
         required: true
     },
 
+    inviteLink: {
+
+        type: String,
+        required: false,
+        unique: function(){
+            this.inviteLink ? true : false
+        }
+    },
+
     eventCode: [{
         type: String,
         description: String

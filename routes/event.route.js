@@ -17,13 +17,15 @@ router.get('/live', EventController.live );
 
 router.patch('/:eventId', [checkAuth, validate("updateEvent"), isValidRequest ], EventController.update );
 
-router.get('/:eventId', [ checkAuth, validate("viewEvent"), isValidRequest ], EventController.view );
-
 router.delete('/:eventId',  [ checkAuth, validate("deleteEvent"), isValidRequest ], EventController.softdelete );
 
 router.get('/code/generate', EventController.generateEventCode );
 
 router.get('/code/:eventCode', EventController.generateEventCode );
+
+router.get('/invitelink', EventController.inviteLink );
+
+router.get('/:eventId', [ checkAuth, validate("viewEvent"), isValidRequest ], EventController.view );
 
 router.patch('/follow/:eventId', [ checkAuth, validate("followEvent"), isValidRequest ], EventController.follow );
 
