@@ -13,15 +13,15 @@ router.get('/', [checkAuth], EventController.index) ;
 
 router.post('/create', middleWareGroup, EventController.create );
 
-router.get('/live', EventController.live );
+router.get('/live', [ checkAuth ], EventController.live );
 
-router.patch('/:eventId', [checkAuth, validate("updateEvent"), isValidRequest ], EventController.update );
+router.patch('/:eventId', [ checkAuth, validate("updateEvent"), isValidRequest ], EventController.update );
 
 router.delete('/:eventId',  [ checkAuth, validate("deleteEvent"), isValidRequest ], EventController.softdelete );
 
 router.get('/code/generate', EventController.generateEventCode );
 
-router.get('/code/:eventCode', EventController.generateEventCode );
+//router.get('/code/:eventCode', EventController.generateEventCode );
 
 router.get('/invitelink', EventController.inviteLink );
 
