@@ -299,16 +299,50 @@ module.exports = {
 
 
     /**
+     * check if a user is following an event
+     * 
+     * @param eventId string
+     * @param userId string
+     * 
+     * @return boolean
+     */
+    isInvited: async (eventId, userId) => {
+
+        let event = await Event.findOne({ _id: eventId, 'invitees.userId': userId });
+        return event ? true : false;
+    },
+
+
+    /**
      * Basically confirms that a user would be attending an event
      * updates a user attending status to 'YES' for an event
      * @param eventId String
      * @param userId String
-     * @param status String - "YES", "NO", "MAYBE" are the only allowed values
+     * @param status String - "YES", "NO", "MAYBE" are the only allowed values 
      * 
      */
     confirmEventAttendance: async( eventId, userId, status ) => {
 
-        return await Event.findOneAndUpdate( { _id: eventId, "invitees.userId": userId }, { $set : { 'invitees.$.accepted' : status }}, { new:true, runValidators: true } );
+        let isInvited = await module.exports.isInvited( eventId, userId );
+
+        if( isInvited ){
+
+            return await Event.findOneAndUpdate( { _id: eventId, "invitees.userId": userId }, { $set : { 'invitees.$.accepted' : status }}, { new:true, runValidators: true } );
+        }
+        else{
+
+            let event = await Event.findById(eventId);
+            const isPrivate = event.isPrivate;
+
+            if( isPrivate ) throw new Error("Invalid invite to a priavte event.")
+
+            let invite = {
+                userId,
+                accepted: "YES"
+            }
+
+            return await module.exports.addInvitees(eventId, [invite]);
+        }
     },
 
 
@@ -403,7 +437,8 @@ module.exports = {
         };
 
         let events = await Event.find(query)
-        .select("_id name")
+        .select("_id")
+        .lean()
         return events;
     },
 

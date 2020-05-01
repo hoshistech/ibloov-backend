@@ -34,8 +34,13 @@ module.exports = {
             let result =  await setFollowingStatus();
             let likedEvents = await userService.getLikedEvents( req.authuser._id );
 
+            likedEvents = likedEvents.reduce( ( acc, event) => {
+                acc.push(event._id);
+                return acc;
+            }, [] )
+
             resp["events"] = result;
-            resp["likedEvents"] = likedEvents ;
+            resp["likedEvents"] = likedEvents;
 
             res.status(200).send({
                 success: true,
@@ -358,7 +363,7 @@ module.exports = {
             
             return res.status(200).json({
                 success: true,
-                message: "Event invitation accepted successfully!.",
+                message: "Attendance status set successfully!.",
                 data: resp
             });
         }

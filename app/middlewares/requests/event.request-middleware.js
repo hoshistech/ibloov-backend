@@ -159,7 +159,7 @@ exports.validate = (method) => {
 
          return [
             
-            param('eventId').custom( value => {
+            param('eventId').custom( ( value, {req, loc, path } ) => {
                return itExists(value);
              }),
          ]
@@ -208,7 +208,18 @@ exports.validate = (method) => {
          return [ 
             
             body('status')
-            .exists().withMessage("Required body param, 'status' not provided"),
+            .exists().withMessage("Required body param, 'status' not provided")
+            .custom( value => {
+
+               const allowed = ["YES", "NO"];
+
+               if( ! allowed.includes( value.toUpperCase() ) ){
+                  return Promise.reject("Invlaid status provided, status can only be 'YES' or 'NO' ");
+               }
+
+               return true;
+
+            }),
 
             param('eventId')
             .custom( value => {
@@ -216,7 +227,6 @@ exports.validate = (method) => {
             })
          ]
       }
-
    }
 }
 

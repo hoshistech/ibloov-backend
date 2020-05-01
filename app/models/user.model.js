@@ -93,6 +93,11 @@ var UserSchema = new Schema({
         type: Date
     },
 
+    bio: {
+        type: String,
+        default: ""
+    },
+
     followers: {
         type: [userFollower],
         required: false,

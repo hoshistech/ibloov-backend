@@ -117,7 +117,7 @@ var invite = new Schema({
     accepted: {
         type: String,
         enum: ["YES", "NO", "MAYBE", null],
-        default: null,
+        default: null
     },
 
     createdAt: {
@@ -347,17 +347,18 @@ var EventSchema = new Schema({
         default: false
     },
 
-    allowNoifications: {
-        type: Boolean,
-        enum: [true, false],
-        default: true
-    },
+    // allowNoifications: {
+    //     type: Boolean,
+    //     enum: [true, false],
+    //     default: true
+    // },
 
     allowedPaymentChannels: {
         type: Array,
-        required: function(){
-            this.isPaid === true
-        },
+        required: false,
+        // required: function(){
+        //     this.isPaid === true
+        // },
         default: []
     },
 
