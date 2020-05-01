@@ -50,9 +50,10 @@ module.exports = {
      * returns a single instance of an influencer
      * @param influencerId String
      */
-    viewInfluencer: async (influencerId) => {
+    viewInfluencer: async ( influencerId ) => {
 
-        let influencer = await Influencer.findById(influencerId);
+        let influencer = await Influencer.findById(influencerId)
+        .populate('userId', '_id avatar email local.firstName local.lastName');
         return influencer;
     },
 

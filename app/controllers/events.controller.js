@@ -379,14 +379,30 @@ module.exports = {
 
         let filter = getMatch(req);
         let options = getOptions(req); 
+        let resp = {};
 
         try{
             let events = await eventService.liveEvents( filter, options );
+
+            const setFollowingStatus = async () => {
+
+                return Promise.all(  events.map( async event => {
+                    let isFollowing = await eventService.isFollowingEvent( event._id, req.authuser._id );
+                    event["isFollowing"] = isFollowing;
+                    return event;
+                }))
+            }
+
+            let result =  await setFollowingStatus();
+            let likedEvents = await userService.getLikedEvents( req.authuser._id );
+
+            resp["events"] = result;
+            resp["likedEvents"] = likedEvents ;
             
             return res.status(200).json({
                 success: true,
                 message: "Live events retreived successfully!.",
-                data: events
+                data: resp
             });
         }
         catch( err ){
