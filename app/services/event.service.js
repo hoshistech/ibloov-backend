@@ -327,7 +327,9 @@ module.exports = {
 
         if( isInvited ){
 
-            return await Event.findOneAndUpdate( { _id: eventId, "invitees.userId": userId }, { $set : { 'invitees.$.accepted' : status }}, { new:true, runValidators: true } );
+            return await Event.findOneAndUpdate( { _id: eventId, "invitees.userId": userId }, { $set : { 'invitees.$.accepted' : status }}, { new:true, runValidators: true } )
+            .populate('userId', '_id avatar local.firstName local.lastName');
+
         }
         else{
 
@@ -338,10 +340,18 @@ module.exports = {
 
             let invite = {
                 userId,
-                accepted: "YES"
+                accepted: status
             }
 
-            return await module.exports.addInvitees(eventId, [invite]);
+            return await Event.findOneAndUpdate(
+                { "_id" : eventId },
+                { 
+                    "$addToSet": { 
+                        invitees : invite 
+                    } 
+                }, 
+                { runValidators: true, new: true }
+            ).populate('userId', '_id avatar local.firstName local.lastName');
         }
     },
 
