@@ -27,12 +27,13 @@ module.exports = {
                 data: influencers
             });
 
-        } catch (e) {
+        } catch ( err ) {
+            console.log( err )
 
             res.status(400).send({
                 success: false,
                 message: "error performing this operation",
-                data: e.toString()
+                data: err.toString()
             });
         }
     },
@@ -174,12 +175,12 @@ module.exports = {
                 data: resp
             });
 
-        } catch (e) {
+        } catch ( err ) {
             
             return res.status(400).json({
                 success: false,
                 message: "Error occured while trying to perform this operation.",
-                data: e.toString()
+                data: err.toString()
             });
         }
     },
@@ -207,13 +208,13 @@ module.exports = {
                 data: resp
             });
 
-        } catch (err) {
+        } catch ( err ) {
 
             return res.status(400).json({
 
-                data: err.toString(),
                 successful: false,
-                message: "Error performing this request."
+                message: "Error performing this request.",
+                data: err.toString(),
             });
         }
     },

@@ -15,7 +15,7 @@ var influencerWishlist = new Schema({
 
     wishlistId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Wishlist",
+        ref: "wishlists",
         required: true
     }
 }, { _id : false } )
