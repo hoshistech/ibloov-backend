@@ -328,7 +328,8 @@ module.exports = {
         if( isInvited ){
 
             return await Event.findOneAndUpdate( { _id: eventId, "invitees.userId": userId }, { $set : { 'invitees.$.accepted' : status }}, { new:true, runValidators: true } )
-            .populate('userId', '_id avatar local.firstName local.lastName');
+            .populate('userId', '_id avatar local.firstName local.lastName')
+            .populate('invitees.userId', '_id avatar local.firstName local.lastName email');
 
         }
         else{
@@ -351,7 +352,10 @@ module.exports = {
                     } 
                 }, 
                 { runValidators: true, new: true }
-            ).populate('userId', '_id avatar local.firstName local.lastName');
+            )
+            .populate('userId', '_id avatar local.firstName local.lastName')
+            .populate('invitees.userId', '_id avatar local.firstName local.lastName email')
+
         }
     },
 
