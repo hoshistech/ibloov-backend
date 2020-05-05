@@ -126,6 +126,20 @@ exports.validate = (method) => {
       ]   
     }
 
+    case 'userTickets': {
+
+      return [ 
+
+        param('userId')
+        .optional()
+        .custom( (value) => {
+
+          if( value ) return itExists(value);
+          
+        })     
+      ]   
+    }
+
     case 'sendTelephoneVerifcationCode': {
 
       return [ 

@@ -23,6 +23,8 @@ router.get('/events/:userId?', [ checkAuth, validate("userEvents"), isValidReque
 
 router.get('/crowdfunds/:userId?', [ checkAuth, validate("userCrowdfunds"), isValidRequest ], UserController.crowdfunds );
 
+router.get('/tickets/:userId?', [ checkAuth, validate("userTickets"), isValidRequest ], UserController.tickets );
+
 router.get('/:userId', [ checkAuth, validate("viewUser"), isValidRequest ], UserController.view );
 
 router.delete('/:userId',  [ checkAuth, validate("deleteUser"), isValidRequest ], UserController.softdelete );

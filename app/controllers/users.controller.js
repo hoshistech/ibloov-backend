@@ -3,6 +3,7 @@ const userService = require('@services/user.service');
 const eventService = require('@services/event.service');
 const wishlistService = require('@services/wishlist.service');
 const crowdfundingService = require('@services/crowdfunding.service');
+const ticketService = require('@services/ticket.service');
 const smsService = require('@services/sms.service');
 
 const uuidv4 = require('uuid/v4');
@@ -322,6 +323,31 @@ module.exports = {
         catch( err ){
 
             return res.status(400).json({
+                success: false,
+                message: "There was an error performing this operation",
+                data: err.toString()
+            });
+        }
+    },
+
+    tickets: async (req, res) => {
+
+        let userId = req.params.userId || req.authuser._id;
+        
+        try{
+            let tickets = await ticketService.userTickets( userId );
+
+            return res.status(200).json({
+
+                success: true,
+                message: "Tickets retreived successfully.",
+                data: tickets
+            });
+        }
+        catch( err ){
+
+            return res.status(400).json({
+
                 success: false,
                 message: "There was an error performing this operation",
                 data: err.toString()

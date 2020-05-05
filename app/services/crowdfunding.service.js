@@ -93,7 +93,6 @@ module.exports = {
             }
 
             return await CrowdFunding.findByIdAndUpdate( crowdFundingId , 
-                //{ '$addToSet': { 'donors': donor }, $inc: { totalDonations: amount } }, 
                 { '$addToSet': { 'donors': donor } }, 
                 { runValidators: true, new: true }  );
         } 
@@ -102,7 +101,6 @@ module.exports = {
             return await CrowdFunding
             .findOneAndUpdate( { _id: crowdFundingId, "donors.userId": userId } , 
             { $set : { 'donors.$.pledge' : amount } }, 
-            //{ $set : { 'donors.$.pledge' : amount },  $inc: { totalDonations: amount } }, 
             { runValidators: true, new: true } );
         }
     },

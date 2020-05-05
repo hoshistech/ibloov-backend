@@ -100,13 +100,13 @@ module.exports = {
      * @param influencer string - the name of the influencer e.g create, delete etc.
      * 
      */
-    addInfluencerHistory: async (influencerId, influencer) => {
+    addInfluencerHistory: async (influencerId, influencer, userId ) => {
 
         let history  = {
             influencer,
             createdAt: new Date(),
             comment: "new influencer history",
-            userId: "o098uyhjk"
+            userId
         };
 
         let set = { 'history': history };

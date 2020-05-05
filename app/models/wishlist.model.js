@@ -121,6 +121,10 @@ var WishListSchema = new Schema({
         max: 255
     },
 
+    description:{
+        type: String
+    },
+
     eventId: {
         type: mongoose.Schema.Types.ObjectId,
         required: false,
