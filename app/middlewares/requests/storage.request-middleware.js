@@ -14,11 +14,18 @@ exports.validate = (method) => {
 
       return [ 
 
-        // body('target')
-        // .exists().withMessage("target"),
+        param('resource')
+        .exists().withMessage("Required parameter 'resource' not found.") 
+        .custom( value => {
 
-        // body('upload')
-        // .exists().withMessage("Required property 'upload' not found.")       
+          const allowedResources = ["avatar", 'event', 'wishlist', 'crowdfund'];
+          
+          if ( ! allowedResources.includes( value )){
+            return Promise.reject('invalid resource provided.');
+          }
+
+          return true;
+        })      
       ]   
     }
   }

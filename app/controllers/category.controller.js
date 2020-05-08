@@ -56,6 +56,6 @@ module.exports = {
     },
 
     view: () => {
-        console.log("creating a new category")
+        console.log("viewing a new category")
     }
 }

@@ -87,10 +87,10 @@ module.exports = {
      * @param influencerId integer
      *
      */
-    softDeleteInfluencer: async (influencerId) => {
+    softDeleteInfluencer: async (influencerId, deletedBy) => {
 
-        const updateData = {deletedAt: Date.now(), deletedBy: '1edfhuio3ifj'};
-        return await module.exports.updateInfluencer(influencerId, updateData);  
+        const updateData = {deletedAt: Date.now(), deletedBy };
+        return await module.exports.updateInfluencer(influencerId, updateData);   
     },
 
 

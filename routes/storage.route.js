@@ -10,6 +10,6 @@ const { checkAuth } = require("@middleware/auth.middleware");
 const { validate } = require("@request-middleware/storage.request-middleware");
 const { isValidRequest } = require("@middleware/isRequestValid.middleware");
 
-router.post('/upload', [ validate("upload"), isValidRequest ], storageController.upload );
+router.post('/upload/:resource', [ checkAuth, validate("upload"), isValidRequest ], storageController.upload );
 
 module.exports = router;

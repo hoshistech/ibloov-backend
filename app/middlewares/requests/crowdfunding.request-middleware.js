@@ -113,34 +113,38 @@ exports.validate = (method) => {
             ]
         }
 
-        case 'muteCrowdfundNotification': {
+        // case 'muteCrowdfundNotification': {
 
-            return [
+        //     return [
 
-                param('crowdFundingId').custom(value => {
-                    return itExists(value);
-                }),
-            ]
-        }
+        //         param('crowdFundingId').custom(value => {
+        //             return itExists(value);
+        //         }),
+        //     ]
+        // }
 
-        case 'unfollowCrowdfund': {
+        // case 'unfollowCrowdfund': {
 
-            return [
+        //     return [
 
-                param('crowdFundingId').custom(value => {
-                    return itExists(value);
-                }),
-            ]
-        }
+        //         param('crowdFundingId').custom(value => {
+        //             return itExists(value);
+        //         }),
+        //     ]
+        // }
 
-        case 'addInvite': {
+        // case 'addInvite': {
 
-            return [
+        //     return [
 
-                body('crowdFundingId')
-                .exists().withMessage("expected invite not found")
-            ]
-        }
+        //         param('crowdFundingId')
+        //         .exists().withMessage("expected invite not found"),
+
+        //         param('crowdFundingId').custom(value => {
+        //             return itExists(value);
+        //         }),
+        //     ]
+        // }
     }
 }
 

@@ -151,5 +151,21 @@ module.exports = {
         })
         
         return resp;
+    },
+
+    block: async( userId ) => {
+
+    },
+
+    unblock: async( userId ) => {
+
+    },
+
+    approveFollowRequest: async( userId ) => {
+
+    },
+
+    denyFollowRequest: async( userId ) => {
+
     }
 }

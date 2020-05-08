@@ -10,10 +10,27 @@ var userFollower = new Schema({
         ref:"users",
         required: true
     },
+
     createdAt: {
         type: Date,
         default: new Date
     }
+
+}, { _id: false })
+
+var blockedFollower = new Schema({
+
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"users",
+        required: true
+    },
+
+    createdAt: {
+        type: Date,
+        default: new Date
+    }
+    
 }, { _id: false })
 
 var UserSchema = new Schema({
@@ -100,6 +117,12 @@ var UserSchema = new Schema({
 
     followers: {
         type: [userFollower],
+        required: false,
+        default: []
+    },
+
+    blocked: {
+        type: [ blockedFollower ],
         required: false,
         default: []
     },

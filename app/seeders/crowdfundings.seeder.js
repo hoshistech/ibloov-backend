@@ -78,7 +78,7 @@ const crowdFundingFactory =  ( crowdFundingDonorCount ) => {
         uuid: faker.random.uuid(),
         createdAt: new Date,
         updatedAt: new Date,
-        createdBy: createdBy,
+        createdBy,
         donors,
         history
     }

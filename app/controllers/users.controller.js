@@ -167,38 +167,25 @@ module.exports = {
 
 
     /**
-     * subscribes a user to an user
+     * subscribes a user to another user
      * user would start receiving user notifications/updates
      * @authlevel authenticated
      */
     follow: async (req, res) => {
 
         let userId = req.params.userId;
-
-        if( ! userId){
-            return res.status(400).json({
-                success: false,
-                message: "required user id missing."
-            });
-        }
+        let followerId = req.authuser._id;
         
         try{
-            let user = await userService.viewUser(userId);
 
-            if( ! user ){
-                return res.status(404).json({
-                    success: false,
-                    message: "invalid user."
-                });
-            }
+            let follower = req.authuser._id;
 
-            let follower = {
-                userId: "98765tguif",
-                email: "test@test.com",
-                telephone: "09039015531"
-            }
+            //let isFollowing = await userService.isFollowingUser(userId, followerId );
 
-            let isFollowing = await userService.isFollowingUser(userId, follower.userId);
+
+            //also check if there is a pending request
+            //also check if there is a denied request 
+            //also check if follower has been blocked.
 
             if( ! isFollowing){
                 userService.updateUserSet(userId, {"followers": follower }); 

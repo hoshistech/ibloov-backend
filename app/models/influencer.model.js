@@ -62,6 +62,12 @@ var InfluencerSchema = new Schema({
         index: true
     },
 
+    uuid: {
+        type: String,
+        unique: true,
+        required: true
+    }, 
+
     isVerified: {
         type: Boolean,
         enum: [true, false],

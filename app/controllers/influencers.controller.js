@@ -28,7 +28,6 @@ module.exports = {
             });
 
         } catch ( err ) {
-            console.log( err )
 
             res.status(400).send({
                 success: false,
@@ -165,10 +164,11 @@ module.exports = {
     softdelete: async (req, res) => { 
 
         let influencerId = req.params.influencerId;
+        let userId = req.authuser._id;
 
         try {
             
-            let resp = await influencerService.softDeleteInfluencer( influencerId );
+            let resp = await influencerService.softDeleteInfluencer( influencerId, userId );
             return res.status(200).json({
                 success: true,
                 message: "Influencer has been deleted successfully.",

@@ -69,9 +69,9 @@ module.exports = {
      * @param categoryId integer
      *
      */
-    softDeleteCategory: async (categoryId) => {
+    softDeleteCategory: async (categoryId, deletedBy) => {
 
-        const updateData = {deletedAt: Date.now(), deletedBy: '1edfhuio3ifj'};
+        const updateData = {deletedAt: Date.now(), deletedBy };
         return await module.exports.updateCategory(categoryId, updateData);  
     }
 }

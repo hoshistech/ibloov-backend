@@ -13,7 +13,7 @@ module.exports = {
      * @param query object 
      * @param options object
      */
-    all: async ( query, options, select ) => {
+    all: async ( query, options ) => {
 
         let sort = {};
         options = options || setDefaultOptions();
@@ -34,6 +34,13 @@ module.exports = {
         .populate('crowdfundingId', '_id name')
         .lean()
 
+        return events;
+    },
+
+
+    paginatedQuery: async ( query  ) => {
+        
+        let events = await Event.find(query)
         return events;
     },
 

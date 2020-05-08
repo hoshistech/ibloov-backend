@@ -2,7 +2,10 @@ const eventService = require('@services/event.service');
 const userService = require('@services/user.service');
 
 const uuidv4 = require('uuid/v4');
+
+//helpers
 const { getOptions, getMatch } = require('@helpers/request.helper');
+const pagination = require('@helpers/pagination.helper');
 
 
 
@@ -20,6 +23,9 @@ module.exports = {
     
         try{
             let events = await eventService.all(filter, options);
+
+            //let pg = await eventService.paginatedQuery(filter);
+            //console.log(  pagination( pg,  options.limit) ); 
 
             //revisit this
             const setFollowingStatus = async () => {
