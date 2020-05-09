@@ -3,6 +3,8 @@ const { body, param } = require('express-validator');
 const crowdfundService = require('@services/crowdfunding.service');
 const moment = require("moment");
 
+const { validateCurrencyCode } = require("@helpers/currency.helper");
+
 
 exports.validate = (method) => {
 
@@ -26,7 +28,13 @@ exports.validate = (method) => {
                 }),
 
                 body('currency')
-                .exists().withMessage("Required body parameter, 'currency' not found."),
+                .exists().withMessage("Required body parameter, 'currency' not found.")
+                .custom( value => {
+
+                    if( ! validateCurrencyCode(value) ) return Promise.reject("Invalid currency code provided");
+
+                    return true;
+                }),
 
                 body('amount')
                 .exists().withMessage("Required body parameter, 'amount' not found"),

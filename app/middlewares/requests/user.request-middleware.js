@@ -168,6 +168,45 @@ exports.validate = (method) => {
 
       ]   
     }
+
+    case 'unfollowUser': {
+
+      return [ 
+
+        param('userId')
+        .custom( (value) => {
+          if( value ) return itExists(value);
+        })     
+      ]   
+    }
+
+    case 'followUser': {
+
+      return [ 
+
+        param('userId')
+        .custom( (value, { req, loc, path}) => {
+
+          if ( value == req.authuser._id.toString() ){
+            return Promise.reject('unable to process this request. Target user same as auth user');
+          }
+
+          if( value ) return itExists(value);
+
+        })     
+      ]   
+    }
+
+    case 'acceptFollowRequest': {
+
+      return [ 
+
+        param('userId')
+        .custom( (value) => {
+          if( value ) return itExists(value);
+        })     
+      ]   
+    }
   }
 }
 

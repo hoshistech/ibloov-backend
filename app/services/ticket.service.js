@@ -102,7 +102,12 @@ module.exports = {
 
     userTickets: async ( userId ) => {
 
-        let tickets = await Ticket.find({ "tickets.userId": userId });
-        return tickets
+        return await Ticket.find({ "tickets.userId": userId, "tickets": { $elemMatch: { userId } } }, {
+            _id: 0,
+            'eventId': 1,
+            'tickets.userId.$': 1
+        })
+        .populate('eventId');
+
     }
 }

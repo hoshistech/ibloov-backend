@@ -53,7 +53,7 @@ module.exports = {
     viewInfluencer: async ( influencerId ) => {
 
         let influencer = await Influencer.findById(influencerId)
-        .populate('userId', '_id avatar email local.firstName local.lastName');
+        .populate('userId', '_id avatar email bio local.firstName local.lastName');
         return influencer;
     },
 
@@ -198,7 +198,14 @@ module.exports = {
         }
 
         return await module.exports.updateInfluencer( influencerId, verificationUpdate); 
-        
+    },
+
+
+    /**
+     * checks if a user is an influencer
+     */
+    isInfluencer: async ( userId ) => {
+        return await Influencer.findOne( { userId }); 
     },
 
 

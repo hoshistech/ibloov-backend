@@ -5,6 +5,8 @@ const wishlistService = require('@services/wishlist.service');
 const crowdfundingService = require('@services/crowdfunding.service');
 const moment = require("moment");
 
+const { validateCurrencyCode } = require("@helpers/currency.helper");
+
 
 exports.validate = (method) => {
 
@@ -84,9 +86,13 @@ exports.validate = (method) => {
                if( typeof value !== 'boolean') return Promise.reject("Invalid 'isPaid' value provided. boolean expected");
 
                if( value ){
+                  
                   if( ! req.body.amount ) return Promise.reject("Body parameter, 'amount' is required for paid events ");
                   
                   if( ! req.body.currency ) return Promise.reject("Body parameter, 'currency' is required for paid events "); 
+
+                  if( ! validateCurrencyCode(req.body.currency) ) return Promise.reject("Invalid currency code provided."); 
+
                }
 
                return true;

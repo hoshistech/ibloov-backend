@@ -50,6 +50,15 @@ module.exports = {
         
         try {
 
+            check = await influencerService.isInfluencer( req.authuser._id );
+            if( check ){
+
+                return res.status(400).send({
+                    success: false,
+                    message: "User is already an inflencer!"
+                });
+            }
+
             let resp = await influencerService.createInfluencer(influencer);
             res.status(201).send({
                 success: true,

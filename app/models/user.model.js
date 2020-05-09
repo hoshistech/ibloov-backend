@@ -3,11 +3,11 @@ const bcrypt = require('bcryptjs');
 
 var Schema = mongoose.Schema;
 
-var userFollower = new Schema({
+var follower = new Schema({
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:"users",
+        ref: "users",
         required: true
     },
 
@@ -18,11 +18,11 @@ var userFollower = new Schema({
 
 }, { _id: false })
 
-var blockedFollower = new Schema({
+var blockedUser = new Schema({
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:"users",
+        ref: "users",
         required: true
     },
 
@@ -30,8 +30,10 @@ var blockedFollower = new Schema({
         type: Date,
         default: new Date
     }
-    
+
 }, { _id: false })
+
+
 
 var UserSchema = new Schema({
 
@@ -116,16 +118,17 @@ var UserSchema = new Schema({
     },
 
     followers: {
-        type: [userFollower],
+        type: [ follower ],
         required: false,
         default: []
     },
 
     blocked: {
-        type: [ blockedFollower ],
+        type: [ blockedUser ],
         required: false,
         default: []
     },
+
 
     type: {
         type: String,
@@ -137,9 +140,26 @@ var UserSchema = new Schema({
         type: String,
         required: false,
         default: null
+    },
+
+    deletedAt: {
+        type: Date,
+        default: null
+    }, 
+    
+    deletedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        default: null,
+        ref: "users"
+    },
+
+    status: {
+        type: String,
+        enum: ["ACTIVE", "BLOCKED"],
+        default: "ACTIVE"
     }
     
-}, {timestamps: true,  versionKey: false} );
+}, { timestamps: true,  versionKey: false } );
 
 
 UserSchema.methods.isValidPassword = async function( password ){
@@ -147,6 +167,7 @@ UserSchema.methods.isValidPassword = async function( password ){
     try {
 
         return await bcrypt.compare( password, this.local.password );
+        
 
     } catch ( err ) {
         

@@ -5,6 +5,7 @@ const wishlistService = require('@services/wishlist.service');
 const crowdfundingService = require('@services/crowdfunding.service');
 const ticketService = require('@services/ticket.service');
 const smsService = require('@services/sms.service');
+const followrequestService = require('@services/followrequest.service');
 
 const uuidv4 = require('uuid/v4');
 
@@ -165,48 +166,73 @@ module.exports = {
     },
 
 
-
     /**
      * subscribes a user to another user
      * user would start receiving user notifications/updates
      * @authlevel authenticated
      */
-    follow: async (req, res) => {
-
-        let userId = req.params.userId;
-        let followerId = req.authuser._id;
+    followUser: async (req, res) => {
         
-        try{
+        //send notification of request
+        //add to requestModel 
+        const requestee = req.authuser._id;
+        const acceptee = req.params.userId;
 
-            let follower = req.authuser._id;
-
-            //let isFollowing = await userService.isFollowingUser(userId, followerId );
-
-
-            //also check if there is a pending request
-            //also check if there is a denied request 
-            //also check if follower has been blocked.
-
-            if( ! isFollowing){
-                userService.updateUserSet(userId, {"followers": follower }); 
-            }
+        try {
+            await followrequestService.createRequest(requestee, acceptee );
 
             return res.status(200).json({
 
                 success: true,
-                message: "Operation successful",
-                data: user
+                message: "Request has been sent succesfully",
+            });
+         
+        } catch ( err ) {
+            
+            return res.status(400).json({
+                success: false,
+                message: "There was an error performing this operation",
+                data: err.toString()
             });
         }
-        catch(e){
+    },
+
+
+    acceptFollowRequest: async (req, res) => {
+
+        let requestee = req.params.userId;
+        let acceptee = req.authuser._id.toString();
+
+        try{
+        
+            let resp = await followrequestService.findRequest( requestee, acceptee ); 
+
+            if( resp ){
+
+                let accept = await userService.approveFollowRequest( acceptee, requestee );
+                return res.status(200).json({
+
+                    success: true,
+                    message: "Operation successful.",
+                    data: accept
+                });
+            }
+
+            return res.status(400).json({
+
+                success: true,
+                message: "Something went wrong while trying to process this request."
+            }); 
+        }
+        catch( err ){
 
             return res.status(400).json({
                 success: false,
                 message: "There was an error performing this operation",
-                data: e.toString()
+                data: err.toString()
             });
         }
-        
+
     },
 
 
@@ -216,21 +242,20 @@ module.exports = {
      * 
      * @authlevel authenticated
      */
-    unfollow: async (req, res) => {
+    unfollowUser: async (req, res ) => {
 
-        let userId = req.params.userId;
+        let followingId = req.params.userId;
+        let userId = req.authuser._id;
 
         try{
-            
-            let follower = req.authuser._id;
-
-            await userService.unfollowUser(userId, follower._id); 
+        
+            let resp = await userService.unfollowUser( userId, followingId ); 
 
             return res.status(200).json({
 
                 success: true,
-                message: "User has been unsubscribed from user sucessfully.",
-                data: user
+                message: "Operation successful.",
+                data: resp
             });
         }
         catch( err ){
@@ -243,6 +268,7 @@ module.exports = {
         }
         
     },
+
 
     events: async (req, res) => {
 
@@ -269,6 +295,7 @@ module.exports = {
         
     },
 
+
     wishlists: async (req, res) => {
 
         let userId = req.params.userId || req.authuser._id;
@@ -292,6 +319,7 @@ module.exports = {
             });
         }
     },
+
 
     crowdfunds: async (req, res) => {
 
@@ -317,6 +345,7 @@ module.exports = {
         }
     },
 
+
     tickets: async (req, res) => {
 
         let userId = req.params.userId || req.authuser._id;
@@ -341,6 +370,7 @@ module.exports = {
             });
         }
     },
+
 
     sendTelephoneVerifcationCode: async (req, res) => {
 
@@ -387,6 +417,7 @@ module.exports = {
         }
     },
 
+
     verifyTelephoneVerifcationCode: async (req, res) => {
 
         const userId = req.params.userId;
@@ -432,6 +463,31 @@ module.exports = {
             });
         }
 
+    },
+
+
+    getUserByToken: async ( req, res ) => {
+
+        const token = req.token;
+
+        try {
+            
+            let data = await userService.getUserFromToken( token );
+
+            return res.status(200).json({
+
+                success: true,
+                message: "OPeration successful",
+                data
+            });
+             
+        } catch ( err ) {
+
+            return res.status(400).json({
+                success: false,
+                message: err.toString()
+            }); 
+        }
     }
 
     

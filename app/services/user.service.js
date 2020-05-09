@@ -1,5 +1,7 @@
 const User = require('@models/user.model');
 const moment = require("moment");
+const jwt = require("jsonwebtoken");
+
 
 //services
 const eventService = require('@services/event.service');
@@ -138,6 +140,7 @@ module.exports = {
 
         
     },
+    
 
     verifySmsCode: async ( userId, code ) => {
 
@@ -153,19 +156,86 @@ module.exports = {
         return resp;
     },
 
-    block: async( userId ) => {
 
+    /**
+     * Block a follower
+     * 
+     * @param userId the blockee
+     * @param 
+     */
+    block: async( userId, blockedUserId ) => {
+
+        let blocked = { userId: blockedUserId };
+        return await User.findByIdAndUpdate( userId , { '$addToSet': { blocked } }, { runValidators: true , new: true} );
     },
 
-    unblock: async( userId ) => {
 
+    /**
+     * unblock a user
+     * 
+     * @param userId
+     * @param blockedUserId - the user to be unblocked
+     */
+    unblock: async( userId, blockedUserId) => {
+
+        return await User.findByIdAndUpdate( userId, { $pull: { 'blocked':  { "userId": blockedUserId }  } }, 
+        { new: true } );
     },
 
-    approveFollowRequest: async( userId ) => {
+    /**
+     * Approves a request to follow a user.
+     * 
+     * @param userId - the acceptee
+     * @param followerId the requetee
+     */
+    approveFollowRequest: async( userId, followerId ) => {
 
+        let follower = {
+
+            "userId": followerId
+        }
+
+        let setData = { "followers": follower };
+        return await User.findByIdAndUpdate( userId , { '$addToSet': setData }, { runValidators: true , new: true} );
+    },
+
+
+
+    /**
+     * unfollow a user
+     * 
+     * how connections is currenlty implemented is explained below 
+     * if userA requests to follow userB - and user B accepts
+     * userA is added to the followers array of userB
+     * 
+     * so to unfollow userB, we have to go to userA's follower array to remove userB's _id
+     * 
+     */
+    unfollowUser: async( userId, followingId ) => {
+
+        return await User.findByIdAndUpdate( followingId, { $pull: { 'followers':  { userId }  } }, 
+        { new: true} );
+    },
+
+
+
+    /**
+     * Retreive the user info using the req auth token.
+     * 
+     * @param token
+     */
+    getUserFromToken: async ( token ) => {
+
+        return jwt.verify( token, process.env.JWT_SECRET_KEY, ( err, data ) => {
+
+            if( err ) throw new Error(err);
+
+            return data;
+        });
     },
 
     denyFollowRequest: async( userId ) => {
 
+        //not sure what should happen here yet.
     }
 }
