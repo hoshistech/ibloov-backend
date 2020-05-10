@@ -1,3 +1,5 @@
+const moment = require("moment");
+
 //services
 const userService = require('@services/user.service');
 const eventService = require('@services/event.service');
@@ -6,6 +8,8 @@ const crowdfundingService = require('@services/crowdfunding.service');
 const ticketService = require('@services/ticket.service');
 const smsService = require('@services/sms.service');
 const followrequestService = require('@services/followrequest.service');
+const authService = require("@services/auth.service");
+
 
 const uuidv4 = require('uuid/v4');
 
@@ -421,7 +425,7 @@ module.exports = {
     verifyTelephoneVerifcationCode: async (req, res) => {
 
         const userId = req.params.userId;
-        const code = req.params.code;
+        const code = req.params.code; 
 
         try {
 
@@ -447,9 +451,13 @@ module.exports = {
 
             await userService.updateUser(userId, { "isPhoneNumberVerified": true });
 
+            let user = await userService.viewUser( userId );
+            const token = await authService.signToken(user);
+
             return res.status(200).json({
                 success: true,
-                message: "Verification code validated sucessfully"
+                message: "Verification code validated sucessfully",
+                data: token
             });
     
             

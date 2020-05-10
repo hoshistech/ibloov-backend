@@ -33,6 +33,21 @@ var blockedUser = new Schema({
 
 }, { _id: false })
 
+var setting = new Schema({
+
+    currency: {
+        type: String
+    },
+
+    timeZone: {
+        type: String
+    },
+
+    country: {
+        type: String
+    }
+
+}, { _id: false })
 
 
 var UserSchema = new Schema({
@@ -159,6 +174,10 @@ var UserSchema = new Schema({
         type: String,
         enum: ["ACTIVE", "BLOCKED"],
         default: "ACTIVE"
+    },
+
+    settings: {
+        type: setting
     }
     
 }, { timestamps: true,  versionKey: false } );

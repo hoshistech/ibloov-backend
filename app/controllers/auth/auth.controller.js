@@ -6,7 +6,7 @@ module.exports = {
 
         try {
 
-            const token = await authService.signToken( req.user );
+            const token = await authService.signToken( req.user ); 
 
             return res.status(200).json({
 
