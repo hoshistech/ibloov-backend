@@ -98,8 +98,10 @@ var UserSchema = new Schema({
         type: String,
         required: function(){
             this.authMethod == "local"
+        },
+        unique: function(){
+            this.phoneNumber ? true : false
         }
-        //unique: true
     },
 
     isPhoneNumberVerified: {

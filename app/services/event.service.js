@@ -426,27 +426,39 @@ module.exports = {
      * @param lat float
      * @param radius float
      */
-    byLocation: ( long, lat, radius ) => {
+    byLocation: async ( long, lat, radius ) => {
 
-        Event.aggregate(
-            [
-                { "$geoNear": {
-                    "near": {
-                        "type": "Point",
-                        "coordinates": [ `<${long}>`,`<${lat}>`]
-                    },
-                    "distanceField": "distance",
-                    "spherical": true,
-                    "maxDistance": radius
-                }}
-            ],
-            function(err,results) {
+        // Event.aggregate(
+        //     [
+        //         { "$geoNear": {
+        //             "near": {
+        //                 "type": "Point",
+        //                 "coordinates": [ `<${long}>`,`<${lat}>`]
+        //             },
+        //             "distanceField": "distance",
+        //             "spherical": true,
+        //             "maxDistance": radius
+        //         }}
+        //     ],
+        //     function(err,results) {
 
-                if(err) throw (err);
+        //         if(err) throw (err);
 
-                return results;
+        //         return results;
+        //     }
+        // )
+
+        let events = await Event.find({
+            location: {
+              $near: {
+                $maxDistance: 3000,
+                $geometry: {
+                  type: "Point",
+                  coordinates: [lat, lang]
+                }
+              }
             }
-        )
+          });
 
     },
 

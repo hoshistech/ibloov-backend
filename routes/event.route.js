@@ -11,7 +11,7 @@ const { deleteEvent } = require("@middleware/onlyOwner.middleware");
 
 const middleWareGroup = [ checkAuth, validate("createEvent"), isValidRequest];
 
-router.get('/', [checkAuth], EventController.index) ;
+router.get('/', EventController.index ) ;
 
 router.post('/create', middleWareGroup, EventController.create );
 

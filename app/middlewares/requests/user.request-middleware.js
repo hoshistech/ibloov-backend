@@ -34,17 +34,20 @@ exports.validate = (method) => {
         }),
 
 
-        body('phoneNumber')
-        .exists().withMessage("Required body property 'phoneNumber' not found.")
-        .custom( (value) => {
+        body('phoneNumber'),
+        //.exists().withMessage("Required body property 'phoneNumber' not found."),
 
-          return userService.getUser({ phoneNumber: value}).then( user => {
+        //make sure to uncomment the above line later.
+        
+        // .custom( (value) => {
+
+        //   return userService.getUser({ phoneNumber: value}).then( user => {
     
-            if ( user ) {
-              return Promise.reject('This phoneNumber already exists!');
-            }
-          });
-        }),
+        //     if ( user ) {
+        //       return Promise.reject('This phoneNumber already exists!');
+        //     }
+        //   });
+        // }),
 
         body('password')
         .exists().withMessage("Required body property 'password' not found.")

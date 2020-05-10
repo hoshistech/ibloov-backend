@@ -23,35 +23,48 @@ module.exports = {
     
         try{
             let events = await eventService.all(filter, options);
+            let authUser = req.authuser ? req.authuser._id : null;
 
             //let pg = await eventService.paginatedQuery(filter);
             //console.log(  pagination( pg,  options.limit) ); 
 
             //revisit this
-            const setFollowingStatus = async () => {
 
-                return Promise.all(  events.map( async event => {
-                    let isFollowing = await eventService.isFollowingEvent( event._id, req.authuser._id );
-                    event["isFollowing"] = isFollowing;
-                    return event;
-                }))
+            if( authUser ){
+
+                const setFollowingStatus = async () => {
+
+                    return Promise.all(  events.map( async event => {
+                        let isFollowing = await eventService.isFollowingEvent( event._id, authUser);
+                        event["isFollowing"] = isFollowing;
+                        return event;
+                    }))
+                }
+
+                let result =  await setFollowingStatus();
+
+                let likedEvents = await userService.getLikedEvents( authUser );
+
+                likedEvents = likedEvents.reduce( ( acc, event) => {
+                    acc.push(event._id);
+                    return acc;
+                }, [] )
+
+                resp["events"] = result;
+                resp["likedEvents"] = likedEvents;
+
+                res.status(200).send({
+                    success: true,
+                    message: "events retreived succesfully",
+                    data: resp
+                });
             }
 
-            let result =  await setFollowingStatus();
-            let likedEvents = await userService.getLikedEvents( req.authuser._id );
 
-            likedEvents = likedEvents.reduce( ( acc, event) => {
-                acc.push(event._id);
-                return acc;
-            }, [] )
-
-            resp["events"] = result;
-            resp["likedEvents"] = likedEvents;
-
-            res.status(200).send({
+            return res.status(200).send({
                 success: true,
                 message: "events retreived succesfully",
-                data: resp
+                data: events
             });
         }
         catch(e){
