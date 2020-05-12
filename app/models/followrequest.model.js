@@ -30,7 +30,7 @@ var FollowRequestSchema = new Schema({
 
 }, { timestamps: true,  versionKey: false } )
 
-FollowRequestSchema.index( { "requesteeId": 1, "acepteeId": 1 }, { unique: true } );
+FollowRequestSchema.index( { "requesteeId": 1, "accepteeId": 1 }, { unique: true } );
 
 let FollowRequest = mongoose.model('followrequests', FollowRequestSchema );
 

@@ -82,6 +82,7 @@ module.exports = {
             message: `has requested to be your friend.`,
             requestId,
             recepient: requestInfo.accepteeId._id
+
         });
 
         await notif.save();
