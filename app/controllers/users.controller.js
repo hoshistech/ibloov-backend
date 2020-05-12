@@ -476,16 +476,16 @@ module.exports = {
 
     getUserByToken: async ( req, res ) => {
 
-        const token = req.token;
+        const userId = req.authuser._id;
 
         try {
             
-            let data = await userService.getUserFromToken( token );
+            let data = await userService.viewUser( userId );
 
             return res.status(200).json({
 
                 success: true,
-                message: "OPeration successful",
+                message: "Operation successful",
                 data
             });
              
