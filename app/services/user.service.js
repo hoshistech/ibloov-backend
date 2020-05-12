@@ -31,6 +31,8 @@ module.exports = {
         .sort(sort)
         .limit(limit)
         .skip(skip)
+        .populate('followers.userId', '_id avatar bio local.firstName local.lastName email');
+
 
         return users;
     },
@@ -50,7 +52,8 @@ module.exports = {
      */
     viewUser: async (userId) => {
 
-        let user = await User.findById(userId);
+        let user = await User.findById(userId)
+        .populate('followers.userId', '_id avatar bio local.firstName local.lastName email');
         return user;
     },
 
