@@ -40,7 +40,7 @@ module.exports = {
     viewGroup: async ( groupId ) => {
 
         return await Group.findById(groupId)
-        .populate('userId', '_id avatar email local.firstName local.lastName');
+        .populate('userId', '_id avatar authMethod email local.firstName local.lastName fullName');
         //.populate('contacts.contactId', '_id name');
     },
 

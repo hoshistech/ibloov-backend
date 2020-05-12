@@ -25,11 +25,11 @@ module.exports = {
         .sort(sort)
         .limit(limit)
         .skip(skip)
-        .populate('userId', '_id avatar local.firstName local.lastName')
-        .populate('followers.userId', '_id avatar local.firstName local.lastName email')
-        .populate('likes.userId', '_id avatar local.firstName local.lastName email')
-        .populate('invitees.userId', '_id avatar local.firstName local.lastName email')
-        .populate('coordinators.userId', '_id avatar local.firstName local.lastName email')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName')
+        .populate('followers.userId', '_id avatar authMethod local.firstName local.lastName email fullName')
+        .populate('likes.userId', '_id avatar authMethod local.firstName local.lastName email fullName')
+        .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName email fullName')
+        .populate('coordinators.userId', '_id avatar authMethod local.firstName local.lastName email fullName')
         .populate('wishlistId', '_id name')
         .populate('crowdfundingId', '_id name')
         .lean()
@@ -65,11 +65,11 @@ module.exports = {
     viewEvent: async (eventId) => {
 
         return await Event.findById(eventId)
-        .populate('userId', '_id avatar local.firstName local.lastName')
-        .populate('followers.userId', '_id avatar local.firstName local.lastName email')
-        .populate('likes.userId', '_id avatar local.firstName local.lastName email')
-        .populate('invitees.userId', '_id avatar local.firstName local.lastName email')
-        .populate('coordinators.userId', '_id avatar local.firstName local.lastName email')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName')
+        .populate('followers.userId', '_id avatar authMethod local.firstName local.lastName email fullName')
+        .populate('likes.userId', '_id avatar authMethod local.firstName local.lastName email fullName')
+        .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName email fullName')
+        .populate('coordinators.userId', '_id avatar authMethod local.firstName local.lastName email fullName')
         .populate('wishlistId', '_id name')
         .populate('crowdfundingId', '_id name')
         .lean(); //find a way to avoid using .lean() here
@@ -335,8 +335,8 @@ module.exports = {
         if( isInvited ){
 
             return await Event.findOneAndUpdate( { _id: eventId, "invitees.userId": userId }, { $set : { 'invitees.$.accepted' : status }}, { new:true, runValidators: true } )
-            .populate('userId', '_id avatar local.firstName local.lastName')
-            .populate('invitees.userId', '_id avatar local.firstName local.lastName email');
+            .populate('userId', '_id avatar authMethod local.firstName local.lastName')
+            .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName email fullName');
 
         }
         else{
@@ -360,8 +360,8 @@ module.exports = {
                 }, 
                 { runValidators: true, new: true }
             )
-            .populate('userId', '_id avatar local.firstName local.lastName')
-            .populate('invitees.userId', '_id avatar local.firstName local.lastName email')
+            .populate('userId', '_id avatar authMethod local.firstName local.lastName')
+            .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName email fullName')
 
         }
     },

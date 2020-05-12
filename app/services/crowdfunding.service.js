@@ -22,7 +22,7 @@ module.exports = {
         .sort(sort)
         .limit(limit)
         .skip(skip)
-        .populate('userId', '_id avatar local.firstName local.lastName')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName')
         return crowdFunding;
     },
 
@@ -45,7 +45,7 @@ module.exports = {
     viewCrowdFunding: async (crowdFundingId) => {
 
         return await CrowdFunding.findById(crowdFundingId)
-        .populate('userId', '_id avatar local.firstName local.lastName');
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName');
     },
 
 

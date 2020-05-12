@@ -8,8 +8,8 @@ module.exports = {
     viewRequestById: async( requestId ) => {
 
         return await FollowRequest.findById( requestId )
-        .populate("requesteeId", "_id authMethod local.firstName local.lastName")
-        .populate("accepteeId", "_id authMethod local.firstName local.lastName");
+        .populate("requesteeId", "_id authMethod local.firstName local.lastName fullName")
+        .populate("accepteeId", "_id authMethod local.firstName local.lastName fullName");
     },
 
 

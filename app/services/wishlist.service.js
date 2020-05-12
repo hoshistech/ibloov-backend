@@ -22,7 +22,7 @@ module.exports = {
         .sort(sort)
         .limit(limit)
         .skip(skip)
-        .populate('userId', '_id avatar local.firstName local.lastName')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName')
         
         return wishlists;
     },
@@ -47,7 +47,7 @@ module.exports = {
     viewWishlist: async (wishlistId) => {
 
         return await Wishlist.findById(wishlistId)
-        .populate('userId', '_id avatar local.firstName local.lastName');
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName');
         
     },
 

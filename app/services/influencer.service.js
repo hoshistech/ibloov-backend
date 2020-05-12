@@ -23,9 +23,9 @@ module.exports = {
         .sort(sort)
         .limit(limit)
         .skip(skip)
-        .populate('userId', '_id avatar email local.firstName local.lastName')
+        .populate('userId', '_id avatar authMethod email local.firstName local.lastName fullName')
         .populate('events.eventId', '_id name startDate')
-        .populate('followers.userId', '_id avatar email local.firstName local.lastName')
+        .populate('followers.userId', '_id avatar authMethod email local.firstName local.lastName fullName')
         .populate('wishlists.wishlistId', '_id name')
 
         return influencers;
@@ -53,7 +53,7 @@ module.exports = {
     viewInfluencer: async ( influencerId ) => {
 
         let influencer = await Influencer.findById(influencerId)
-        .populate('userId', '_id avatar email bio local.firstName local.lastName');
+        .populate('userId', '_id avatar authMethod email bio local.firstName local.lastName fullName');
         return influencer;
     },
 
