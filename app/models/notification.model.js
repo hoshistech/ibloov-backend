@@ -32,6 +32,7 @@ var NotificationSchema = new Schema({
     requestId: {
 
         type: mongoose.Schema.Types.ObjectId,
+        ref: "followrequests",
         required: function(){
             return this.type == 'request';
         }

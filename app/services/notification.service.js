@@ -27,7 +27,7 @@ module.exports = {
         const { limit, skip, sortBy, orderBy } = options;
         sort[ sortBy ] = orderBy;
 
-        let notifications = await Notification.find({
+        return await Notification.find({
 
             $or: [
                 { recepient: userId },
@@ -38,8 +38,6 @@ module.exports = {
         .sort(sort)
         .limit(limit)
         .skip(skip);
-
-        return notifications;
     },
 
 
@@ -75,10 +73,13 @@ module.exports = {
 
         const notif = new Notification({
 
-            sender: "internal",
+            sender: {
+                fullName: requestInfo.requesteeId.fullName,
+                _id: requestInfo.requesteeId._id
+            },
             type: requestType,
             requestcategory: followRequest,
-            message: `${ requestInfo.requesteeId.fullName } has requested to be your friend.`,
+            message: `has requested to be your friend.`,
             requestId,
             recepient: requestInfo.accepteeId._id
         });
