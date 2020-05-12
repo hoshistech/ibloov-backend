@@ -14,6 +14,18 @@ var FollowRequestSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "users"
+    },
+
+    accepted: {
+        type: Boolean,
+        default: null,
+        enum: [true, false, null]
+    },
+
+    type: {
+        type: String,
+        enum: ['follow-request', 'extra-invite-request'],
+        required: true
     }
 
 }, { timestamps: true,  versionKey: false } )

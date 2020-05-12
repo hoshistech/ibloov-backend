@@ -31,7 +31,7 @@ module.exports = {
         .sort(sort)
         .limit(limit)
         .skip(skip)
-        .populate('followers.userId', '_id avatar bio local.firstName local.lastName email');
+        .populate('followers.userId', '_id authMethod avatar bio local.firstName local.lastName email fullName');
 
 
         return users;
@@ -53,7 +53,7 @@ module.exports = {
     viewUser: async (userId) => {
 
         let user = await User.findById(userId)
-        .populate('followers.userId', '_id avatar bio local.firstName local.lastName email');
+        .populate('followers.userId', '_id authMethod avatar bio local.firstName local.lastName email fullName');
         return user;
     },
 
@@ -235,6 +235,18 @@ module.exports = {
 
             return data;
         });
+    },
+
+
+    /**
+     * Get the users a user is following
+     * @param userId String
+     * 
+     */
+    getUserFollowing: async ( userId ) => {
+
+        return await User.find( { "followers.userId": userId } )
+        .select("_id local.firstName local.lastName email avatar");
     },
 
     denyFollowRequest: async( userId ) => {

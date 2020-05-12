@@ -29,6 +29,10 @@ router.get('/tickets/:userId?', [ checkAuth, validate("userTickets"), isValidReq
 
 router.get('/details',  [ checkAuth ], UserController.getUserByToken );
 
+router.get('/following/:userId?',  [ checkAuth ], UserController.getFollowing ); 
+
+router.get('/notifications',  [ checkAuth ], UserController.getNotifications ); 
+
 router.get('/:userId', [ checkAuth, validate("viewUser"), isValidRequest ], UserController.view );
 
 router.delete('/:userId',  [ checkAuth, validate("deleteUser"), isValidRequest ], UserController.softdelete );

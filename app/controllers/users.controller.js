@@ -1,4 +1,5 @@
 const moment = require("moment");
+const uuidv4 = require('uuid/v4');
 
 //services
 const userService = require('@services/user.service');
@@ -9,10 +10,9 @@ const ticketService = require('@services/ticket.service');
 const smsService = require('@services/sms.service');
 const followrequestService = require('@services/followrequest.service');
 const authService = require("@services/auth.service");
+const notificationService = require("@services/notification.service");
 
-
-const uuidv4 = require('uuid/v4');
-
+//helpers
 const { getOptions, getMatch } = require('@helpers/request.helper');
 
 
@@ -183,7 +183,8 @@ module.exports = {
         const acceptee = req.params.userId;
 
         try {
-            await followrequestService.createRequest(requestee, acceptee );
+            const request = await followrequestService.createFollowRequest(requestee, acceptee );
+            notificationService.userFollowRequestRequestNotif( request._id );
 
             return res.status(200).json({
 
@@ -209,7 +210,7 @@ module.exports = {
 
         try{
         
-            let resp = await followrequestService.findRequest( requestee, acceptee ); 
+            let resp = await followrequestService.viewFollowRequest( requestee, acceptee ); 
 
             if( resp ){
 
@@ -481,6 +482,58 @@ module.exports = {
         try {
             
             let data = await userService.viewUser( userId );
+
+            return res.status(200).json({
+
+                success: true,
+                message: "Operation successful",
+                data
+            });
+             
+        } catch ( err ) {
+
+            return res.status(400).json({
+                success: false,
+                message: err.toString()
+            }); 
+        }
+    },
+
+
+    getNotifications: async( req, res ) => {
+
+        const userId = req.authuser._id;
+
+        try {
+            // let filter = getMatch(req);
+            // let options = getOptions(req);
+            // filter["deletedAt"] = null; 
+            
+            const notifications = await notificationService.getUserNotifications( userId );
+            return res.status(200).json({
+
+                success: true,
+                message: "Operation successful",
+                data: notifications
+            });
+
+        } catch ( err ) {
+
+            return res.status(400).json({
+                success: false,
+                message: err.toString()
+            }); 
+            
+        }
+    },
+
+    getFollowing: async ( req, res ) => {
+
+        const userId = req.params.userId || req.authuser._id;
+
+        try {
+            
+            let data = await userService.getUserFollowing( userId );
 
             return res.status(200).json({
 
