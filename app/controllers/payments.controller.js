@@ -4,7 +4,13 @@ module.exports = {
 
     checkout: async (req, res) => {
 
-        let { nonceFromTheClient, amount } = req.body;
+        let { nonceFromTheClient, amount, currency } = req.body;
+
+
+        console.log("nonceFromTheClient, amount, currency");
+        console.log(nonceFromTheClient);
+        console.log(amount);
+        console.log(currency);
 
         try {
             

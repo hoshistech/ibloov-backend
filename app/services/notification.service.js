@@ -75,7 +75,8 @@ module.exports = {
 
             sender: {
                 fullName: requestInfo.requesteeId.fullName,
-                _id: requestInfo.requesteeId._id
+                _id: requestInfo.requesteeId._id,
+                avatar: requestInfo.requesteeId.avatar
             },
             type: requestType,
             requestcategory: followRequest,
