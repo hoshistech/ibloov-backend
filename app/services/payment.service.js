@@ -11,7 +11,7 @@ module.exports = {
     checkout: async (amount, nonceFromTheClient) => {
 
         try{
-            return gateway.checkout(amount);
+            return gateway.checkout(amount, nonceFromTheClient);
 
         } catch(e) {
             throw e;

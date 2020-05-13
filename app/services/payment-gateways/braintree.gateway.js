@@ -15,6 +15,9 @@ module.exports = {
 
     checkout: async (amount, nonceFromTheClient) => {
 
+      console.log("braintree.gateway")
+      console.log(amount, nonceFromTheClient)
+
       try {
 
         return await gateway.transaction.sale({
