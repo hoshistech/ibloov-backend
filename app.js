@@ -38,6 +38,7 @@ const CategoryRouter = require("@routes/category.route");
 const StorageRouter  = require("@routes/storage.route");
 const LocationRouter  = require("@routes/location.route");
 const GroupRouter  = require("@routes/group.route");
+const RequestRouter  = require("@routes/request.route");
 
 //seeders
 const eventSeederRouter = require('@routes/seeders/event.route');
@@ -116,6 +117,9 @@ app.use('/v1/category', CategoryRouter);
 app.use('/v1/do/', StorageRouter);
 app.use('/v1/location/', LocationRouter);
 app.use('/v1/group/', GroupRouter);
+app.use('/v1/request/', RequestRouter);
+
+
 
 //seeders
 app.use('/seeders/event', eventSeederRouter);

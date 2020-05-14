@@ -23,6 +23,8 @@ module.exports = {
         .limit(limit)
         .skip(skip)
         .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName')
+        .populate('donors.userId', '_id avatar authMethod local.firstName local.lastName fullName');
+
         return crowdFunding;
     },
 
@@ -45,7 +47,8 @@ module.exports = {
     viewCrowdFunding: async (crowdFundingId) => {
 
         return await CrowdFunding.findById(crowdFundingId)
-        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName');
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName')
+        .populate('donors.userId', '_id avatar authMethod local.firstName local.lastName fullName');
     },
 
 
@@ -82,10 +85,6 @@ module.exports = {
      */
     pledge: async (crowdFundingId, amount, userId) => {
 
-        const crowdFunding = await CrowdFunding.findOne( { _id: crowdFundingId, "donors.userId": userId });
-
-        if( ! crowdFunding ){
-
             const donor = { 
             
                 pledge: amount,
@@ -95,14 +94,7 @@ module.exports = {
             return await CrowdFunding.findByIdAndUpdate( crowdFundingId , 
                 { '$addToSet': { 'donors': donor } }, 
                 { runValidators: true, new: true }  );
-        } 
-        else {
-
-            return await CrowdFunding
-            .findOneAndUpdate( { _id: crowdFundingId, "donors.userId": userId } , 
-            { $set : { 'donors.$.pledge' : amount } }, 
-            { runValidators: true, new: true } );
-        }
+        
     },
 
     /**

@@ -33,13 +33,15 @@ router.get('/following/:userId?',  [ checkAuth ], UserController.getFollowing );
 
 router.get('/notifications',  [ checkAuth ], UserController.getNotifications ); 
 
+router.get('/followrequests',  [ checkAuth ], UserController.followRequests ); 
+
 router.get('/:userId', [ checkAuth, validate("viewUser"), isValidRequest ], UserController.view );
 
 router.delete('/:userId',  [ checkAuth, validate("deleteUser"), isValidRequest ], UserController.softdelete );
 
 router.patch('/unfollow/:userId', [ checkAuth, validate("unfollowUser"), isValidRequest ], UserController.unfollowUser );
 
-router.patch('/followrequest/accept/:userId', [ checkAuth, validate("acceptFollowRequest"), isValidRequest ], UserController.acceptFollowRequest );
+//router.patch('/followrequest/accept/:userId', [ checkAuth, validate("acceptFollowRequest"), isValidRequest ], UserController.acceptFollowRequest );
 
 router.patch('/:userId', [ checkAuth, validate("updateUser"), isValidRequest ], UserController.update );
 

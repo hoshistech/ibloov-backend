@@ -14,7 +14,7 @@ const { setDefaultOptions  } = require('@helpers/request.helper');
 
 
 //services
-const requestService = require("@services/followrequest.service");
+const requestService = require("@services/request.service");
 
 module.exports = {
 
@@ -34,7 +34,11 @@ module.exports = {
                 { "recepient": { $elemMatch: { userId } }  }
             ]
         })
+        
         .select("-recepient") //dont send the recepient along with the result
+        .populate("requestId", "_id accepted")
+        .populate("sender", "_id avatar authMethod local.firstName local.lastName fullName")
+        .populate("eventId", "_id name")
         .sort(sort)
         .limit(limit)
         .skip(skip);
@@ -73,11 +77,7 @@ module.exports = {
 
         const notif = new Notification({
 
-            sender: {
-                fullName: requestInfo.requesteeId.fullName,
-                _id: requestInfo.requesteeId._id,
-                avatar: requestInfo.requesteeId.avatar
-            },
+            sender: requestInfo.requesteeId._id,
             type: requestType,
             requestcategory: followRequest,
             message: `has requested to be your friend.`,

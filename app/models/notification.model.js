@@ -38,6 +38,14 @@ var NotificationSchema = new Schema({
         }
     },
 
+    eventId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: function(){
+            return this.requestcategory == "extra-invite-request"
+        },
+        ref: "events"
+    },
+
     recepient: {
         type: mongoose.Mixed,
         requried: true

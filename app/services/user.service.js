@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 
 //services
 const eventService = require('@services/event.service');
+const requestService = require("@services/request.service");
 
 //helpers
 const { randomInt } = require("@helpers/number.helper");
@@ -191,15 +192,17 @@ module.exports = {
      * @param userId - the acceptee
      * @param followerId the requetee
      */
-    approveFollowRequest: async( userId, followerId ) => {
+    approveFollowRequest: async( requestId ) => {
+
+        const request = await requestService.viewRequestById( requestId );
 
         let follower = {
-
-            "userId": followerId
+ 
+            "userId": request.requesteeId._id
         }
 
         let setData = { "followers": follower };
-        return await User.findByIdAndUpdate( userId , { '$addToSet': setData }, { runValidators: true , new: true} );
+        return await User.findByIdAndUpdate( request.accepteeId._id , { '$addToSet': setData }, { runValidators: true , new: true} );
     },
 
 
@@ -247,10 +250,5 @@ module.exports = {
 
         return await User.find( { "followers.userId": userId } )
         .select("_id local.firstName local.lastName email avatar");
-    },
-
-    denyFollowRequest: async( userId ) => {
-
-        //not sure what should happen here yet.
     }
 }

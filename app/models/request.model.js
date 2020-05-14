@@ -22,6 +22,14 @@ var FollowRequestSchema = new Schema({
         enum: [true, false, null]
     },
 
+    eventId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: function(){
+            return this.type == "extra-invite-request"
+        },
+        ref: "events"
+    },
+
     type: {
         type: String,
         enum: ['follow-request', 'extra-invite-request'],
@@ -30,8 +38,8 @@ var FollowRequestSchema = new Schema({
 
 }, { timestamps: true,  versionKey: false } )
 
-FollowRequestSchema.index( { "requesteeId": 1, "accepteeId": 1 }, { unique: true } );
+FollowRequestSchema.index( { "requesteeId": 1, "accepteeId": 1, "type": 1 }, { unique: true } );
 
-let FollowRequest = mongoose.model('followrequests', FollowRequestSchema );
+let FollowRequest = mongoose.model('requests', FollowRequestSchema );
 
 module.exports = FollowRequest;

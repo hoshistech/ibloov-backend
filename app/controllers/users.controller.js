@@ -8,9 +8,10 @@ const wishlistService = require('@services/wishlist.service');
 const crowdfundingService = require('@services/crowdfunding.service');
 const ticketService = require('@services/ticket.service');
 const smsService = require('@services/sms.service');
-const followrequestService = require('@services/followrequest.service');
+const followrequestService = require('@services/request.service');
 const authService = require("@services/auth.service");
 const notificationService = require("@services/notification.service");
+const requestService = require("@services/request.service");
 
 //helpers
 const { getOptions, getMatch } = require('@helpers/request.helper');
@@ -203,42 +204,42 @@ module.exports = {
     },
 
 
-    acceptFollowRequest: async (req, res) => {
+    // acceptFollowRequest: async (req, res) => {
 
-        let requestee = req.params.userId;
-        let acceptee = req.authuser._id.toString();
+    //     let requestee = req.params.userId;
+    //     let acceptee = req.authuser._id.toString();
 
-        try{
+    //     try{
         
-            let resp = await followrequestService.viewFollowRequest( requestee, acceptee ); 
+    //         let resp = await followrequestService.viewFollowRequest( requestee, acceptee ); 
 
-            if( resp ){
+    //         if( resp ){
 
-                let accept = await userService.approveFollowRequest( acceptee, requestee );
-                return res.status(200).json({
+    //             let accept = await userService.approveFollowRequest( acceptee, requestee );
+    //             return res.status(200).json({
 
-                    success: true,
-                    message: "Operation successful.",
-                    data: accept
-                });
-            }
+    //                 success: true,
+    //                 message: "Operation successful.",
+    //                 data: accept
+    //             });
+    //         }
 
-            return res.status(400).json({
+    //         return res.status(400).json({
 
-                success: true,
-                message: "Something went wrong while trying to process this request."
-            }); 
-        }
-        catch( err ){
+    //             success: true,
+    //             message: "Something went wrong while trying to process this request."
+    //         }); 
+    //     }
+    //     catch( err ){
 
-            return res.status(400).json({
-                success: false,
-                message: "There was an error performing this operation",
-                data: err.toString()
-            });
-        }
+    //         return res.status(400).json({
+    //             success: false,
+    //             message: "There was an error performing this operation",
+    //             data: err.toString()
+    //         });
+    //     }
 
-    },
+    // },
 
 
     /**
@@ -549,7 +550,31 @@ module.exports = {
                 message: err.toString()
             }); 
         }
-    }
+    },
+
+
+    followRequests: async (req, res) => {
+
+        const userId = req.authuser._id;
+
+        try {
+            const requests = await requestService.getUserRequestByType(userId, 'follow-request');
+
+            res.status(200).send({
+                success: true,
+                message: "Operation successful",
+                data: requests
+            });
+
+        } catch ( err ) {
+
+            res.status(400).send({
+                success: false,
+                message: "error performing this operation",
+                data: err.toString()
+            });
+        }
+    },
 
     
 }
