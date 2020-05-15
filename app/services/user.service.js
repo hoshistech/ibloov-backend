@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 
 //services
 const eventService = require('@services/event.service');
-const requestService = require("@services/request.service");
+const { viewRequestById } = require('@services/request.service');
 
 //helpers
 const { randomInt } = require("@helpers/number.helper");
@@ -72,7 +72,7 @@ module.exports = {
      */
     updateUser: async ( userId, updateData ) => {
 
-        return  await User.findByIdAndUpdate( userId, updateData, {new: true});
+        return  await User.findByIdAndUpdate( userId, updateData, {new: true}); 
     },
 
 
@@ -187,27 +187,6 @@ module.exports = {
     },
 
     /**
-     * Approves a request to follow a user.
-     * 
-     * @param userId - the acceptee
-     * @param followerId the requetee
-     */
-    approveFollowRequest: async( requestId ) => {
-
-        const request = await requestService.viewRequestById( requestId );
-
-        let follower = {
- 
-            "userId": request.requesteeId._id
-        }
-
-        let setData = { "followers": follower };
-        return await User.findByIdAndUpdate( request.accepteeId._id , { '$addToSet': setData }, { runValidators: true , new: true} );
-    },
-
-
-
-    /**
      * unfollow a user
      * 
      * how connections is currenlty implemented is explained below 
@@ -249,6 +228,20 @@ module.exports = {
     getUserFollowing: async ( userId ) => {
 
         return await User.find( { "followers.userId": userId } )
-        .select("_id local.firstName local.lastName email avatar");
+        .select("_id authMethod local.firstName local.lastName email avatar fullName");
+    },
+
+
+    approveFollowRequest: async( requestId ) => {
+
+        const request = await viewRequestById( requestId );
+
+        let follower = {
+ 
+            "userId": request.requesteeId._id
+        }
+
+        let setData = { "followers": follower };
+        return await User.findByIdAndUpdate( request.accepteeId._id , { '$addToSet': setData }, { runValidators: true , new: true} );
     }
 }

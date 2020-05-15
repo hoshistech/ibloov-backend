@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
-var FollowRequestSchema = new Schema({
+var RequestSchema = new Schema({
 
     requesteeId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -38,8 +38,8 @@ var FollowRequestSchema = new Schema({
 
 }, { timestamps: true,  versionKey: false } )
 
-FollowRequestSchema.index( { "requesteeId": 1, "accepteeId": 1, "type": 1 }, { unique: true } );
+RequestSchema.index( { "requesteeId": 1, "accepteeId": 1, "type": 1 }, { unique: true } );
 
-let FollowRequest = mongoose.model('requests', FollowRequestSchema );
+let Request = mongoose.model('requests', RequestSchema );
 
-module.exports = FollowRequest;
+module.exports = Request;

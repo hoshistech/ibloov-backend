@@ -8,7 +8,6 @@ const wishlistService = require('@services/wishlist.service');
 const crowdfundingService = require('@services/crowdfunding.service');
 const ticketService = require('@services/ticket.service');
 const smsService = require('@services/sms.service');
-const followrequestService = require('@services/request.service');
 const authService = require("@services/auth.service");
 const notificationService = require("@services/notification.service");
 const requestService = require("@services/request.service");
@@ -184,7 +183,7 @@ module.exports = {
         const acceptee = req.params.userId;
 
         try {
-            const request = await followrequestService.createFollowRequest(requestee, acceptee );
+            const request = await requestService.createFollowRequest(requestee, acceptee );
             notificationService.userFollowRequestRequestNotif( request._id );
 
             return res.status(200).json({
@@ -202,44 +201,6 @@ module.exports = {
             });
         }
     },
-
-
-    // acceptFollowRequest: async (req, res) => {
-
-    //     let requestee = req.params.userId;
-    //     let acceptee = req.authuser._id.toString();
-
-    //     try{
-        
-    //         let resp = await followrequestService.viewFollowRequest( requestee, acceptee ); 
-
-    //         if( resp ){
-
-    //             let accept = await userService.approveFollowRequest( acceptee, requestee );
-    //             return res.status(200).json({
-
-    //                 success: true,
-    //                 message: "Operation successful.",
-    //                 data: accept
-    //             });
-    //         }
-
-    //         return res.status(400).json({
-
-    //             success: true,
-    //             message: "Something went wrong while trying to process this request."
-    //         }); 
-    //     }
-    //     catch( err ){
-
-    //         return res.status(400).json({
-    //             success: false,
-    //             message: "There was an error performing this operation",
-    //             data: err.toString()
-    //         });
-    //     }
-
-    // },
 
 
     /**
@@ -514,7 +475,7 @@ module.exports = {
             return res.status(200).json({
 
                 success: true,
-                message: "Operation successful",
+                message: "Operation successful", 
                 data: notifications
             });
 

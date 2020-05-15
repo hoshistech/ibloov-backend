@@ -3,12 +3,13 @@ const Request = require('@models/request.model');
 const followRequestType = "follow-request";
 const extraInviteRequestType = "extra-invite-request";
 
-const { approveFollowRequest } = require("@services/user.service");
+const { approveFollowRequestCallback } = require("@services/requestcallback.service");
 
 const requestTypeCallbacks = {
 
-    "follow-request" : approveFollowRequest
+    "follow-request" : approveFollowRequestCallback
 }
+
 
 module.exports = {
 
@@ -117,7 +118,7 @@ module.exports = {
         let requestType = request.type;
 
         const callback = requestTypeCallbacks[ requestType ] || module.exports.doNothingHandler;
-        return await module.exports.processAcceptRequest( requestId, approveFollowRequest)
+        return await module.exports.processAcceptRequest( requestId, callback)
     },
 
 
@@ -154,6 +155,8 @@ module.exports = {
 
         //do nothing
         console.log("I did nothing!")
+        //notify admin of possible handler
+        //consider throwing an error here for now
     },
 
 
@@ -166,7 +169,8 @@ module.exports = {
     getUserRequestByType: async ( accepteeId, type ) => {
 
         return await Request.find( { accepteeId, type, accepted: null} );
-    }   
+    },
+  
 }
 
 

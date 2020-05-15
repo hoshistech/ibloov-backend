@@ -335,7 +335,7 @@ module.exports = {
         if( isInvited ){
 
             return await Event.findOneAndUpdate( { _id: eventId, "invitees.userId": userId }, { $set : { 'invitees.$.accepted' : status }}, { new:true, runValidators: true } )
-            .populate('userId', '_id avatar authMethod local.firstName local.lastName')
+            .populate('userId', '_id avatar authMethod local.firstName local.lastName email fullName')
             .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName email fullName');
 
         }
@@ -360,7 +360,7 @@ module.exports = {
                 }, 
                 { runValidators: true, new: true }
             )
-            .populate('userId', '_id avatar authMethod local.firstName local.lastName')
+            .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName')
             .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName email fullName')
 
         }
@@ -496,7 +496,8 @@ module.exports = {
      * when a user creates an event | accepts to attend an event - the event gets added to their google calendar
      * @param eventId
      */
-    googleCalendarIntegration: async( eventId ) => {
+    googleCalendarIntegration: ( eventId ) => {
 
+        console.log("google integration!");
     }
 }
