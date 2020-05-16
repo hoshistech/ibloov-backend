@@ -36,17 +36,18 @@ module.exports = {
     createCrowdFunding: async (crowdFundingData) => {
 
         let crowdFunding = new CrowdFunding(crowdFundingData);
-        return await crowdFunding.save(); 
+        return await crowdFunding.save()
+        //.populate("userId", "_id avatar authMethod local.firstName local.lastName fullName");
     },
  
 
     /**
      * returns a single instance of a crowdFund
-     * @param crowdFundingId String
+     * @param crowdfundingId String
      */
-    viewCrowdFunding: async (crowdFundingId) => {
+    viewCrowdFunding: async (crowdfundingId) => {
 
-        return await CrowdFunding.findById(crowdFundingId)
+        return await CrowdFunding.findById(crowdfundingId)
         .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName')
         .populate('donors.userId', '_id avatar authMethod local.firstName local.lastName fullName');
     },
@@ -54,36 +55,36 @@ module.exports = {
 
     /**
      * update a single crowdFunding instance
-     * @param crowdFundingId integer
+     * @param crowdfundingId integer
      * @param updateData object
      * 
      */
-    updateCrowdFunding: async (crowdFundingId, updateData) => {
+    updateCrowdFunding: async (crowdfundingId, updateData) => {
 
-        return await CrowdFunding.findByIdAndUpdate( crowdFundingId, updateData, {new: true});
+        return await CrowdFunding.findByIdAndUpdate( crowdfundingId, updateData, {new: true});
     },
 
 
     /**
      * performs a softDelete operation on a single instance of a  model
-     * @param crowdFundingId integer
+     * @param crowdfundingId integer
      *
      */
-    softDeleteCrowdFunding: async (crowdFundingId, userId) => {
+    softDeleteCrowdFunding: async (crowdfundingId, userId) => {
 
         const updateData = { deletedAt: Date.now(), deletedBy: userId };
-        return await module.exports.updateCrowdFunding(crowdFundingId, updateData); 
+        return await module.exports.updateCrowdFunding(crowdfundingId, updateData); 
     },
 
 
     /**
      * allows a user to pledge a certain amount to a crowdfuning campaign
      * if user has pleadged before, it updates the pledge, else, it adds the pledge to the set.
-     * @param crowdFundingId integer - id of the crowdFunding model to be updated.
+     * @param crowdfundingId integer - id of the crowdFunding model to be updated.
      * @param amount Number - amount to be pledged.
      * 
      */
-    pledge: async (crowdFundingId, amount, userId) => {
+    pledge: async (crowdfundingId, amount, userId) => {
 
             const donor = { 
             
@@ -91,7 +92,7 @@ module.exports = {
                 userId
             }
 
-            return await CrowdFunding.findByIdAndUpdate( crowdFundingId , 
+            return await CrowdFunding.findByIdAndUpdate( crowdfundingId , 
                 { '$addToSet': { 'donors': donor } }, 
                 { runValidators: true, new: true }  );
         
@@ -99,12 +100,12 @@ module.exports = {
 
     /**
      * allows a user to renege on a pledge.
-     * @param crowdFundingId integer - the unique id of the crowdfuding model
+     * @param crowdfundingId integer - the unique id of the crowdfuding model
      * @param userId integer - the unique ID of the user
      */
-    unPledge: async(crowdFundingId, userId) => {
+    unPledge: async(crowdfundingId, userId) => {
         
-        let update = await CrowdFunding.findByIdAndUpdate( crowdFundingId, { $pull: { 'donors':  { "userId": userId }  } }, 
+        let update = await CrowdFunding.findByIdAndUpdate( crowdfundingId, { $pull: { 'donors':  { "userId": userId }  } }, 
         { new: true} );
         return update
     },
@@ -113,30 +114,72 @@ module.exports = {
     /**
      * allows a user to update their pledge for a crowdfunding campaign
      * @usercase - user mistakenly pledges $1000 insead of $100 - this methos allows the user to update the pledge.
-     * @param crowdFundingId integer
+     * @param crowdfundingId integer
      * @param userId integer
      * @param newPledge number - The updated pledge by the donor
      */
-    updatePledge: async(crowdFundingId, userId, newPledge) => {
+    updatePledge: async(crowdfundingId, userId, newPledge) => {
 
         return await CrowdFunding
-        .findOneAndUpdate( { _id: crowdFundingId, "donors.userId": userId }, 
+        .findOneAndUpdate( { _id: crowdfundingId, "donors.userId": userId }, 
         { $set : { 'donors.$.pledge' : newPledge }}, 
         { runValidators: true } );
     },
 
+
     /**
-     * removes all documents in this colletion
-     * This service cannot be exposed to a controller 
-     * and should only be used during tests and on the test Db
-     * 
+     * add new invitees to an crowdfund
+     * @param crowdfundingId String
+     * @param invitees array
      */
-    removeAll: async () => {
+    addInvitees: async( crowdfundingId, invites = [] ) => {
 
-        let env = process.env.NODE_ENV;
+        return await CrowdFunding.findOneAndUpdate(
+            { "_id" : crowdfundingId },
+            { 
+                "$addToSet": { 
+                    invitees : { 
+                        "$each": invites
+                    } 
+                } 
+            }, 
+            { runValidators: true, new: true }
+        );
+    },
 
-        if( env === 'test'){
-            return await CrowdFunding.deleteMany({}) 
-        }
+
+    /**
+     * Remove an invitee from an crowdfund.
+     * @param crowdfundingId string
+     * @param userId string - this could later be the user's email, yet to decide
+     */
+    removeInvitees: async( crowdfundingId, email ) => {
+
+        let update = await CrowdFunding.findByIdAndUpdate( crowdfundingId, { $pull: { 'invitees':  { "email": email }  } }, 
+        { new: true} );
+        return update;
+    },
+
+    /**
+     * check if a user is following an crowdfund
+     * 
+     * @param crowdfundingId string
+     * @param userId string
+     * 
+     * @return boolean
+     */
+    isInvited: async (crowdfundingId, userId) => {
+
+        let crowdfund = await CrowdFunding.findOne({ _id: crowdfundingId, 'invitees.userId': userId });
+        return crowdfund ? true : false;
+    },
+
+
+    generateInviteLink: async() => {
+
+        const baseUrl = process.env.FRONTEND_BASE_URL;
+        randomString = (+new Date).toString(36).slice();
+        let link = `${baseUrl}/wishist/${randomString}`;
+        return link
     },
 }

@@ -21,6 +21,50 @@ var donor = new Schema({
     }
 })
 
+
+var crowdfundInvite = new Schema({
+
+    name: {
+        type: String
+    },
+
+    email: {
+        type: String,
+        required: function(){
+            
+            return (! this.telephone && ! this.userId);
+        }
+    },
+
+    telephone: {
+        type: String,
+        required: function(){
+            
+            return (! this.email && ! this.userId);
+        }
+    },
+
+    userId: { //optional. for people on the platform
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: function(){
+            return (! this.email && ! this.telephone);
+        }
+    }, 
+
+    accepted: {
+        type: String,
+        enum: ["YES", "NO", null],
+        default: null
+    },
+
+    createdAt: {
+        type: Date,
+        default: Date.now()
+    }
+
+}, { _id : false } )
+
 var crowdfundImage = new Schema({
 
     url: {
@@ -74,6 +118,15 @@ var CrowdFundingSchema = new Schema({
         }
     },
 
+    inviteLink: {
+
+        type: String,
+        required: false,
+        unique: function(){
+            this.inviteLink ? true : false
+        }
+    },
+
     endDate: {
         type: Date,
         required: true
@@ -81,6 +134,12 @@ var CrowdFundingSchema = new Schema({
 
     donors: {
         type: [ donor ],
+        default: []
+    },
+
+    invitees: {
+        type: [ crowdfundInvite ],
+        required: false,
         default: []
     },
 
@@ -94,10 +153,6 @@ var CrowdFundingSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
         required: true
-        // required: function(){
-
-        //     return this.eventId !== null 
-        // }
     },
 
     updatedBy: {

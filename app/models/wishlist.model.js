@@ -30,7 +30,8 @@ var pledge = new Schema({
 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        //ref: "users"
+        ref: "users",
+        required: true
     },
 
     quantity: {
@@ -82,6 +83,10 @@ var item = new Schema({
     price: {
         type: Number,
         required: true
+    },
+
+    price_raw: {
+        type: String,
     },
 
     currency: {

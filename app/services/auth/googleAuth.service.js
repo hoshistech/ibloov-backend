@@ -21,9 +21,9 @@ module.exports = function(passport){
                     authMethod: "google",
                     email: profile.email,
                     google: {
-                    id: profile.id,
-                    firstName: profile.name.givenName,
-                    lastName: profile.name.familyName, 
+                        id: profile.id,
+                        firstName: profile.name.givenName,
+                        lastName: profile.name.familyName, 
                     }
                 }
                 let createdUser = await userService.createUser( newUser );

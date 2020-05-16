@@ -47,9 +47,10 @@ module.exports = {
     viewWishlist: async (wishlistId) => {
 
         return await Wishlist.findById(wishlistId)
+        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName fullName google')
         .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName');
         
-    },
+    }, 
 
 
     /**
@@ -70,9 +71,9 @@ module.exports = {
      * @param wishlistId integer
      *
      */
-    softDeleteWishlist: async (wishlistId) => {
+    softDeleteWishlist: async (wishlistId, deletedBy) => {
 
-        const updateData = { deletedAt: Date.now(), deletedBy: '5e8cb0191ec1f8160def48c1' };
+        const updateData = { deletedAt: Date.now(), deletedBy };
         return await module.exports.updateWishlist(wishlistId, updateData); 
     },
 
@@ -110,26 +111,11 @@ module.exports = {
         return update;
     },
 
-    /**
-     * removes all documents in this colletion
-     * This service cannot be exposed to a controller 
-     * and should only be used during tests and on the test Db
-     * 
-     */
-    removeAll: async () => {
-
-        let env = process.env.NODE_ENV;
-
-        if( env === 'test'){
-            return await Wishlist.deleteMany({}) 
-        }
-    },
-
 
     /**
      * allows a user to pledge to a certain amount on a wishlist
      * if user has pleadged before, it updates the pledge, else, it adds the pledge to the set.
-     * @param crowdFundingId integer - id of the crowdFunding model to be updated.
+     * @param crowdfundingId integer - id of the crowdFunding model to be updated.
      * @param donation Object - info about the donation and the donor
      * 
      */
@@ -144,7 +130,7 @@ module.exports = {
 
     /**
      * allows a user to renege on a pledge to an item in a wishist.
-     * @param crowdFundingId integer - the unique id of the crowdfuding model
+     * @param crowdfundingId integer - the unique id of the crowdfuding model
      * @param userId integer - the unique ID of the user
      */
     unPledge: async(wishlistId, itemId, userId) => {

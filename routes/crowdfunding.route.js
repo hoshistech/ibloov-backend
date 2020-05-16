@@ -11,14 +11,20 @@ router.get('/', [ checkAuth ], CrowdFundingController.index) ;
 
 router.post('/create', [ checkAuth, validate("createCrowdfund"), isValidRequest ], CrowdFundingController.create );
 
-router.patch('/:crowdFundingId', [ checkAuth, validate("updateCrowdfund"), isValidRequest ], CrowdFundingController.update );
+router.patch('/:crowdfundingId', [ checkAuth, validate("updateCrowdfund"), isValidRequest ], CrowdFundingController.update );
 
-router.get('/:crowdFundingId', [ checkAuth, validate("viewCrowdfund"), isValidRequest ], CrowdFundingController.view );
+router.get('/invitelink', CrowdFundingController.inviteLink );
 
-router.delete('/:crowdFundingId', [ checkAuth, validate("deleteCrowdfund"), isValidRequest ], CrowdFundingController.softdelete );
+router.get('/:crowdfundingId', [ checkAuth, validate("viewCrowdfund"), isValidRequest ], CrowdFundingController.view );
 
-router.patch('/pledge/:crowdFundingId', [ checkAuth, validate("crowdfundPledge"), isValidRequest ], CrowdFundingController.pledge );
+router.delete('/:crowdfundingId', [ checkAuth, validate("deleteCrowdfund"), isValidRequest ], CrowdFundingController.softdelete );
 
-router.patch('/unpledge/:crowdFundingId', [ checkAuth, validate("crowdfundUnpledge"), isValidRequest ], CrowdFundingController.unpledge );
+router.patch('/pledge/:crowdfundingId', [ checkAuth, validate("crowdfundPledge"), isValidRequest ], CrowdFundingController.pledge );
+
+router.patch('/unpledge/:crowdfundingId', [ checkAuth, validate("crowdfundUnpledge"), isValidRequest ], CrowdFundingController.unpledge );
+
+router.patch('/invite/add/:crowdfundingId', [ checkAuth, validate("addInvite"), isValidRequest ], CrowdFundingController.addInvites ); 
+
+router.patch('/invite/remove/:crowdfundingId', [ checkAuth, validate("removeInvite"), isValidRequest ], CrowdFundingController.removeInvites );
 
 module.exports = router; 

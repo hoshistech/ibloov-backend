@@ -364,7 +364,7 @@ module.exports = {
                 data: err.toString()
             });
         }
-    },
+    }, 
 
     /**
      * @RESTCONTROLLER
@@ -475,7 +475,6 @@ module.exports = {
                 data: err.toString() 
             });
         }
-
     },
 
     /**

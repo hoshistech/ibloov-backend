@@ -72,7 +72,7 @@ exports.validate = (method) => {
 
             return [
 
-                param('crowdFundingId').custom(value => {
+                param('crowdfundingId').custom(value => {
                     return itExists(value);
                 })
             ]
@@ -82,7 +82,7 @@ exports.validate = (method) => {
 
             return [
 
-                param('crowdFundingId').custom(value => {
+                param('crowdfundingId').custom(value => {
                     return itExists(value);
                 })
             ]
@@ -92,7 +92,7 @@ exports.validate = (method) => {
 
             return [
 
-                param('crowdFundingId').custom(value => {
+                param('crowdfundingId').custom(value => {
                     return itExists(value);
                 }),
             ]
@@ -105,7 +105,7 @@ exports.validate = (method) => {
                 body("pledge")
                 .exists("Required body paramter 'pledge' not found."),
 
-                param('crowdFundingId').custom(value => {
+                param('crowdfundingId').custom(value => {
                     return itExists(value);
                 }),
             ]
@@ -115,44 +115,41 @@ exports.validate = (method) => {
 
             return [
 
-                param('crowdFundingId').custom(value => {
+                param('crowdfundingId').custom(value => {
                     return itExists(value);
                 }),
             ]
         }
 
-        // case 'muteCrowdfundNotification': {
+        case 'addInvite': {
 
-        //     return [
+            return [
 
-        //         param('crowdFundingId').custom(value => {
-        //             return itExists(value);
-        //         }),
-        //     ]
-        // }
+                body('invites')
+                .exists().withMessage("Required property, 'invites' not provided"),
 
-        // case 'unfollowCrowdfund': {
+                param('crowdfundingId')
+                .exists().withMessage("Required 'crowdfundingId' not found!")
+                .custom( value => {
+                    return itExists(value);
+                })
+            ]
+        }
 
-        //     return [
+        case 'removeInvite': {
 
-        //         param('crowdFundingId').custom(value => {
-        //             return itExists(value);
-        //         }),
-        //     ]
-        // }
+            return [
+                
+                body('email')
+                .exists().withMessage("Required property, 'email' not provided"),
 
-        // case 'addInvite': {
-
-        //     return [
-
-        //         param('crowdFundingId')
-        //         .exists().withMessage("expected invite not found"),
-
-        //         param('crowdFundingId').custom(value => {
-        //             return itExists(value);
-        //         }),
-        //     ]
-        // }
+                param('crowdfundingId')
+                .exists().withMessage("Required 'crowdfundingId' not found!")
+                .custom( value => {
+                    return itExists(value);
+                }),
+            ]
+        }
     }
 }
 

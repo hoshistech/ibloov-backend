@@ -189,9 +189,10 @@ UserSchema.methods.isValidPassword = async function( password ){
 
     try {
 
-        return await bcrypt.compare( password, this.local.password );
-        
+        const storedpassword = this.local.password || "";
 
+        return await bcrypt.compare( password, storedpassword );
+        
     } catch ( err ) {
         
         throw new Error(err);

@@ -1,4 +1,4 @@
-const service = require('@services/wishlist.service');
+const wishlistService = require('@services/wishlist.service');
 const uuidv4 = require('uuid/v4');
 const { getOptions, getMatch } = require('@helpers/request.helper');
 
@@ -12,7 +12,7 @@ module.exports = {
         filter["deletedAt"] = null;
 
         try{
-            let wishlists = await service.all( filter, options );
+            let wishlists = await wishlistService.all( filter, options );
             res.status(200).send({
 
                 success: true,
@@ -41,7 +41,7 @@ module.exports = {
         wishlist.uuid = uuidv4();
 
         try{
-            let result = await service.createWishlist(wishlist);
+            let result = await wishlistService.createWishlist(wishlist);
             res.status(201).send({
                 success: true,
                 message: "Wishlist created successfully.",
@@ -66,24 +66,8 @@ module.exports = {
 
         let wishlistId = req.params.wishlistId;
 
-        if( ! wishlistId ){
-
-            return res.status(400).json({
-                success: false,
-                message: "invalid wishlist id provided.",
-            });
-        }
-
         try {
-            let wishlist = await service.viewWishlist(wishlistId);
-
-            if( ! wishlist){
-
-                return res.status(404).json({
-                    success: true,
-                    message: "Wishlist not found!."
-                });
-            }
+            let wishlist = await wishlistService.viewWishlist(wishlistId);
 
             return res.status(200).json({
                 success: true,
@@ -112,7 +96,7 @@ module.exports = {
 
         try {
             
-            let resp = await service.updateWishlist(wishlistId, wishlistData);
+            let resp = await wishlistService.updateWishlist(wishlistId, wishlistData);
             //addHistory( wishlistId, "WISHLIST_UPDATE");
 
             return res.status(200).json({
@@ -138,41 +122,24 @@ module.exports = {
      */
     softdelete: async (req, res) => { 
 
-        let wishlistId = req.params.wishlistId;
-        let wishlistData = req.body;
-
-        if( ! wishlistId){
-            return res.status(400).json({
-                success: false,
-                message: "required wishlist id missing."
-            });
-        }
-
-        
+        const wishlistId = req.params.wishlistId;
+        const userId = req.authuser._id
 
         try {
-
-            let wishlist = await service.viewWishlist(wishlistId);
-            if( ! wishlist ){
-                return res.status(404).json({
-                    success: false,
-                    message: "invalid wishlist."
-                });
-            }
             
-        let resp = await service.softDeleteWishlist(wishlistId, wishlistData);
+            let resp = await wishlistService.softDeleteWishlist(wishlistId, userId);
             return res.status(200).json({
                 success: true,
                 message: "Wishlist information has been deleted successfully.",
                 data: resp
             });
 
-        } catch (e) {
+        } catch ( err ) {
             
             return res.status(400).json({
                 success: false,
                 message: "Error occured while trying to update this wishlist.",
-                data: e.toString()
+                data: err.toString()
             });
         }
     },
@@ -197,7 +164,7 @@ module.exports = {
         }
         
         try {
-            let response = await service.addInvitees(wishlistId, invites);
+            let response = await wishlistService.addInvitees(wishlistId, invites);
 
             return res.status(200).json({
                 success: true,
@@ -227,7 +194,7 @@ module.exports = {
         let invite = req.body.email;
         
         try {
-            let result = await service.removeInvitee(wishlistId, invite);
+            let result = await wishlistService.removeInvitee(wishlistId, invite);
 
             return res.status(200).json({
                 success: true,
@@ -257,7 +224,7 @@ module.exports = {
         let item = req.body.item;
         
         try {
-            let response = await service.addItem(wishlistId, item);
+            let response = await wishlistService.addItem(wishlistId, item);
 
             return res.status(200).json({
                 success: true,
@@ -288,7 +255,7 @@ module.exports = {
         let itemId = req.body.itemId;
         
         try {
-            let result = await service.removeItem(wishlistId, itemId);
+            let result = await wishlistService.removeItem(wishlistId, itemId);
 
             return res.status(200).json({
                 success: true,
@@ -324,7 +291,7 @@ module.exports = {
 
         try {
             
-            let resp = await service.pledge(wishlistId, itemId, pledgeInfo );
+            let resp = await wishlistService.pledge(wishlistId, itemId, pledgeInfo );
             //addHistory( wishlistId, "WISHLIST_ITEM_PLEDGE");
 
             return res.status(200).json({
@@ -358,7 +325,7 @@ module.exports = {
 
         
         try {
-            let result = await service.unPledge(wishlistId, itemId, userId);
+            let result = await wishlistService.unPledge(wishlistId, itemId, userId);
 
             return res.status(200).json({
                 success: true,

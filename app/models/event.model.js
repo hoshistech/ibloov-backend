@@ -218,11 +218,6 @@ var EventSchema = new Schema({
         required: true
     },
 
-    // endDate: {
-    //     type: Date,
-    //     required: true
-    // },
-
     isPrivate: {
         type: Boolean,
         default: false,
