@@ -18,7 +18,12 @@ module.exports = {
 
     getMatch: ( req ) => {
 
-        const match = (({ sortBy, orderBy, skip, limit, ...o }) => o)(req.query) 
+        let match = (({ sortBy, orderBy, skip, limit, ...o }) => o)(req.query) 
+
+        if( match["category"]){
+            match["category"] = match.category.toLowerCase();
+        }
+
         return match;
     },
 

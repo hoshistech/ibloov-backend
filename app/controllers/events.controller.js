@@ -53,7 +53,7 @@ module.exports = {
                 resp["events"] = result;
                 resp["likedEvents"] = likedEvents;
 
-                res.status(200).send({
+                return res.status(200).send({
                     success: true,
                     message: "events retreived succesfully",
                     data: resp
