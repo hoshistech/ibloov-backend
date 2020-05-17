@@ -3,6 +3,9 @@ const QRCode = require('qrcode');
 const moment = require("moment");
 const { setDefaultOptions  } = require('@helpers/request.helper');
 
+const { viewRequestById } = require('@services/request.service');
+
+
 
 module.exports = {
 
@@ -476,19 +479,18 @@ module.exports = {
     },
 
 
-    /**
-     * removes all documents in this colletion
-     * This service cannot be exposed to a controller 
-     * and should only be used during tests and on the test Db
-     * 
-     */
-    removeAll: async () => {
+    approveEventInviteRequest: async ( requestId ) => {
 
-        let env = process.env.NODE_ENV;
+        const request = await viewRequestById( requestId );
+        return await module.exports.confirmEventAttendance( request.eventId, request.accepteeId._id, "YES");
 
-        if( env === 'test'){
-            return await Event.deleteMany({}) 
-        }
+    },
+
+    denyEventInviteRequest: async ( requestId ) => {
+
+        const request = await viewRequestById( requestId );
+        return await module.exports.confirmEventAttendance( request.eventId, request.accepteeId._id, "NO");
+
     },
 
     /**

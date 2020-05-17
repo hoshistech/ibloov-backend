@@ -7,6 +7,7 @@ const infoType = 'info';
 
 const followRequest = "follow-request";
 const extraInviteRequest = 'extra-invite-request';
+const eventInviteRequest = 'event-invite-request';
 
 
 //helpers
@@ -39,7 +40,7 @@ module.exports = {
         .populate("requestId", "_id accepted")
         .populate("sender", "_id avatar authMethod local.firstName local.lastName fullName")
         .populate("eventId", "_id name")
-        .sort(sort)
+        .sort(sort) 
         .limit(limit)
         .skip(skip);
     },
@@ -87,6 +88,57 @@ module.exports = {
         });
 
         await notif.save();
+    },
+
+
+    eventInviteRequestNotif: async ( requestId ) => {
+
+        const requestInfo = await requestService.viewRequestById(requestId);
+
+        const notif = new Notification({
+
+            sender: requestInfo.requesteeId._id,
+            type: requestType,
+            requestcategory: eventInviteRequest,
+            message: `has invited you to his event.`,
+            requestId,
+            recepient: requestInfo.accepteeId._id,
+            eventId: requestInfo.eventId
+
+        });
+
+        await notif.save();
+    },
+
+
+    /**
+     * create bulk notifications to all invitees when an event is created.
+     */
+    eventInviteBulkRequestNotif: async ( event ) => {
+
+        const requests = await requestService.createEventInviteRequestBulk(event);
+        let notifs = [];
+
+        requests.map( request => {
+
+            notif = {
+
+                sender: request.requesteeId,
+                type: requestType,
+                requestcategory: eventInviteRequest,
+                message: `has invited you to an event.`,
+                requestId: request._id,
+                recepient: request.accepteeId,
+                eventId: request.eventId
+            }
+
+            notifs.push(notif);
+        })
+
+        if( notifs.length > 0 ){
+            await Notification.insertMany(notifs);
+        }
     }
 
 }
+

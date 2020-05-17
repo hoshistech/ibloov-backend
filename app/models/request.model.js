@@ -25,14 +25,14 @@ var RequestSchema = new Schema({
     eventId: {
         type: mongoose.Schema.Types.ObjectId,
         required: function(){
-            return this.type == "extra-invite-request"
+            return this.type == "extra-invite-request" || this.type == "event-invite-request" 
         },
         ref: "events"
     },
 
     type: {
         type: String,
-        enum: ['follow-request', 'extra-invite-request'],
+        enum: ['follow-request', 'extra-invite-request', 'event-invite-request'],
         required: true
     }
 

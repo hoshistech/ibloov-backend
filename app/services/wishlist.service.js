@@ -22,7 +22,8 @@ module.exports = {
         .sort(sort)
         .limit(limit)
         .skip(skip)
-        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName google')
+        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName fullName google')
         
         return wishlists;
     },
@@ -61,7 +62,10 @@ module.exports = {
      */
     updateWishlist: async (wishlistId, updateData) => {
 
-        return await Wishlist.findByIdAndUpdate( wishlistId, updateData, { runValidators: true, new: true});
+        return await Wishlist.findByIdAndUpdate( wishlistId, updateData, { runValidators: true, new: true})
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName google')
+        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName fullName google')
+
        
     },
 
@@ -95,7 +99,10 @@ module.exports = {
                 } 
             }, 
             { runValidators: true, new: true }
-        );
+        )
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName google')
+        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName fullName google')
+
     },
 
     /**
@@ -107,7 +114,10 @@ module.exports = {
     removeInvitee: async( wishlistId, email ) => {
 
         let update = await Wishlist.findByIdAndUpdate( wishlistId, { $pull: { 'invitees':  { "email": email }  } }, 
-        { runValidators: true,  new: true} );
+        { runValidators: true,  new: true} )
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName google')
+        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName fullName google')
+
         return update;
     },
 

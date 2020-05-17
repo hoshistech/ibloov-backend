@@ -26,7 +26,7 @@ var NotificationSchema = new Schema({
         required: function(){
             return this.type == 'request';
         },
-        enum: ['follow-request', 'extra-invite-request']
+        enum: ['follow-request', 'extra-invite-request', 'event-invite-request']
     },
 
     requestId: {
@@ -41,7 +41,7 @@ var NotificationSchema = new Schema({
     eventId: {
         type: mongoose.Schema.Types.ObjectId,
         required: function(){
-            return this.requestcategory == "extra-invite-request"
+            return this.requestcategory == "extra-invite-request" || this.requestcategory == "event-invite-request"
         },
         ref: "events"
     },
@@ -52,7 +52,7 @@ var NotificationSchema = new Schema({
     }
 
 
-}, { timestamps: true,  versionKey: false} );
+}, { timestamps: true,  versionKey: false } );
 
 
 

@@ -2,12 +2,21 @@ const Request = require('@models/request.model');
 
 const followRequestType = "follow-request";
 const extraInviteRequestType = "extra-invite-request";
+const eventInviteRequestType = "event-invite-request";
 
-const { approveFollowRequestCallback } = require("@services/requestcallback.service");
+const { approveFollowRequestCallback, 
+        approveEventInviteRequestCallback, 
+        denyEventInviteRequestCallback } = require("@services/requestcallback.service");
 
-const requestTypeCallbacks = {
+const requestTypeApproveCallbacks = {
 
-    "follow-request" : approveFollowRequestCallback
+    "follow-request" : approveFollowRequestCallback,
+    "event-invite-request": approveEventInviteRequestCallback
+}
+
+const requestTypeDenyCallbacks = {
+
+    "event-invite-request": denyEventInviteRequestCallback
 }
 
 
@@ -66,6 +75,9 @@ module.exports = {
     },
 
 
+    /********************* USER FOLLOW REQUEST *****************************/
+
+
     /**
      * Create a new user-follow request.
      * 
@@ -90,6 +102,9 @@ module.exports = {
     },
 
 
+     /********************* EXTRA INVITE REQUEST *****************************/
+
+
     /**
      * Request to bring along somone not on the original invite list.
      * 
@@ -108,6 +123,68 @@ module.exports = {
     },
 
 
+    /********************* EVENT INVITE *****************************/
+
+    createEventInviteRequest: async ( requesteeId, accepteeId, eventId ) => {
+
+        const followRequest = {
+
+            requesteeId,
+            accepteeId,
+            type: eventInviteRequestType,
+            eventId
+        };
+
+        let request = new Request( followRequest );
+        return await request.save();
+    },
+
+
+    /**
+     * create bulk requests for the invitees when an event is created.
+     * @param {*} event 
+     */
+    createEventInviteRequestBulk: async function( event ){
+
+        let requests = [];
+
+        const requesteeId = event.userId;
+        const acceptees = event.invitees;
+        const eventId = event._id;
+
+        acceptees.map( acceptee => {
+
+            if( acceptee.userId ){
+
+                let followRequest = {
+
+                    requesteeId,
+                    accepteeId: acceptee.userId,
+                    type: eventInviteRequestType,
+                    eventId
+                }
+
+                requests.push( followRequest);
+            }
+
+        })
+
+
+        if( requests.length > 0 ){
+            const docs = await Request.insertMany(requests);
+            return docs
+        }
+
+        return [];
+    },
+
+
+    viewEventInviteRequest: async ( requesteeId, accepteeId ) => {
+
+        return await module.exports.viewRequest(requesteeId, accepteeId, eventInviteRequestType );
+    },
+
+
     /**
      * accept a request
      * @param requestId
@@ -117,7 +194,7 @@ module.exports = {
         const request = await module.exports.viewRequestById(  requestId );
         let requestType = request.type;
 
-        const callback = requestTypeCallbacks[ requestType ] || module.exports.doNothingHandler;
+        const callback = requestTypeApproveCallbacks[ requestType ] || module.exports.doNothingHandler;
         return await module.exports.processAcceptRequest( requestId, callback)
     },
 
@@ -128,8 +205,11 @@ module.exports = {
      */
     denyRequest: async( requestId ) => {
 
-        const result = await Request.findByIdAndUpdate( requestId, { accepted: false }, { runValidators: true , new: true });
-        return result;
+        const request = await module.exports.viewRequestById(  requestId );
+        let requestType = request.type;
+
+        const callback = requestTypeDenyCallbacks[ requestType ] || module.exports.doNothingHandler;
+        return await module.exports.processDenyRequest( requestId, callback)
     },
 
 
@@ -143,6 +223,13 @@ module.exports = {
 
         await callback( requestId );
         const result = await Request.findByIdAndUpdate( requestId, { accepted: true }, { runValidators: true , new: true });
+        return result;
+    },
+
+    processDenyRequest: async( requestId, callback ) => {
+
+        await callback( requestId );
+        const result = await Request.findByIdAndUpdate( requestId, { accepted: false }, { runValidators: true , new: true });
         return result;
     },
 
@@ -168,7 +255,10 @@ module.exports = {
      */
     getUserRequestByType: async ( accepteeId, type ) => {
 
-        return await Request.find( { accepteeId, type, accepted: null} );
+        return await Request.find( { accepteeId, type, accepted: null} )
+        .populate("requesteeId", "_id avatar authMethod local.firstName local.lastName fullName google")
+        .populate("accepteeId", "_id avatar authMethod local.firstName local.lastName fullName google")
+
     },
   
 }

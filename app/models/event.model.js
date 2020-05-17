@@ -94,7 +94,7 @@ var invite = new Schema({
         type: String,
         required: function(){
             
-            return (! this.telephone && ! this.userId);
+            return (! this.telephone && ! this.userId );
         }
     },
 
@@ -116,7 +116,7 @@ var invite = new Schema({
 
     accepted: {
         type: String,
-        enum: ["YES", "NO", "MAYBE", null],
+        enum: ["YES", "NO", null],
         default: null
     },
 

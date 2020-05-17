@@ -1,5 +1,6 @@
 const eventService = require('@services/event.service');
 const userService = require('@services/user.service');
+const { eventInviteBulkRequestNotif } = require('@services/notification.service');
 
 const uuidv4 = require('uuid/v4');
 
@@ -96,6 +97,8 @@ module.exports = {
             }
             
             let result = await eventService.createEvent(event);
+            eventInviteBulkRequestNotif( result );
+
             //sendAccountConfirmationNotification();
             res.status(201).send({
                 success: true,
