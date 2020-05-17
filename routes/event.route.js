@@ -6,12 +6,14 @@ const EventController = require('@controllers/events.controller');
 const { validate } = require("@request-middleware/event.request-middleware");
 const { isValidRequest } = require("@middleware/isRequestValid.middleware");
 const { checkAuth } = require("@middleware/auth.middleware");
+const { checkAuthOptional } = require("@middleware/auth.optional.middleware");
+
 
 const { deleteEvent } = require("@middleware/onlyOwner.middleware");
 
 const middleWareGroup = [ checkAuth, validate("createEvent"), isValidRequest];
 
-router.get('/', EventController.index ) ;
+router.get('/', [ checkAuthOptional ], EventController.index ) ;
 
 router.post('/create', middleWareGroup, EventController.create );
 

@@ -43,7 +43,7 @@ module.exports = {
 
                 let result =  await setFollowingStatus();
 
-                let likedEvents = await userService.getLikedEvents( authUser );
+                let likedEvents = await eventService.likedByUser( authUser );
 
                 likedEvents = likedEvents.reduce( ( acc, event) => {
                     acc.push(event._id);
@@ -421,7 +421,7 @@ module.exports = {
             }
 
             let result =  await setFollowingStatus();
-            let likedEvents = await userService.getLikedEvents( req.authuser._id );
+            let likedEvents = await eventService.likedByUser( req.authuser._id );
 
             resp["events"] = result;
             resp["likedEvents"] = likedEvents ;

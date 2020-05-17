@@ -108,17 +108,6 @@ module.exports = {
     },
 
 
-    /**
-     * Gets all events liked by a user
-     * @param userId String
-     * 
-     */
-    getLikedEvents: async (userId) => {
-
-        return await eventService.likedByUser( userId );
-    },
-
-
     setVerfificationCode: async ( userId ) => {
 
         const code = randomInt( 1222, 9999 );

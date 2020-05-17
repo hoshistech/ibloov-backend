@@ -475,7 +475,7 @@ module.exports = {
         let events = await Event.find(query)
         .select("_id")
         .lean()
-        return events;
+        return events; 
     },
 
 
