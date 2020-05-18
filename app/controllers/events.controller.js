@@ -167,18 +167,19 @@ module.exports = {
 
                         let isFollowing = await userService.isFollowingUser( authUser,  invitee.userId._id);
                         invitee["isFollowing"] = isFollowing;
-                        return event;
                     }
-                    
+
+                    return invitee;
+    
                 }))
             }
 
-            let result =  await checkBlooverstFollowingStatus();
+            event["invitees"] = await checkBlooverstFollowingStatus();
 
             return res.status(200).json({
                 success: true,
                 message: "Event retreived successfully.",
-                data: result
+                data: event
             });
             
         } catch ( err ) {
