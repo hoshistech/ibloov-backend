@@ -38,7 +38,7 @@ var RequestSchema = new Schema({
 
 }, { timestamps: true,  versionKey: false } )
 
-RequestSchema.index( { "requesteeId": 1, "accepteeId": 1, "type": 1 }, { unique: true } );
+//RequestSchema.index( { "requesteeId": 1, "accepteeId": 1, "type": 1 }, { unique: true } );
 
 let Request = mongoose.model('requests', RequestSchema );
 

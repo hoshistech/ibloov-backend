@@ -1,89 +1,147 @@
 const faker = require('faker');
+const moment = require("moment");
+
 const { randomInt } = require("@helpers/number.helper");
+const eventCategory = ["party", "birthday", "cooperate", "wedding", "houseparty", "sport", "movies"];
+const currencies = ["NGN", "USD", "GBP", "CAD"];
 
-const eventCategory = ["birthday", "cooperate", "wedding", "house party", "sports", "house warming"];
-
-const locations = [ {address: "lagos, `Nigeria"}, {address: "abuja, `Nigeria"}, {address: "paris, Italy"} ]
+const locations = [ { address: "lagos, `Nigeria" }, 
+                        {address: "abuja, `Nigeria"}, 
+                        { address: "paris, Italy"},
+                        { address: "Johannesburg, SouthAfrica"},
+                        { address: "123B southPark, Miwe. Malawi"},
+                        { address: "5th Avenuw, Ringroad. Newyork. US"},
+                        { address: "kante road, Accra. Ghana"},
+                        { address: "121 Worcester Rd, Framingham MA 1701"},
+                        { address: "337 Russell St, Hadley MA 1035"},
+                        { address: "262 Swansea Mall Dr, Swansea MA 2777"},
+                        { address: "297 Grant Avenue, Auburn NY 13021"},
+                        { address: "30 Catskill, Catskill NY 12414"},
+                        { address: "180 North King Street, Northhampton MA 1060"},
+                        { address: "777 Brockton Avenue, Abington MA 2351"},
+                        { address: "1537 Hwy 231 South, Ozark AL 36360"},
+                        { address: "165 Vaughan Ln, Pell City AL 35125"},
+                        { address: "7855 Moffett Rd, Semmes AL 36575"},
+                        { address: "1420 Us 231 South, Troy AL 36081"},
+                        { address: "8650 Madison Blvd, Madison AL 35758"},
+                        { address: "2453 2Nd Avenue East, Oneonta AL 35121  205-625-647"}
+                     ]
 
 //models
 const Event = require("@models/event.model");
 
+const { all } = require("@services/user.service");
+const { createEvent } = require("@services/event.service");
+
+//notif
+const { eventInviteBulkRequestNotif } = require('@services/notification.service');
+
+
+
 
 const seedEvents = async (req, res) => {
 
-    const eventCount = parseInt(req.query.eventCount) || randomInt(1, 3);
-    const eventCodeCountMax = parseInt(req.query.eventCodeCountMax) || randomInt(1, 4);
-    const eventCodeCount = randomInt(1, eventCodeCountMax);
-    const events = [];
+    const eventCount = parseInt(req.query.eventCount) || randomInt(50, 100);
+    // const eventCodeCountMax = parseInt(req.query.eventCodeCountMax) || randomInt(50, 100);
+    // const eventCodeCount = randomInt(1, eventCodeCountMax);
+    //const events = [];
+
+    const users = await all();
+
+    console.log( eventCount);
 
     for( let count = 0; count < eventCount; count++){
 
-        let event = eventFactory(eventCodeCount);
-        events.push(event);
+        let event = eventFactory();
+
+        event.userId = users[ randomInt(0, users.length -1 )]._id;
+        event.invitees = getInvitees(users, event.userId);
+        event.followers = getFollowers(users);
+        let newEvent =  await createEvent(event);
+        eventInviteBulkRequestNotif(newEvent);
     }
 
-    Event.collection.insertMany( events, function (err, data) {
-        if (err){ 
-            
-            res.status(400).json({
-                success: false,
-                message: "error generating and saving events",
-                data: err
-            });
+    res.send("done");
 
-        } 
-        else {
-            res.status(201).json({
-                success: "true",
-                message: "events generated and saved successfully",
-                data: events
-            });
-        }
-    });  
+
 }
 
 
-const eventFactory =  ( eventCodeCount ) => {
+const getInvitees = ( users, creator ) => {
 
-    let eventCode = [];
-    let isSameDay = randomInt(0,2);
-    let isPrivate = randomInt(1,9) % 2 === 0;
-    let eventDay = faker.date.future();
-    let createdBy = "5e74a056a1d062242108b212";
+    let idMonitor = [];
+    let inviteesCount = randomInt(5, 15);
+    let invitees = [];
 
-    for( let i = 0; i < eventCodeCount; i++ ){
-        
-        code = {
-            name: faker.lorem.word(),
-            description: faker.lorem.sentence()
+    for( let c = 0; c < inviteesCount; c++){
+
+        let inviteId = users[ randomInt(0, users.length -1 )]._id;
+        if( ! idMonitor.includes(inviteId) && inviteId !== creator ){
+
+            let invite = {
+                userId: inviteId
+            };
+
+            invitees.push(invite);
+            idMonitor.push(inviteId);
         }
-
-        eventCode.push(code);
     }
 
-    const history = {
-        event: "EVENT_CREATE",
-        comment: `event created by ${createdBy}`,
-        createdAt: new Date,
-        userId: createdBy
+    return invitees;
+}
+
+const getFollowers = ( users ) => {
+
+    let idMonitor = [];
+    let followersCount = randomInt(5, 15);
+    let followers = [];
+
+    for( let c = 0; c < followersCount; c++){
+
+        let followerId = users[ randomInt(0, users.length -1 )]._id;
+        if( ! idMonitor.includes(followerId)  ){
+
+            let follower = {
+                userId: followerId
+            };
+
+            followers.push(follower);
+            idMonitor.push(followerId);
+        }
     }
+
+    return followers;
+}
+
+
+
+
+const eventFactory =  () => {
+
+    let isPrivate = randomInt(1, 9) % 2 === 0;
+    
+    const isPaid = randomInt(1, 9) % 2 === 0;
+    const amount = isPaid ? randomInt(1000, 10000) : null
     
     const event = {
 
         name: `${faker.lorem.word()}${randomInt(1110,9999)}`,
         category: eventCategory[ randomInt( 0, eventCategory.length - 1) ],
+        description: `${faker.lorem.paragraph() }`,
         location: locations[ randomInt( 0, locations.length - 1) ],
         uuid: faker.random.uuid(),
-        startDate: isSameDay ? eventDay : faker.date.future() ,
-        //endDate: isSameDay ? eventDay : faker.date.future(),
+        startDate: moment().add( randomInt( 0, 7), 'd').toDate() ,
         isPrivate,
-        createdBy,
+        //createdBy,
+        isPaid,
+        amount,
+        currency: currencies[ randomInt( 0, currencies.length - 1) ], 
         status: "UPCOMING",
         createdAt: new Date,
         updatedAt: new Date,
-        eventCode: eventCode,
+        //eventCode: eventCode,
         hashTags: [`#${faker.lorem.word()}`, `#${faker.lorem.word()}`],
-        history: history
+
     }
 
     return event;
