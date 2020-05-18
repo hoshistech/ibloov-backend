@@ -127,7 +127,7 @@ module.exports = {
             return res.status(200).json({
                 success: true,
                 message: "User retreived successfully.",
-                data: user
+                data: user 
             });
             
         } catch ( err ) {

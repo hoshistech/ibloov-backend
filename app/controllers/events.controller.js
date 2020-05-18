@@ -153,15 +153,32 @@ module.exports = {
     view: async (req, res) => {
 
         let eventId = req.params.eventId;
+        const authUser = req.authuser._id;
 
         try {
             let event = await eventService.viewEvent(eventId);
-            event["isFollowing"] = await eventService.isFollowingEvent( eventId, req.authuser._id);
+            event["isFollowing"] = await eventService.isFollowingEvent( eventId, authUser);
+
+            const checkBlooverstFollowingStatus = async () => {
+
+                return Promise.all(  event.invitees.map( async invitee => {
+
+                    if( invitee.userId._id){
+
+                        let isFollowing = await userService.isFollowingUser( authUser,  invitee.userId._id);
+                        invitee["isFollowing"] = isFollowing;
+                        return event;
+                    }
+                    
+                }))
+            }
+
+            let result =  await checkBlooverstFollowingStatus();
 
             return res.status(200).json({
                 success: true,
                 message: "Event retreived successfully.",
-                data: event
+                data: result
             });
             
         } catch ( err ) {

@@ -182,8 +182,6 @@ var UserSchema = new Schema({
     
 }, { timestamps: true,  versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true } } );
 
-//toJSON: { virtuals: true }, toObject: { virtuals: true }
-
 
 UserSchema.methods.isValidPassword = async function( password ){
 

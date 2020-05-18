@@ -56,7 +56,7 @@ module.exports = {
 
         let event = new Event(eventData);
         event.qrCode = await QRCode.toDataURL( eventData.uuid );
-        event.coordinators.push({ userId: eventData.userId });
+        event.coordinators.push({ userId: eventData.userId }); 
         return await event.save();
     },
 

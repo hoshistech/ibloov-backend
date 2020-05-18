@@ -232,5 +232,29 @@ module.exports = {
 
         let setData = { "followers": follower };
         return await User.findByIdAndUpdate( request.accepteeId._id , { '$addToSet': setData }, { runValidators: true , new: true} );
+    },
+
+
+
+    /**
+     * checks if a user is following another user
+     * @param userId
+     * @param isFollowingUserId
+     * 
+     * @returns boolean
+     */
+    isFollowingUser: async( userId, isFollowingUserId ) => {
+
+        let resp =  await User.findOne( {
+            _id: isFollowingUserId, 
+            "followers": { $elemMatch: { userId } } 
+        }, {
+            _id: 0,
+            'followers.$': 1
+        })
+        .lean();
+
+       return  ( resp && resp["followers"].length > 0 ) ? true : false
+        
     }
 }
