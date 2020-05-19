@@ -32,25 +32,41 @@ module.exports = {
 
             if( authUser ){
 
-                const setFollowingStatus = async () => {
 
-                    return Promise.all(  events.map( async event => {
+                const checkBlooverstFollowingStatus = async () => {
+
+                    return Promise.all( events.map( async event => {
+
                         let isFollowing = await eventService.isFollowingEvent( event._id, authUser);
                         event["isFollowing"] = isFollowing;
+                        
+                        let invitees = event.invitees;
+
+                        Promise.all( invitees.map( async invitee => {
+
+                            if( invitee.userId._id){
+        
+                                let isFollowing = await userService.isFollowingUser( authUser,  invitee.userId._id);
+                                invitee["isFollowing"] = isFollowing;
+                            }
+
+                            return invitee;
+                        }))
+
                         return event;
                     }))
                 }
-
-                let result =  await setFollowingStatus();
+    
+                events = await checkBlooverstFollowingStatus();
 
                 let likedEvents = await eventService.likedByUser( authUser );
 
                 likedEvents = likedEvents.reduce( ( acc, event) => {
                     acc.push(event._id);
-                    return acc;
+                    return acc; 
                 }, [] )
 
-                resp["events"] = result;
+                resp["events"] = events;
                 resp["likedEvents"] = likedEvents;
 
                 return res.status(200).send({
@@ -60,22 +76,20 @@ module.exports = {
                 });
             }
 
-
             return res.status(200).send({
                 success: true,
                 message: "events retreived succesfully",
                 data: events
             });
         }
-        catch(e){
+        catch( err ){
 
             res.status(400).send({
                 success: false,
                 message: "error performing this operation",
-                data: e.toString()
+                data: err.toString()
             });
         }
-        
     },
 
 
@@ -426,23 +440,42 @@ module.exports = {
         let options = getOptions(req); 
         let resp = {};
 
+        const authUser = req.authuser._id;
+
         try{
             let events = await eventService.liveEvents( filter, options );
 
-            const setFollowingStatus = async () => {
+            const checkBlooverstFollowingStatus = async () => {
 
-                return Promise.all(  events.map( async event => {
-                    let isFollowing = await eventService.isFollowingEvent( event._id, req.authuser._id );
+                return Promise.all( events.map( async event => {
+
+                    let isFollowing = await eventService.isFollowingEvent( event._id, authUser);
                     event["isFollowing"] = isFollowing;
+                    
+                    let invitees = event.invitees;
+
+                    Promise.all( invitees.map( async invitee => {
+
+                        if( invitee.userId._id){
+    
+                            let isFollowing = await userService.isFollowingUser( authUser,  invitee.userId._id);
+                            invitee["isFollowing"] = isFollowing;
+                        }
+
+                        return invitee;
+                    }))
+
                     return event;
                 }))
             }
 
-            let result =  await setFollowingStatus();
+            events = await checkBlooverstFollowingStatus();
+
+            let result =  await checkBlooverstFollowingStatus();
             let likedEvents = await eventService.likedByUser( req.authuser._id );
 
             resp["events"] = result;
-            resp["likedEvents"] = likedEvents ;
+            resp["likedEvents"] = likedEvents;
             
             return res.status(200).json({
                 success: true,
