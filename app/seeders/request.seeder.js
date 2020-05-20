@@ -1,5 +1,5 @@
-const faker = require('faker');
-const moment = require("moment");
+const Request = require('@models/request.model');
+const Notification = require("@models/notification.model");
 
 const { randomInt } = require("@helpers/number.helper");
 const allowedRequestTypes = ["follow-request", 
@@ -24,6 +24,8 @@ const seedRequests = async (req, res) => {
 
 
     const type = req.query.requesttype || "follow-request";
+    await Request.deleteMany({ type, "accepteeId": "5eb9d67ba75f18002a4e497d"});
+    await Notification.deleteMany({ "requestcategory": type, "recepient": "5eb9d67ba75f18002a4e497d" });
 
     if( ! allowedRequestTypes.includes(type)){
         return res.send("invalid request type.")
