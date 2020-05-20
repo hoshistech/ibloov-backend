@@ -184,7 +184,7 @@ module.exports = {
 
         try {
             const request = await requestService.createFollowRequest(requestee, acceptee );
-            notificationService.userFollowRequestRequestNotif( request._id );
+            notificationService.userFollowRequestNotif( request._id );
 
             return res.status(200).json({
 

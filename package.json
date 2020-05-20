@@ -8,6 +8,8 @@
     "test": "NODE_ENV=test mocha --timeout 5000"
   },
   "dependencies": {
+    "@bugsnag/js": "^7.0.2",
+    "@bugsnag/plugin-express": "^7.0.1",
     "@googlemaps/google-maps-services-js": "^2.5.5",
     "@sendgrid/mail": "^6.4.0",
     "aws-sdk": "^2.656.0",

@@ -5,7 +5,18 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
+//cors
 var cors = require('cors');
+
+//Bugsnag
+var Bugsnag = require('@bugsnag/js');
+var BugsnagPluginExpress = require('@bugsnag/plugin-express');
+
+Bugsnag.start({
+  apiKey: '7986ae2c393aaf09fa8a72c36e8f0661',
+  plugins: [BugsnagPluginExpress]
+})
 
 //moment
 //var moment = require('moment-timezone');
@@ -46,8 +57,15 @@ const wishlistSeederRouter = require('@routes/seeders/wishlist.route');
 const crowdfundingSeederRouter = require('@routes/seeders/crowdfunding.route');
 const userSeederRouter = require('@routes/seeders/user.route');
 const influencerSeederRouter = require('@routes/seeders/influencer.route');
+const requestSeederRouter = require('@routes/seeders/request.route');
 
 var app = express();
+
+var bugsnagMiddleware = Bugsnag.getPlugin('express');
+
+
+//use bugnsag
+app.use(bugsnagMiddleware.requestHandler);
 
 var dbConnect = require('./db.connect');
 dbConnect.connect();
@@ -55,6 +73,7 @@ dbConnect.connect();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
 
 //use cors
 app.use(cors());
@@ -127,11 +146,24 @@ app.use('/seeders/wishlist', wishlistSeederRouter);
 app.use('/seeders/crowdfunding', crowdfundingSeederRouter);
 app.use('/seeders/user', userSeederRouter);
 app.use('/seeders/influencer', influencerSeederRouter);
+app.use('/seeders/request', requestSeederRouter);
 
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404));
+
+  req.bugsnag.notify(
+    new Error('invalid endpoint'),
+    function (event) {
+      //event.addMetadata('product', product)
+    }
+  )
+
+  return res.status(404).json({
+    status: false,
+    message: "invalid route"
+  })
+  //next(createError(404));
 });
 
 // error handler
@@ -144,5 +176,8 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
+app.use(bugsnagMiddleware.errorHandler);
 
 module.exports = app;

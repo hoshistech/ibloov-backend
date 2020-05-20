@@ -32,7 +32,7 @@ var RequestSchema = new Schema({
 
     type: {
         type: String,
-        enum: ['follow-request', 'extra-invite-request', 'event-invite-request'],
+        enum: ['follow-request', 'extra-invite-request', 'event-invite-request', 'event-coordinator-request'],
         required: true
     }
 

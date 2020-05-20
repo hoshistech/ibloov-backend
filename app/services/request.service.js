@@ -3,6 +3,7 @@ const Request = require('@models/request.model');
 const followRequestType = "follow-request";
 const extraInviteRequestType = "extra-invite-request";
 const eventInviteRequestType = "event-invite-request";
+const eventCoordinatorRequestType = "event-coordinator-request";
 
 const { approveFollowRequestCallback, 
         approveEventInviteRequestCallback, 
@@ -40,14 +41,14 @@ module.exports = {
      */
     createRequest: async ( requesteeId, accepteeId, type ) => {
 
-        const followRequest = {
+        const newRequest = {
 
             requesteeId,
             accepteeId,
             type
         };
 
-        let request = new Request( followRequest );
+        let request = new Request( newRequest );
         return await request.save();
     },
 
@@ -111,9 +112,18 @@ module.exports = {
      * @param requesteeId String
      * @param accepteeId String
      */
-    createExtraInviteRequest: async ( requesteeId, accepteeId ) => {
+    createExtraInviteRequest: async ( requesteeId, accepteeId, eventId ) => {
 
-        return await module.exports.createRequest(requesteeId, accepteeId, extraInviteRequestType );
+        const followRequest = {
+
+            requesteeId,
+            accepteeId,
+            type: extraInviteRequestType,
+            eventId
+        };
+
+        let request = new Request( followRequest );
+        return await request.save();
     },
 
 
@@ -132,6 +142,21 @@ module.exports = {
             requesteeId,
             accepteeId,
             type: eventInviteRequestType,
+            eventId
+        };
+
+        let request = new Request( followRequest );
+        return await request.save();
+    },
+
+
+    createEventCoordinatorRequest: async ( requesteeId, accepteeId, eventId ) => {
+
+        const followRequest = {
+
+            requesteeId,
+            accepteeId,
+            type: eventCoordinatorRequestType,
             eventId
         };
 

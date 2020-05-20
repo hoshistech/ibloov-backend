@@ -26,7 +26,7 @@ var NotificationSchema = new Schema({
         required: function(){
             return this.type == 'request';
         },
-        enum: ['follow-request', 'extra-invite-request', 'event-invite-request']
+        enum: ['follow-request', 'extra-invite-request', 'event-invite-request', , 'event-coordinator-request']
     },
 
     requestId: {
