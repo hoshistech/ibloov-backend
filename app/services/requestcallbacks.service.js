@@ -1,4 +1,4 @@
-const { approveFollowRequest } = require('@services/user.service'); 
+//const { approveFollowRequest } = require('@services/user.service'); 
 const { approveEventInviteRequest, denyEventInviteRequest } = require('@services/event.service'); 
 
 
@@ -14,7 +14,7 @@ module.exports = {
 
 
     approveFollowRequestCallback: () => {
-        return approveFollowRequest;
+        //return approveFollowRequest;
     },
 
     approveEventInviteRequestCallback: () => {

@@ -7,7 +7,7 @@ const eventCoordinatorRequestType = "event-coordinator-request";
 
 const { approveFollowRequestCallback, 
         approveEventInviteRequestCallback, 
-        denyEventInviteRequestCallback } = require("@services/requestcallback.service");
+        denyEventInviteRequestCallback } = require("@services/requestcallback.service"); 
 
 const requestTypeApproveCallbacks = {
 
@@ -83,7 +83,7 @@ module.exports = {
      * Create a new user-follow request.
      * 
      * @param requesteeId String
-     * @param accepteeId String
+     * @param accepteeId String 
      */
     createFollowRequest: async ( requesteeId, accepteeId ) => {
 
@@ -218,6 +218,12 @@ module.exports = {
 
         const request = await module.exports.viewRequestById(  requestId );
         let requestType = request.type;
+
+        console.log("requestType")
+        console.log(requestType);
+
+        console.log( "requestTypeApproveCallbacks[ requestType ]" )
+        console.log( requestTypeApproveCallbacks[ requestType ] )
 
         const callback = requestTypeApproveCallbacks[ requestType ] || module.exports.doNothingHandler;
         return await module.exports.processAcceptRequest( requestId, callback)

@@ -32,13 +32,12 @@ module.exports = {
 
             if( authUser ){
 
-
                 const checkBlooverstFollowingStatus = async () => {
 
                     return Promise.all( events.map( async event => {
 
                         let isFollowing = await eventService.isFollowingEvent( event._id, authUser);
-                        event["isFollowing"] = isFollowing;
+                        event["isFollowing"] = isFollowing; 
                         
                         let invitees = event.invitees;
 

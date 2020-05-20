@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 
 
 //services
-const eventService = require('@services/event.service');
-const { viewRequestById } = require('@services/request.service');
+const eventService = require('@services/event.service');  
+const { viewRequestById, viewFollowRequest } = require('@services/request.service'); 
 
 //helpers
 const { randomInt } = require("@helpers/number.helper");
@@ -32,7 +32,7 @@ module.exports = {
         .sort(sort)
         .limit(limit)
         .skip(skip)
-        .populate('followers.userId', '_id authMethod avatar bio local.firstName local.lastName email fullName');
+        .populate('followers.userId', '_id authMethod avatar bio local.firstName local.lastName email fullName phoneNumber');
 
 
         return users;
@@ -54,7 +54,7 @@ module.exports = {
     viewUser: async (userId) => {
 
         let user = await User.findById(userId)
-        .populate('followers.userId', '_id authMethod avatar bio local.firstName local.lastName email fullName');
+        .populate('followers.userId', '_id authMethod avatar bio local.firstName local.lastName email fullName phoneNumber');
         return user;
     },
 
@@ -159,7 +159,7 @@ module.exports = {
     block: async( userId, blockedUserId ) => {
 
         let blocked = { userId: blockedUserId };
-        return await User.findByIdAndUpdate( userId , { '$addToSet': { blocked } }, { runValidators: true , new: true} );
+        return await User.findByIdAndUpdate( userId , { '$addToSet': { blocked } }, { runValidators: true , new: true} ); 
     },
 
 
@@ -254,7 +254,27 @@ module.exports = {
         })
         .lean();
 
-       return  ( resp && resp["followers"].length > 0 ) ? true : false
+        if( resp && resp["followers"].length > 0 ){
+            return "true";
+
+        } else {
+
+            let hasFollowRequest = await viewFollowRequest( userId, isFollowingUserId );
+
+            console.log( "hasFollowRequest" )
+            console.log( hasFollowRequest )
+
+            if( hasFollowRequest){
+
+                let status = hasFollowRequest.accepted;
+
+                if( status === null ) return "pending";
+
+                if( status === false ) return "denied";
+            }
+
+            return "false";
+        }
         
     }
 }
