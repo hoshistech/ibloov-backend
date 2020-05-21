@@ -7,7 +7,7 @@ const eventCoordinatorRequestType = "event-coordinator-request";
 
 const { approveFollowRequestCallback, 
         approveEventInviteRequestCallback, 
-        denyEventInviteRequestCallback } = require("@services/requestcallback.service"); 
+        denyEventInviteRequestCallback } = require("@services/requestcallbacks.service"); 
 
 const requestTypeApproveCallbacks = {
 

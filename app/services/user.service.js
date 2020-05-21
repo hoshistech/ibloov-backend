@@ -261,16 +261,16 @@ module.exports = {
 
             let hasFollowRequest = await viewFollowRequest( userId, isFollowingUserId );
 
-            console.log( "hasFollowRequest" )
-            console.log( hasFollowRequest )
-
             if( hasFollowRequest){
 
                 let status = hasFollowRequest.accepted;
 
-                if( status === null ) return "pending";
+                if( status == null ) return "pending";
 
-                if( status === false ) return "denied";
+                if( status == false ) return "denied";
+
+                if( status == true ) return "true";
+
             }
 
             return "false";

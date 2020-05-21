@@ -32,7 +32,7 @@ module.exports = {
 
             if( authUser ){
 
-                const checkBlooverstFollowingStatus = async () => {
+                const processEvent = async () => {
 
                     return Promise.all( events.map( async event => {
 
@@ -41,22 +41,27 @@ module.exports = {
                         
                         let invitees = event.invitees;
 
-                        Promise.all( invitees.map( async invitee => {
+                        const checkBlooverstFollowingStatus = async () => {
 
-                            if( invitee.userId._id){
-        
-                                let isFollowing = await userService.isFollowingUser( authUser,  invitee.userId._id);
-                                invitee["isFollowing"] = isFollowing;
-                            }
+                            return Promise.all( invitees.map( async invitee => {
 
-                            return invitee;
-                        }))
-
+                                if( invitee.userId._id){
+            
+                                    let isFollowing = await userService.isFollowingUser( authUser,  invitee.userId._id);
+                                    invitee.isFollowing = isFollowing;    
+                                }
+    
+                                return invitee;
+                            }))
+                        }
+                        
+                        let processedInvitees = await checkBlooverstFollowingStatus();
+                        event['invitees'] = processedInvitees
                         return event;
                     }))
                 }
     
-                events = await checkBlooverstFollowingStatus();
+                events = await processEvent();
 
                 let likedEvents = await eventService.likedByUser( authUser );
 

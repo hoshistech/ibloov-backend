@@ -481,6 +481,7 @@ module.exports = {
 
     approveEventInviteRequest: async ( requestId ) => {
 
+        console.log("gers here")
         const request = await viewRequestById( requestId );
         return await module.exports.confirmEventAttendance( request.eventId, request.accepteeId._id, "YES"); 
 

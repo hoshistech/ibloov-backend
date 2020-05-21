@@ -1,5 +1,5 @@
 //const { approveFollowRequest } = require('@services/user.service'); 
-const { approveEventInviteRequest, denyEventInviteRequest } = require('@services/event.service'); 
+//const { approveEventInviteRequest, denyEventInviteRequest } = require('@services/event.service'); 
 
 
 /**
@@ -12,16 +12,16 @@ const { approveEventInviteRequest, denyEventInviteRequest } = require('@services
  */
 module.exports = {
 
-
     approveFollowRequestCallback: () => {
+
         //return approveFollowRequest;
     },
 
     approveEventInviteRequestCallback: () => {
-        return approveEventInviteRequest;
+        //return approveEventInviteRequest;
     },
 
     denyEventInviteRequestCallback: () => {
-        return denyEventInviteRequest;
+        //return denyEventInviteRequest;
     }
 }
