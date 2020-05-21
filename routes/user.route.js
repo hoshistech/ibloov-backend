@@ -33,6 +33,8 @@ router.get('/following/:userId?',  [ checkAuth ], UserController.getFollowing );
 
 router.get('/notifications',  [ checkAuth ], UserController.getNotifications ); 
 
+router.get('/requests',  [ checkAuth ], UserController.getRequests ); 
+
 router.get('/followrequests',  [ checkAuth ], UserController.followRequests ); 
 
 router.get('/:userId', [ checkAuth, validate("viewUser"), isValidRequest ], UserController.view );

@@ -519,7 +519,29 @@ module.exports = {
         const userId = req.authuser._id;
 
         try {
-            const requests = await requestService.getUserRequestByType(userId, 'follow-request');
+            const requests = await requestService.getUserRequests(userId, 'follow-request');
+
+            res.status(200).send({
+                success: true,
+                message: "Operation successful",
+                data: requests
+            });
+
+        } catch ( err ) {
+
+            res.status(400).send({
+                success: false,
+                message: "error performing this operation",
+                data: err.toString()
+            });
+        }
+    },
+
+
+    getRequests: async (req, res) => {
+
+        try {
+            const requests = await requestService.getUserRequests(req.authuser._id);
 
             res.status(200).send({
                 success: true,

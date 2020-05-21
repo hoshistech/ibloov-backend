@@ -284,9 +284,16 @@ module.exports = {
      * @param accepteeId String userId of the acceptee
      * @param type String
      */
-    getUserRequestByType: async ( accepteeId, type ) => {
+    getUserRequests: async ( accepteeId, type ) => {
 
-        return await Request.find( { accepteeId, type, accepted: null} )
+        let query = {
+            accepteeId,
+            accepted: null
+        }
+
+        if( type ) query["type"] = type;
+
+        return await Request.find( query )
         .populate("requesteeId", "_id avatar authMethod local.firstName local.lastName fullName google")
         .populate("accepteeId", "_id avatar authMethod local.firstName local.lastName fullName google")
 
