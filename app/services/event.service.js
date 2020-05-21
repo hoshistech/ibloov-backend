@@ -335,6 +335,9 @@ module.exports = {
 
         let isInvited = await module.exports.isInvited( eventId, userId );
 
+        //check for paid events
+        //only people who have paid for paid events should be added to attending.
+
         if( isInvited ){
 
             return await Event.findOneAndUpdate( { _id: eventId, "invitees.userId": userId }, { $set : { 'invitees.$.accepted' : status }}, { new:true, runValidators: true } )

@@ -5,6 +5,9 @@ const passport = require("passport");
 const authController = require("@controllers/auth/auth.controller");
 const googleAuthController = require('@controllers/auth/google.auth.controller');
 
+const { validate } = require("@request-middleware/auth.request-middleware");
+const { isValidRequest } = require("@middleware/isRequestValid.middleware");
+
 
 /*********************************************************************************** */
 router.get("/google/authurl", googleAuthController.googleAuthUrl );
@@ -14,11 +17,11 @@ router.get("/google/authurl", googleAuthController.googleAuthUrl );
 
 
 
-router.get("/google",  passport.authenticate('google', { scope: ["profile", "email"] }),   );
+router.get("/google",  passport.authenticate('google', { scope: ["profile", "email"] }) );
 
 router.get('/google/callback', passport.authenticate('google'), authController.signUser);
 
-router.post('/local', passport.authenticate('local'), authController.signUser );
+router.post('/local/:platform', validate("isValidPlatform"), isValidRequest, passport.authenticate('local'), authController.signUser );
 
 //router.get("/facebook",  passport.authenticate('google', { scope: ["profile"] }) );
 

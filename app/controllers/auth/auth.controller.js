@@ -6,7 +6,9 @@ module.exports = {
 
         try {
 
-            const token = await authService.signToken( req.user ); 
+            const platform = req.params.platform;
+
+            const token = await authService.signToken( req.user, platform ); 
 
             return res.status(200).json({
 
