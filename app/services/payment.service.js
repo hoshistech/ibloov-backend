@@ -13,7 +13,7 @@ module.exports = {
     checkout: async (amount, nonceFromTheClient) => {
 
         try{
-            const response = gateway.checkout(amount, nonceFromTheClient);
+            const response = await gateway.checkout(amount, nonceFromTheClient);
 
             console.log( "payment response" );
             console.log( response );
