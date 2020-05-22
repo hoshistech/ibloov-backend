@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-var Float = require('mongoose-float').loadType(mongoose, 2);
+var mFloat = require('mongoose-float').loadType(mongoose, 2);
 
 var Schema = mongoose.Schema;
 
@@ -22,7 +22,7 @@ var ticket = new Schema({
     },
 
     amount: {
-        type: Float,
+        type: mFloat,
         required: true
     },
 
@@ -34,7 +34,7 @@ var ticket = new Schema({
     },
 
     discountAmount: {
-        type: Float,
+        type: mFloat,
         default: 0,
         required: function(){
             this.isDiscount === true;
