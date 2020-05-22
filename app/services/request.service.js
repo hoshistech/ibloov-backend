@@ -85,7 +85,7 @@ module.exports = {
      * @param requesteeId String
      * @param accepteeId String 
      */
-    ß: async ( requesteeId, accepteeId ) => {
+    createFollowRequest: async ( requesteeId, accepteeId ) => {
 
         return await module.exports.createRequest(requesteeId, accepteeId, followRequestType );
     },
@@ -133,7 +133,7 @@ module.exports = {
     },
 
 
-    /********************* EVENT INVITE *****************************/ 
+    /********************* EVENT INVITE *****************************/
 
     createEventInviteRequest: async ( requesteeId, accepteeId, eventId ) => {
 
