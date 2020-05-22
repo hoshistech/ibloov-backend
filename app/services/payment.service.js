@@ -1,8 +1,8 @@
 const gateway = require("@services/payment-gateways/braintree.gateway");
 
-const Payment = require("@models/payment.model");
+//const Payment = require("@models/payment.model");
 
-module.exports = {
+module.exports = { 
 
 
     /**
@@ -56,7 +56,7 @@ module.exports = {
             response: paymentResponse
 
         }
-        let payment = new Payment( newPayment );
-        return await payment.save();
+        // let payment = new Payment( newPayment );
+        // return await payment.save();
     }
 }
