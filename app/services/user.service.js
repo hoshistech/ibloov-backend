@@ -2,11 +2,10 @@ const User = require('@models/user.model');
 const moment = require("moment");
 const jwt = require("jsonwebtoken");
 
-
 //services
 const eventService = require('@services/event.service'); 
 
-const { viewFollowRequest } = require("@user-request/follow.request")
+const { viewRequest } = require("@services/request.service")
 
 //helpers
 const { randomInt } = require("@helpers/number.helper");
@@ -240,7 +239,7 @@ module.exports = {
      */
     followUser: async( requesteeId, accepteeId ) => {
 
-        let follower = { "userId": requesteeId };
+        let follower = { "userId": requesteeId }; 
 
         let setData = { "followers": follower };
         
@@ -272,7 +271,7 @@ module.exports = {
 
         } else {
 
-            let hasFollowRequest = await viewFollowRequest( userId, isFollowingUserId );
+            let hasFollowRequest = await viewRequest( userId, isFollowingUserId, "follow-request" );
 
             if( hasFollowRequest){
 

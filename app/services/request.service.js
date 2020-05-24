@@ -31,6 +31,21 @@ module.exports = {
     },
 
 
+
+    viewRequest: async ( requesteeId, accepteeId, type ) => {
+
+        const request = {
+
+            requesteeId,
+            accepteeId
+        };
+
+        if( type ) request["type"] = type;
+
+        return await Request.findOne( request );
+    },
+
+
     /**
      * get the list of follow request for a user
      * 
@@ -56,12 +71,14 @@ module.exports = {
      * accept a request
      * @param requestId
      */
-    acceptRequest: async( requestId ) => {
+    acceptRequest: async( requestId ) => { 
 
         const request = await module.exports.viewRequestById(  requestId );
+        
         let requestType = request.type;
 
         const callback = requestTypeModules[ requestType ].acceptRequest;
+
         return await module.exports.processAcceptRequest( request, callback )
     },
 

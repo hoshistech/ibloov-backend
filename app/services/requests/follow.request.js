@@ -1,9 +1,7 @@
 
 //models
 const Request = require('@models/request.model');
-
-//service
-const { followUser }  = require('@services/user.service');
+const User = require('@models/user.model');
 
 //notifs
 const { notify } = require('@request-notif/follow-request.notif');
@@ -27,7 +25,7 @@ module.exports = {
 
         notify( newRequest._id );
 
-        return newRequest;
+        return newRequest; 
     },
 
 
@@ -52,7 +50,11 @@ module.exports = {
      */
     acceptRequest: async ( request ) => {
 
-        await followUser(request.requesteeId._id, request.accepteeId._id)
+        let follower = { "userId": request.requesteeId._id }; 
+
+        let setData = { "followers": follower };
+        
+        return await User.findByIdAndUpdate( request.accepteeId._id , { '$addToSet': setData }, { runValidators: true , new: true} );
     },
 
 
