@@ -35,7 +35,7 @@ verifyToken = function( req, res, next ){
         userService.getUser( { _id: data.user._id })
         .then( user => {
 
-            if( ! user ){
+            if( ! user ){ 
 
                 return res.status(401).json({
 
@@ -45,6 +45,8 @@ verifyToken = function( req, res, next ){
             }
 
             req.authuser = user;
+            req.authplatform = data.platform;
+
             next();
         })
         .catch( err => {

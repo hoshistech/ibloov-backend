@@ -61,6 +61,13 @@ var coordinator = new Schema({
         default: Date.now()
     },
 
+    accepted: { 
+
+        type: String,
+        default: null,
+        enum: ["YES", "NO", null]
+    }
+
 }, { _id : false } )
 
 var follower = new Schema({

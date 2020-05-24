@@ -11,48 +11,52 @@ const allowedRequestTypes = ["follow-request",
 
 const { all } = require("@services/user.service");
 const eService = require("@services/event.service");
-const { createRequest, 
-    createEventCoordinatorRequest,
-    createEventInviteRequest,
-    createExtraInviteRequest } = require("@services/request.service");
 
-//notif
-const { userFollowRequestNotif, eventInviteRequestNotif, eventCoordinatorRequestNotif, extraInviteRequestNotif } = require('@services/notification.service');
+//request types
+const eventCooridnatorRequest = require("@user-request/event-coordinator.request");
+const followRequest = require("@user-request/follow.request");
+const eventInviteRequest = require("@user-request/event-invite.request");
+const extraInviteRequest = require("@user-request/extra-invite.request");
 
 
 const seedRequests = async (req, res) => {
 
 
     const type = req.query.requesttype || "follow-request";
-    await Request.deleteMany({ type, "accepteeId": "5eb9d67ba75f18002a4e497d"});
+    const userId = req.query.userId || "5eb9d67ba75f18002a4e497d";
+
+    /** very important  */
+    /** remove this before going live */
+    await Request.deleteMany({ type, "accepteeId": userId });
     await Notification.deleteMany({ "requestcategory": type, "recepient": "5eb9d67ba75f18002a4e497d" });
 
     if( ! allowedRequestTypes.includes(type)){
         return res.send("invalid request type.")
     }
 
-    let resp = getFactory(type);
+    let resp = getFactory(type, userId );
     return res.send(resp);
 }
 
 
-const getFactory = async (type) => {
+const getFactory = async (type, userId) => {
 
     switch (type) {
+
         case "follow-request":
-            return await followInviteRequestFactory(type);
+            return await followInviteRequestFactory(userId);
             break;
 
         case "event-invite-request":
-            return await eventInviteRequestFactory(type);
+            return await eventInviteRequestFactory(userId);
             break;
 
         case "event-coordinator-request":
-            return await eventCoordinatorRequestFactory(type);
+            return await eventCoordinatorRequestFactory(userId);
             break;
 
         case "extra-invite-request":
-            return await extraInviteRequestFactory(type);
+            return await extraInviteRequestFactory(userId);
             break;
 
         default:
@@ -61,8 +65,12 @@ const getFactory = async (type) => {
 }
 
 
-
-const followInviteRequestFactory =  async ( type ) => {
+/**
+ * create a request of type follow-request
+ * @param {*} userId 
+ * 
+ */
+const followInviteRequestFactory =  async ( userId ) => {
 
     const users = await all();
 
@@ -70,7 +78,7 @@ const followInviteRequestFactory =  async ( type ) => {
 
     let userTracker = [];
 
-    const accepteeId = "5eb9d67ba75f18002a4e497d";
+    const accepteeId = userId;
 
     for( let count = 0; count < requestCount; count++){
 
@@ -78,9 +86,7 @@ const followInviteRequestFactory =  async ( type ) => {
 
         if(  ! userTracker.includes( requesteeId ) && requesteeId !== accepteeId ){
 
-            let newRequest = await createRequest(requesteeId, accepteeId, type);
-            userFollowRequestNotif(newRequest._id.toString() );
-
+            await followRequest.createFollowRequest( requesteeId, accepteeId );
             userTracker.push(requesteeId);
         }
     }
@@ -88,7 +94,13 @@ const followInviteRequestFactory =  async ( type ) => {
     return userTracker;
 }
 
-const eventInviteRequestFactory =  async ( type ) => {
+
+/**
+ * create a request of type event-invite-request
+ * @param {*} userId 
+ * 
+ */
+const eventInviteRequestFactory = async ( userId ) => {
 
     const users = await all();
     const events = await eService.all();
@@ -98,7 +110,7 @@ const eventInviteRequestFactory =  async ( type ) => {
     let userTracker = [];
     let eventTracker = [];
 
-    const accepteeId = "5eb9d67ba75f18002a4e497d";
+    const accepteeId = userId;
 
     for( let count = 0; count < requestCount; count++){
 
@@ -108,12 +120,7 @@ const eventInviteRequestFactory =  async ( type ) => {
 
         if(  ! userTracker.includes( requesteeId ) && requesteeId !== accepteeId ){
 
-            let newRequest = await createEventInviteRequest(requesteeId, accepteeId, eventId );
-
-            console.log("newRequest")
-            console.log(newRequest)
-            
-            await eventInviteRequestNotif( newRequest._id.toString() );
+            await eventInviteRequest.createExtraInviteRequest(requesteeId, accepteeId, eventId );
 
             userTracker.push(requesteeId);
             eventTracker.push(eventId);
@@ -124,7 +131,12 @@ const eventInviteRequestFactory =  async ( type ) => {
     return userTracker;
 }
 
-const eventCoordinatorRequestFactory =  async ( type ) => {
+
+/**
+ * create a event-coordinator-request
+ * 
+ */
+const eventCoordinatorRequestFactory =  async ( userId ) => {
 
     const users = await all();
     const events = await eService.all();
@@ -134,7 +146,7 @@ const eventCoordinatorRequestFactory =  async ( type ) => {
     let userTracker = [];
     let eventTracker = [];
 
-    const accepteeId = "5eb9d67ba75f18002a4e497d";
+    const accepteeId = userId;
 
     for( let count = 0; count < requestCount; count++){
 
@@ -145,8 +157,7 @@ const eventCoordinatorRequestFactory =  async ( type ) => {
 
         if(  ! userTracker.includes( requesteeId ) && requesteeId !== accepteeId ){
 
-            let newRequest = await createEventCoordinatorRequest(requesteeId, accepteeId, eventId);
-            eventCoordinatorRequestNotif(newRequest._id.toString() );
+            await eventCooridnatorRequest.createEventCoordinatorRequest( requesteeId, accepteeId, eventId );
 
             userTracker.push(requesteeId);
             eventTracker.push(eventId);
@@ -156,7 +167,12 @@ const eventCoordinatorRequestFactory =  async ( type ) => {
     return userTracker;
 }
 
-const extraInviteRequestFactory =  async ( type ) => {
+
+/**
+ * create a extra-invite-request
+ * 
+ */
+const extraInviteRequestFactory =  async ( userId ) => {
 
     const users = await all();
     const events = await eService.all();
@@ -166,7 +182,7 @@ const extraInviteRequestFactory =  async ( type ) => {
     let userTracker = [];
     let eventTracker = [];
 
-    const accepteeId = "5eb9d67ba75f18002a4e497d";
+    const accepteeId = userId;
 
     for( let count = 0; count < requestCount; count++){
 
@@ -177,8 +193,7 @@ const extraInviteRequestFactory =  async ( type ) => {
 
         if(  ! userTracker.includes( requesteeId ) && requesteeId !== accepteeId ){
 
-            let newRequest = await createExtraInviteRequest(requesteeId, accepteeId, eventId );
-            extraInviteRequestNotif(newRequest._id.toString() );
+            await extraInviteRequest.createExtraInviteRequest(requesteeId, accepteeId, eventId );
 
             userTracker.push(requesteeId);
             eventTracker.push(eventId);

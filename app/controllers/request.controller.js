@@ -1,10 +1,10 @@
-const requestService = require('@services/request.service');
+const { acceptRequest, denyRequest } = require('@services/request.service');
 
 module.exports = {
 
     /**
      * @RESTCONTROLLER
-     * endpoint to retreive a list of groups
+     * endpoint to process accepting a request
      * 
      * @authlevel authenticated
      */
@@ -13,7 +13,7 @@ module.exports = {
         const requestId = req.params.requestId;
 
         try {
-            await requestService.acceptRequest(requestId);
+            await acceptRequest( requestId );
 
             res.status(200).send({
                 success: true,
@@ -33,14 +33,14 @@ module.exports = {
 
     /**
      * @RESTCONTROLLER
-     * endpoint to create a new group.
+     * endpoint to process rejecting a request
      */
     deny: async (req, res) => {
 
         const requestId = req.params.requestId;
 
         try {
-            await requestService.denyRequest(requestId);
+            await denyRequest( requestId );
 
             res.status(200).send({
                 success: true,

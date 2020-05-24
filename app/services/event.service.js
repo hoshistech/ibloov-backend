@@ -3,10 +3,6 @@ const QRCode = require('qrcode');
 const moment = require("moment");
 const { setDefaultOptions  } = require('@helpers/request.helper');
 
-const { viewRequestById } = require('@services/request.service');
-
-
-
 module.exports = {
 
     "model": Event,
@@ -335,8 +331,11 @@ module.exports = {
 
         let isInvited = await module.exports.isInvited( eventId, userId );
 
-        //check for paid events
-        //only people who have paid for paid events should be added to attending.
+        /**
+         * @Todo check for paid events
+         * @Todo only people who have paid for paid events should be added to attending.
+         */
+        
 
         if( isInvited ){
 
@@ -370,6 +369,32 @@ module.exports = {
             .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName email fullName')
 
         }
+    },
+
+
+    /**
+     * Basically confirms that a user status on a request to be a coordinator for an event
+     * This is usually based on request to the user
+     * updates a user accept status in the coordinator array for an event
+     * @param eventId String
+     * @param userId String
+     * @param status String - "YES" and "NO" are the only allowed values 
+     * 
+     */
+    confirmEventCoordinator: async( eventId, userId, status ) => {
+
+        if( status !== "YES" && status !== "NO") throw new Error("invalid event coordinator request confirmation value");
+
+        let coordinator = await Event.findOne({ _id: eventId, 'coordinators.userId': userId });
+
+        if( coordinator ){
+
+            return await Event.findOneAndUpdate( { _id: eventId, "coordinators.userId": userId }, { $set : { 'coordinators.$.accepted' : status }}, { new:true, runValidators: true } )
+            .populate('userId', '_id avatar authMethod local.firstName local.lastName email fullName')
+            .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName email fullName');
+        }
+
+        throw new Error("coordinator not found!");
     },
 
 
@@ -482,18 +507,39 @@ module.exports = {
     },
 
 
-    approveEventInviteRequest: async ( requestId ) => {
+    /**
+     * approve a requst to attend an event
+     */
+    approveEventInviteRequest: async ( eventId, accepteeId  ) => {
 
-        console.log("gers here")
-        const request = await viewRequestById( requestId );
-        return await module.exports.confirmEventAttendance( request.eventId, request.accepteeId._id, "YES"); 
+        return await module.exports.confirmEventAttendance( eventId, accepteeId, "YES"); 
+    },
+
+
+    /**
+     * deny a request to attend an event
+     */
+    denyEventInviteRequest: async ( eventId, rejecteeId ) => {
+
+        return await module.exports.confirmEventAttendance( eventId, rejecteeId, "NO");
 
     },
 
-    denyEventInviteRequest: async ( requestId ) => {
+    /**
+     * approve a requst to attend an event
+     */
+    approveEventCoordinatorRequest: async ( eventId, accepteeId ) => {
 
-        const request = await viewRequestById( requestId );
-        return await module.exports.confirmEventAttendance( request.eventId, request.accepteeId._id, "NO");
+        return await module.exports.confirmEventCoordinator( eventId, accepteeId, "YES"); 
+    },
+
+
+    /**
+     * deny a request to attend an event
+     */
+    denyEventCoordinatorRequest: async ( eventId, rejecteeId ) => {
+
+        return await module.exports.confirmEventCoordinator( eventId, rejecteeId, "NO");
 
     },
 

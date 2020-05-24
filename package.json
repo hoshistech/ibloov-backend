@@ -68,6 +68,11 @@
     "@config": "config",
     "@services": "app/services",
     "@middleware": "app/middlewares",
-    "@request-middleware": "app/middlewares/requests"
+    "@request-middleware": "app/middlewares/requests",
+
+    "@request-notif": "app/services/notification/request",
+    "@info-notif": "app/services/notification/info",
+
+    "@user-request": "app/services/requests"
   }
 }

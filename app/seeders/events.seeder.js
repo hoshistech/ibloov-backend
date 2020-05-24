@@ -27,28 +27,19 @@ const locations = [ { address: "lagos, `Nigeria" },
                         { address: "2453 2Nd Avenue East, Oneonta AL 35121  205-625-647"}
                      ]
 
-//models
-const Event = require("@models/event.model");
-
+//services
 const { all } = require("@services/user.service");
 const { createEvent } = require("@services/event.service");
 
 //notif
-const { eventInviteBulkRequestNotif } = require('@services/notification.service');
-
-
+const { createEventInviteBulkRequest } = require('@user-request/event-invite.request');
 
 
 const seedEvents = async (req, res) => {
 
-    const eventCount = parseInt(req.query.eventCount) || randomInt(50, 100);
-    // const eventCodeCountMax = parseInt(req.query.eventCodeCountMax) || randomInt(50, 100);
-    // const eventCodeCount = randomInt(1, eventCodeCountMax);
-    //const events = [];
-
+    const eventCount = parseInt( req.query.eventCount ) || randomInt(50, 100);
+    
     const users = await all();
-
-    console.log( eventCount);
 
     for( let count = 0; count < eventCount; count++){
 
@@ -58,12 +49,10 @@ const seedEvents = async (req, res) => {
         event.invitees = getInvitees(users, event.userId);
         event.followers = getFollowers(users);
         let newEvent =  await createEvent(event);
-        eventInviteBulkRequestNotif(newEvent);
+        createEventInviteBulkRequest( newEvent );
     }
 
     res.send("done");
-
-
 }
 
 
@@ -90,6 +79,7 @@ const getInvitees = ( users, creator ) => {
     return invitees;
 }
 
+
 const getFollowers = ( users ) => {
 
     let idMonitor = [];
@@ -114,8 +104,6 @@ const getFollowers = ( users ) => {
 }
 
 
-
-
 const eventFactory =  () => {
 
     let isPrivate = randomInt(1, 9) % 2 === 0;
@@ -132,16 +120,13 @@ const eventFactory =  () => {
         uuid: faker.random.uuid(),
         startDate: moment().add( randomInt( 0, 7), 'd').toDate() ,
         isPrivate,
-        //createdBy,
         isPaid,
         amount,
         currency: currencies[ randomInt( 0, currencies.length - 1) ], 
         status: "UPCOMING",
         createdAt: new Date,
         updatedAt: new Date,
-        //eventCode: eventCode,
         hashTags: [`#${faker.lorem.word()}`, `#${faker.lorem.word()}`],
-
     }
 
     return event;

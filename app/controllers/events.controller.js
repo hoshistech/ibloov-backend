@@ -1,6 +1,13 @@
 const eventService = require('@services/event.service');
 const userService = require('@services/user.service');
-const { eventInviteBulkRequestNotif } = require('@services/notification.service');
+
+//requests 
+const { createEventInviteBulkRequest } = require('@user-request/event-invite.request');
+const { createEventCoordinatorBulkRequest } = require('@user-request/event-coordinator.request');
+
+//notifs
+
+const { eventLikedNotification } = require('@info-notif/event-like.notif');
 
 const uuidv4 = require('uuid/v4');
 
@@ -115,8 +122,9 @@ module.exports = {
             }
             
             let result = await eventService.createEvent(event);
-            eventInviteBulkRequestNotif( result );
-
+            createEventInviteBulkRequest( result );
+            createEventCoordinatorBulkRequest(result);
+            
             //sendAccountConfirmationNotification();
             res.status(201).send({
                 success: true,
@@ -582,10 +590,10 @@ module.exports = {
 
             } else {
                 data = await eventService.likeEvent( eventId, userId );
+                eventLikedNotification( userId, data.userId, eventId);
             } 
 
             data.isFollowing = await eventService.isFollowingEvent( eventId, userId );
-        
 
             return res.status(200).json({
                 success: true,

@@ -6,7 +6,6 @@ module.exports = {
 
         let { nonceFromTheClient, amount, currency } = req.body;
 
-
         console.log("nonceFromTheClient, amount, currency");
         console.log(nonceFromTheClient);
         console.log(amount);
@@ -14,7 +13,7 @@ module.exports = {
 
         try {
             
-            let resp = await paymentService.checkout(amount, nonceFromTheClient);
+            const resp = await paymentService.checkout( amount, nonceFromTheClient, currency, req.authuser );
 
             if(! resp.success ){
 
@@ -24,6 +23,11 @@ module.exports = {
                     data: resp
                 });
             }
+
+            const platform = req.authplatform
+            const userId = req.authuser._id;
+
+            paymentService.logPayment( resp, userId, platform )
             
             /**
              * @Todo log payment
@@ -32,15 +36,18 @@ module.exports = {
 
             return res.status(200).json({
                 success: true,
-                message: "payment processing successful."
+                message: "payment processing successful.",
+                data: resp
             });
 
-        } catch (error) {
+        } catch ( err ) {
+
+            console.log( err )
             
             return res.status(400).json({
                 success: false,
                 message: "Error occured while processing this payment!.",
-                data: error.toString()
+                data: err.toString()
             });
         }
     },

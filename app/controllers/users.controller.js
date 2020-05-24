@@ -12,6 +12,8 @@ const authService = require("@services/auth.service");
 const notificationService = require("@services/notification.service");
 const requestService = require("@services/request.service");
 
+const { createFollowRequest } = require("@user-request/follow.request");
+
 //helpers
 const { getOptions, getMatch } = require('@helpers/request.helper');
 
@@ -183,8 +185,7 @@ module.exports = {
         const acceptee = req.params.userId;
 
         try {
-            const request = await requestService.createFollowRequest(requestee, acceptee );
-            notificationService.userFollowRequestNotif( request._id );
+            await createFollowRequest(requestee, acceptee );
 
             return res.status(200).json({
 

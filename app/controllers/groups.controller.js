@@ -10,11 +10,13 @@ module.exports = {
      * 
      * @authlevel authenticated
      */
-    index: async (req, res) => {
+    index: async (req, res ) => {
 
         let filter = getMatch(req);
         let options = getOptions(req);
+
         filter["deletedAt"] = null; 
+        filter["userId"] = req.authuser._id; 
 
         try {
             let groups = await groupService.all(filter, options);
@@ -39,6 +41,8 @@ module.exports = {
     /**
      * @RESTCONTROLLER
      * endpoint to create a new group.
+     * 
+     * @authlevel authenticated
      */
     create: async (req, res) => { 
 
@@ -133,7 +137,7 @@ module.exports = {
      * @RESTCONTROLLER
      * softDeletes a single group instance.
      * 
-     * @authLevel - authenticated | isEventAdmin 
+     * @authLevel - authenticated | isOwner | isEventAdmin 
      */
     softdelete: async (req, res) => { 
 
@@ -160,6 +164,12 @@ module.exports = {
         }
     },
 
+
+    /**
+     * adds contacts to a group
+     * 
+     * @authLevel - authenticated | isOwner 
+     */
     addContacts: async (req, res) => {
 
         let groupId = req.params.groupId;
@@ -187,6 +197,11 @@ module.exports = {
     },
 
 
+    /**
+     * remove contact to a group
+     * 
+     * @authLevel - authenticated | isOwner 
+     */
     removeContacts: async (req, res) => {
 
         let groupId = req.params.groupId;

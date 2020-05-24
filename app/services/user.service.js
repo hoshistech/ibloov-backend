@@ -4,8 +4,9 @@ const jwt = require("jsonwebtoken");
 
 
 //services
-const eventService = require('@services/event.service');  
-const { viewRequestById, viewFollowRequest } = require('@services/request.service'); 
+const eventService = require('@services/event.service'); 
+
+const { viewFollowRequest } = require("@user-request/follow.request")
 
 //helpers
 const { randomInt } = require("@helpers/number.helper");
@@ -58,7 +59,11 @@ module.exports = {
         return user;
     },
 
-    getUser: async (query) => {
+    /**
+     * returns a single instance of a user using a query instead of _id
+     * @param userId String
+     */
+    getUser: async ( query ) => {
 
         let user = await User.findOne(query);
         return user;
@@ -89,7 +94,7 @@ module.exports = {
 
     
     /**
-     * Gets all the events that are a user is subscribed to
+     * Gets all the events that are a user is following
      * 
      * @param userId string
      * 
@@ -108,6 +113,12 @@ module.exports = {
     },
 
 
+    /**
+     * creates phonenumber verification code 
+     * used majorly during signup
+     * 
+     * @param userId
+     */
     setVerfificationCode: async ( userId ) => {
 
         const code = randomInt( 1222, 9999 );
@@ -135,6 +146,9 @@ module.exports = {
     },
     
 
+    /**
+     * confirms that the verification inputed by the user during phonenumber verification is valid
+     */
     verifySmsCode: async ( userId, code ) => {
 
 
@@ -221,17 +235,16 @@ module.exports = {
     },
 
 
-    approveFollowRequest: async( requestId ) => {
+    /**
+     * follow a user
+     */
+    followUser: async( requesteeId, accepteeId ) => {
 
-        const request = await viewRequestById( requestId );
-
-        let follower = {
- 
-            "userId": request.requesteeId._id
-        }
+        let follower = { "userId": requesteeId };
 
         let setData = { "followers": follower };
-        return await User.findByIdAndUpdate( request.accepteeId._id , { '$addToSet': setData }, { runValidators: true , new: true} );
+        
+        return await User.findByIdAndUpdate( accepteeId , { '$addToSet': setData }, { runValidators: true , new: true} );
     },
 
 
