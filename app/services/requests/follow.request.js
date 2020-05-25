@@ -23,7 +23,7 @@ module.exports = {
         const request = new Request( followRequest );
         const newRequest =  await request.save();
 
-        notify( newRequest._id );
+        notify( newRequest );
 
         return newRequest; 
     },

@@ -1,23 +1,18 @@
 const Notification = require("@models/notification.model");
 
-//services
-const { viewRequestById } = require("@services/request.service");
-
 module.exports = {
 
-    notify: async ( requestId ) => {
-
-        const requestInfo = await viewRequestById( requestId );
+    notify: async ( request ) => {
 
         const notif = new Notification({
 
-            sender: requestInfo.requesteeId._id,
+            sender: request.requesteeId,
             type: "request",
-            requestcategory: requestInfo.type,
+            requestcategory: request.type,
             message: `has requested a +1 to your event.`,
-            requestId,
-            recepient: requestInfo.accepteeId._id,
-            eventId: requestInfo.eventId
+            requestId: request._id,
+            recepient: request.accepteeId,
+            eventId: request.eventId
 
         });
 

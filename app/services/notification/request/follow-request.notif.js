@@ -1,20 +1,15 @@
 const Notification = require("@models/notification.model");
 
-//services
-const requestService = require("@services/request.service");
+module.exports.notify = async ( request ) => {
 
-module.exports.notify = async ( requestId ) => {
+    const notif = new Notification({ 
 
-    const requestInfo = await requestService.viewRequestById(requestId);
-
-    const notif = new Notification({
-
-        sender: requestInfo.requesteeId._id,
+        sender: request.requesteeId,
         type: "request",
-        requestcategory: requestInfo.type,
+        requestcategory: request.type,
         message: `would like to be your friend.`,
-        requestId,
-        recepient: requestInfo.accepteeId._id
+        requestId: request._id,
+        recepient: request.accepteeId
 
     });
 

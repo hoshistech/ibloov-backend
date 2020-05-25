@@ -52,7 +52,7 @@ module.exports = {
 
                             return Promise.all( invitees.map( async invitee => {
 
-                                if( invitee.userId._id){
+                                if( invitee.userId ){
             
                                     let isFollowing = await userService.isFollowingUser( authUser,  invitee.userId._id);
                                     invitee.isFollowing = isFollowing;    
@@ -468,7 +468,7 @@ module.exports = {
 
                     Promise.all( invitees.map( async invitee => {
 
-                        if( invitee.userId._id){
+                        if( invitee.userId ){
     
                             let isFollowing = await userService.isFollowingUser( authUser,  invitee.userId._id);
                             invitee["isFollowing"] = isFollowing;

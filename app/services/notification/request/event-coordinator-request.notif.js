@@ -1,27 +1,22 @@
 const Notification = require("@models/notification.model");
 
-//services
-const { viewRequestById } = require("@services/request.service");
-
 module.exports = {
     
     /**
      * creates a single event-coordinator-request notification
      * @param requestId
      */
-    notify:  async ( requestId ) => {
-
-        const requestInfo = await viewRequestById(requestId);
+    notify:  async ( request ) => {
 
         const notif = new Notification({
 
-            sender: requestInfo.requesteeId._id,
+            sender: request.requesteeId,
             type: "request",
-            requestcategory: requestInfo.type,
+            requestcategory: request.type,
             message: `has invited you to be a coordinator at an event.`,
-            requestId,
-            recepient: requestInfo.accepteeId._id,
-            eventId: requestInfo.eventId
+            requestId: request._id,
+            recepient: request.accepteeId,
+            eventId: request.eventId
 
         });
 

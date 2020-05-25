@@ -1,24 +1,20 @@
 //models
 const Notification = require("@models/notification.model");
 
-//services
-const { viewRequestById } = require("@services/request.service");
-
 module.exports = { 
     
-    notify: async ( requestId ) => {
+    notify: async ( request ) => {
 
-        const requestInfo = await viewRequestById( requestId );
 
         const notif = new Notification({
 
-            sender: requestInfo.requesteeId._id,
+            sender: request.requesteeId,
             type: "request",
-            requestcategory: requestInfo.type,
+            requestcategory: request.type,
             message: `has invited you to an event.`,
-            requestId,
-            recepient: requestInfo.accepteeId._id,
-            eventId: requestInfo.eventId
+            requestId: request._id,
+            recepient: request.accepteeId,
+            eventId: request.eventId
 
         });
 

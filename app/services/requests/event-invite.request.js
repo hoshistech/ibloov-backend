@@ -31,9 +31,12 @@ module.exports = {
             eventId
         };
 
-        let newRequest = new Request( request );
-        notify( newRequest._id);
-        return await newRequest.save();
+        const newRequest = new Request( request );
+    
+        const resp = await newRequest.save();
+        
+        notify( resp );
+        return resp;
     },
 
     /**

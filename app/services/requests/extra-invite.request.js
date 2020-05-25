@@ -29,11 +29,13 @@ module.exports = {
             eventId
         };
 
-        let request = new Request( followRequest );
+        const request = new Request( followRequest );
 
-        notify( request._id );
+        const resp =  await request.save();
 
-        return await request.save();
+        notify( resp );
+
+        return resp;
     },
 
 
