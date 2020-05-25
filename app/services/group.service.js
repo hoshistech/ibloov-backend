@@ -94,7 +94,9 @@ module.exports = {
                 } 
             }, 
             { runValidators: true, new: true }
-        );
+        )
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName google')
+        .populate('contacts.userId', '_id avatar authMethod local.firstName local.lastName fullName google');
     },
 
     /**
