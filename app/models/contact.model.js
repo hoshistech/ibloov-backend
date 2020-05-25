@@ -4,9 +4,14 @@ var Schema = mongoose.Schema;
 
 var userContact = new Schema({
 
-    telepone: {
+    telephone: {
         type: Number,
         required: true
+    },
+
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users"
     },
 
     email: {

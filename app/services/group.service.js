@@ -15,6 +15,8 @@ module.exports = {
         sort[ sortBy ] = orderBy;
 
         return await Group.find( query )
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName google')
+        .populate('contacts.userId', '_id avatar authMethod local.firstName local.lastName fullName google')
         .sort(sort)
         .limit(limit)
         .skip(skip);
@@ -40,8 +42,8 @@ module.exports = {
     viewGroup: async ( groupId ) => {
 
         return await Group.findById(groupId)
-        .populate('userId', '_id avatar authMethod email local.firstName local.lastName fullName');
-        //.populate('contacts.contactId', '_id name');
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName google')
+        .populate('contacts.userId', '_id avatar authMethod local.firstName local.lastName fullName google');
     },
 
 
@@ -53,7 +55,10 @@ module.exports = {
      */
     updateGroup: async (groupId, updateData) => {
 
-        const result = await Group.findByIdAndUpdate( groupId, updateData, {new: true});
+        const result = await Group.findByIdAndUpdate( groupId, updateData, {new: true})
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName google')
+        .populate('contacts.userId', '_id avatar authMethod local.firstName local.lastName fullName google')
+
         return result;
     },
 
@@ -66,7 +71,9 @@ module.exports = {
     softDeleteGroup: async ( groupId, deletedBy ) => {
         
         const updateData = {deletedAt: Date.now(), deletedBy };
-        return await module.exports.updateGroup(groupId, updateData); 
+        return await module.exports.updateGroup(groupId, updateData)
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName google')
+        .populate('contacts.userId', '_id avatar authMethod local.firstName local.lastName fullName google');
     },
 
 
@@ -104,7 +111,7 @@ module.exports = {
 
 
     /**
-     * updates an event instance -  addsa a new audit history to the event document
+     * updates an event instance -  addsa a new audit history to the group document
      * @param eventId String - the unique identifier of the event.
      * @param event string - the name of the event e.g create, delete etc.
      */

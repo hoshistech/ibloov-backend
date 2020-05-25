@@ -5,6 +5,7 @@ const User = require('@models/user.model');
 
 //notifs
 const { notify } = require('@request-notif/follow-request.notif');
+const { followAcceptNotification } = require('@info-notif/follow-accept.notif');
 
 //request module constants 
 const type = "follow-request";
@@ -54,7 +55,11 @@ module.exports = {
 
         let setData = { "followers": follower };
         
-        return await User.findByIdAndUpdate( request.accepteeId._id , { '$addToSet': setData }, { runValidators: true , new: true} );
+        const resp =  await User.findByIdAndUpdate( request.accepteeId._id , { '$addToSet': setData }, { runValidators: true , new: true} );
+
+        followAcceptNotification(request.requesteeId._id, request.accepteeId._id);
+
+        return resp;
     },
 
 
