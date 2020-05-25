@@ -440,7 +440,7 @@ module.exports = {
 
     getUserByToken: async ( req, res ) => {
 
-        const userId = req.authuser._id;
+        const userId = req.authuser._id; 
 
         try {
             
@@ -558,7 +558,7 @@ module.exports = {
                 data: err.toString()
             });
         }
-    },
+    }
 
     
 }

@@ -235,7 +235,7 @@ module.exports = {
 
 
     /**
-     * follow a user
+     * follow a user 
      */
     followUser: async( requesteeId, accepteeId ) => {
 

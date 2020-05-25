@@ -4,9 +4,28 @@ var Schema = mongoose.Schema;
 
 var contact = new Schema({
 
+    email: {
+        type: String,
+        required: function(){
+            
+            return (! this.telephone && ! this.userId);
+        }
+    },
+
     telephone: {
         type: String,
-        required: true
+        required: function(){
+            
+            return (! this.email && ! this.userId);
+        }
+    },
+
+    userId: { //optional. for people on the platform
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: function(){
+            return (! this.email && ! this.telephone);
+        }
     },
 
     contactId: {
@@ -14,19 +33,11 @@ var contact = new Schema({
         ref: "contacts",
     },
 
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
-    },
-
-    email: {
-        type: String
-    },
-
     createdAt: {
         type: Date,
         default: Date.now()
     }
+    
 }, { _id : false } )
 
 var GroupSchema = new Schema({
