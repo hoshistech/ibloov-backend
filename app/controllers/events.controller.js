@@ -124,7 +124,7 @@ module.exports = {
             console.log( geoCode );
 
             event.location = {
-                address: geoCode.formattedAddress,
+                address: geoCode[0].formattedAddress,
                 coordinates: [ geoCode[0].longitude, geoCode[0].latitude ]
             }
 
