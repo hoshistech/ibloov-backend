@@ -121,6 +121,8 @@ module.exports = {
 
             let geoCode = await geocode( event.address );
 
+            console.log( geoCode );
+
             event.location = {
                 address: geoCode.formattedAddress,
                 coordinates: [ geoCode[0].longitude, geoCode[0].latitude ]
