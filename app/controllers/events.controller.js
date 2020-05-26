@@ -5,6 +5,9 @@ const userService = require('@services/user.service');
 const { createEventInviteBulkRequest } = require('@user-request/event-invite.request');
 const { createEventCoordinatorBulkRequest } = require('@user-request/event-coordinator.request');
 
+const { geocode } = require("@providers/location/node-geocoder.provider")
+
+
 //notifs
 
 const { eventLikedNotification } = require('@info-notif/event-like.notif');
@@ -108,8 +111,6 @@ module.exports = {
      * @RESTCONTROLLER
      * create a new event.
      * 
-     * @TODO add middleware to ensure that the start date is not in the past
-     * @TODO add middleware to ensure that the end date is not greater than the start date
      */
     create: async (req, res) => {
 
@@ -117,9 +118,14 @@ module.exports = {
             let event = req.body;
             event.uuid = uuidv4();
             event.userId = req.authuser._id;
+
+            let geoCode = await geocode( event.address );
+
             event.location = {
-                address: event.address
+                address: geoCode.formattedAddress,
+                coordinates: [ geoCode[0].longitude, geoCode[0].latitude ]
             }
+
             
             let result = await eventService.createEvent(event);
             createEventInviteBulkRequest( result );

@@ -2,6 +2,7 @@ const groupService = require('@services/group.service');
 const uuidv4 = require('uuid/v4');
 const { getOptions, getMatch } = require('@helpers/request.helper');
 
+
 module.exports = {
 
     /**
@@ -173,12 +174,12 @@ module.exports = {
     addContacts: async (req, res) => {
 
         let groupId = req.params.groupId;
-        let contacts = req.body.contacts;
+        let contacts = req.body.contacts; 
 
         try {
 
             let resp = await groupService.addContacts(groupId, contacts);
-
+            
             return res.status(200).json({
                 success: true,
                 message: "Contact(s) added successfully",

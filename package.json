@@ -40,6 +40,7 @@
     "morgan": "~1.9.1",
     "multer": "^1.4.2",
     "multer-s3": "^2.9.0",
+    "node-geocoder": "^3.27.0",
     "nodemon": "^1.19.4",
     "passport": "^0.4.0",
     "passport-facebook": "^3.0.0",
@@ -69,10 +70,8 @@
     "@services": "app/services",
     "@middleware": "app/middlewares",
     "@request-middleware": "app/middlewares/requests",
-
     "@request-notif": "app/services/notification/request",
     "@info-notif": "app/services/notification/info",
-
     "@user-request": "app/services/requests"
   }
 }
