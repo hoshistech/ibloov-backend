@@ -9,7 +9,7 @@ const eventCoordinatorRequestModule = require('@user-request/event-coordinator.r
 /**
  * maps the different request types to their handlers
  * 
- * @Todo - find a way to lazy-load these modules
+ * Todo - find a way to lazy-load these modules
  */
 const requestTypeModules = {
 
@@ -103,6 +103,8 @@ module.exports = {
      * 
      * @param request object
      * @param callback function
+     * 
+     * Todo delete request after successful operation
      */
     processAcceptRequest: async( request, callback ) => {
 
@@ -116,6 +118,8 @@ module.exports = {
      * 
      * @param request object
      * @param callback function
+     * 
+     * Todo delete request after successful operation
      */
     processDenyRequest: async( request, callback ) => {
 

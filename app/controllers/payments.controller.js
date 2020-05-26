@@ -30,8 +30,8 @@ module.exports = {
             paymentService.logPayment( resp, userId, platform )
             
             /**
-             * @Todo log payment
-             * @Todo send receipt.
+             * Todo log payment
+             * Todo send receipt.
              */
 
             return res.status(200).json({

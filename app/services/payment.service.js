@@ -38,8 +38,8 @@ module.exports = {
 
     //     //vaultService.customerExists
     //     /**
-    //      * @Todo check if the customer exists in the vault - if not create user with a nonce
-    //      * @Todo set merchantId to use
+    //      * Todo check if the customer exists in the vault - if not create user with a nonce
+    //      * Todo set merchantId to use
     //      * 
     //      */
 

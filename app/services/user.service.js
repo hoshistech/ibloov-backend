@@ -249,16 +249,16 @@ module.exports = {
 
 
     /**
-     * checks if a user is following another user
+     * checks if a user is in "followers" array of another user
      * @param userId
      * @param isFollowingUserId
      * 
-     * @returns boolean
+     * @return boolean 
      */
     isFollowingUser: async( userId, isFollowingUserId ) => {
 
         let resp =  await User.findOne( {
-            _id: isFollowingUserId, 
+            _id: isFollowingUserId,  
             "followers": { $elemMatch: { userId } } 
         }, {
             _id: 0,
@@ -267,10 +267,33 @@ module.exports = {
         .lean();
 
         if( resp && resp["followers"].length > 0 ){
+            return true;
+        } 
+
+        return false;
+    },
+
+
+    /**
+     * checks the following status, system-wide between 2 users
+     * @param userId
+     * @param isFollowingUserId
+     * 
+     * @return String either of "true", "false" or "pending" 
+     */
+    isFollowingStatus: async( userId, isFollowingUserId ) => {
+
+        const resp = await module.exports.isFollowingUser( userId, isFollowingUserId );
+
+        if( resp ){
+
             return "true";
 
         } else {
 
+            /**
+             * Todo decide if it is better to get pending requests only here
+             */
             let hasFollowRequest = await viewRequest( userId, isFollowingUserId, "follow-request" );
 
             if( hasFollowRequest){
@@ -279,6 +302,10 @@ module.exports = {
 
                 if( status == null ) return "pending";
 
+                /**
+                 * Todo remove this status
+                 * if a request is denied, remove it after executing its callback successfully
+                 */
                 if( status == false ) return "denied";
 
                 if( status == true ) return "true";

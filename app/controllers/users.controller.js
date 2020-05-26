@@ -512,7 +512,7 @@ module.exports = {
                 message: err.toString()
             }); 
         }
-    },
+    }, 
 
 
     followRequests: async (req, res) => {
@@ -527,6 +527,31 @@ module.exports = {
                 message: "Operation successful",
                 data: requests
             });
+
+        } catch ( err ) {
+
+            res.status(400).send({
+                success: false,
+                message: "error performing this operation",
+                data: err.toString()
+            });
+        }
+    },
+
+    followStatus: async (req, res) => {
+
+        const authuser = req.authuser._id;
+        const isFollowingUser = req.params.userId;
+
+        try {
+            const status = await userService.isFollowingStatus( authuser, isFollowingUser );
+
+            res.status(200).json({
+
+                success: true,
+                message: "Operation successful",
+                data: status
+            })
 
         } catch ( err ) {
 
@@ -558,7 +583,57 @@ module.exports = {
                 data: err.toString()
             });
         }
-    }
+    },
+
+
+    /**
+     * toggles the follow state of a user
+     * if user A is following userB, then this endpoint unfollows the userA
+     * if userA is not following userB, then it sends userB a follow request
+     * 
+     * for pending or denied status - nothing happens
+     */
+    toggleFollow: async( req, res) => {
+
+        const isFollowingUserId = req.params.userId;
+
+        try{
+            const userId = req.authuser._id;
+            let message;
+
+            const isFollowing = await userService.isFollowingStatus( userId, isFollowingUserId );
+
+            if( isFollowing === "true" ){
+
+                await userService.unfollowUser( userId, isFollowingUserId );
+                message = "you have unfollowed this user successfully";
+
+            } 
+            else if( isFollowing === "false" ) {
+
+                await createFollowRequest(userId, isFollowingUserId );
+                message = "A follow request has been sent to user successfully ";
+            } 
+            else if( isFollowing === "pending" ) {
+                
+                message = "Follow Request pending";
+            } 
+
+            return res.status(200).json({
+                success: true,
+                message
+            });
+        }
+        catch( err ){
+
+            return res.status(400).json({
+
+                success: false,
+                message: "There was an error performing this operation",
+                data: err.toString()
+            });
+        }
+    },
 
     
 }

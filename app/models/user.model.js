@@ -74,7 +74,11 @@ var UserSchema = new Schema({
         }],
 
         password: {
-            type: String
+            type: String,
+            required: function(){
+
+                return this.authMethod == "local";
+            }
         }
 
     },
@@ -115,7 +119,11 @@ var UserSchema = new Schema({
             this.authMethod == "local"
         },
         unique: function(){
-            this.phoneNumber ? true : false
+
+            /**
+             * Todo uncomment this when Afolabi is done testing
+             */
+            //this.phoneNumber ? true : false
         }
     },
 

@@ -31,6 +31,8 @@ router.get('/details',  [ checkAuth ], UserController.getUserByToken );
 
 router.get('/following/:userId?',  [ checkAuth ], UserController.getFollowing ); 
 
+router.get('/following/status/:userId',  [ checkAuth ], UserController.followStatus ); 
+
 router.get('/notifications',  [ checkAuth ], UserController.getNotifications ); 
 
 router.get('/requests',  [ checkAuth ], UserController.getRequests ); 
@@ -42,6 +44,8 @@ router.get('/:userId', [ checkAuth, validate("viewUser"), isValidRequest ], User
 router.delete('/:userId',  [ checkAuth, validate("deleteUser"), isValidRequest ], UserController.softdelete );
 
 router.patch('/unfollow/:userId', [ checkAuth, validate("unfollowUser"), isValidRequest ], UserController.unfollowUser );
+
+router.patch('/togglefollow/:userId', [ checkAuth, validate("toggleFollowUser"), isValidRequest ], UserController.toggleFollow );
 
 //router.patch('/followrequest/accept/:userId', [ checkAuth, validate("acceptFollowRequest"), isValidRequest ], UserController.acceptFollowRequest );
 

@@ -57,8 +57,8 @@ module.exports = {
 
                                 if( invitee.userId ){
             
-                                    let isFollowing = await userService.isFollowingUser( authUser,  invitee.userId._id);
-                                    invitee.isFollowing = isFollowing;    
+                                    let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
+                                    invitee.isFollowing = isFollowingStatus;    
                                 }
     
                                 return invitee;
@@ -197,8 +197,8 @@ module.exports = {
 
                     if( invitee.userId._id){
 
-                        let isFollowing = await userService.isFollowingUser( authUser,  invitee.userId._id);
-                        invitee["isFollowing"] = isFollowing;
+                        let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
+                        invitee["isFollowing"] = isFollowingStatus;
                     }
 
                     return invitee;
@@ -476,8 +476,8 @@ module.exports = {
 
                         if( invitee.userId ){
     
-                            let isFollowing = await userService.isFollowingUser( authUser,  invitee.userId._id);
-                            invitee["isFollowing"] = isFollowing;
+                            let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
+                            invitee["isFollowing"] = isFollowingStatus;
                         }
 
                         return invitee;
@@ -513,7 +513,7 @@ module.exports = {
 
     /**
      * adds new invitees to the event invitees
-     * @TODO - only the creator or admins of an event should be able to do this
+     * Todo - only the creator or admins of an event should be able to do this
      */
     addInvites: async ( req, res) => {
 

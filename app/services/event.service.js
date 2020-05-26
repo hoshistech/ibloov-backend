@@ -332,8 +332,8 @@ module.exports = {
         let isInvited = await module.exports.isInvited( eventId, userId );
 
         /**
-         * @Todo check for paid events
-         * @Todo only people who have paid for paid events should be added to attending.
+         * Todo check for paid events
+         * Todo only people who have paid, for paid events should be added to attending.
          */
         
 

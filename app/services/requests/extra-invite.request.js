@@ -66,7 +66,7 @@ module.exports = {
     acceptRequest: async ( request ) => {
 
         /**
-         * @Todo add the person to the 
+         * Todo - decidde how to handle +1 requests
          */
     },
 
