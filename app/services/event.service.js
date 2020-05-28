@@ -334,6 +334,7 @@ module.exports = {
         /**
          * Todo check for paid events
          * Todo only people who have paid, for paid events should be added to attending.
+         * Todo - to acheive the above, make sure the user has a ticket
          */
         
 

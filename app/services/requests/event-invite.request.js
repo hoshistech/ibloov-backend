@@ -6,6 +6,7 @@ const { approveEventInviteRequest, denyEventInviteRequest } = require("@services
 
 //notifs
 const { notify, notifyBulk } =  require('@request-notif/event-invite-request.notif');
+const { eventAttendanceConfirmationNotification } = require('@info-notif/event-attendance-confirmation.notif');
 
 //module constants
 const type = "event-invite-request";
@@ -86,6 +87,7 @@ module.exports = {
     acceptRequest: async ( request ) => {
         
         await approveEventInviteRequest( request.eventId, request.accepteeId._id );
+        eventAttendanceConfirmationNotification( request.accepteeId._id, request.requesteeId._id, request.eventId )
     },
 
     /**

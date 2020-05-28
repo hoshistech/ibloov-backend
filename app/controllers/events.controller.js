@@ -9,8 +9,10 @@ const { geocode } = require("@providers/location/node-geocoder.provider")
 
 
 //notifs
-
 const { eventLikedNotification } = require('@info-notif/event-like.notif');
+const { eventAttendanceConfirmationNotification } = require('@info-notif/event-attendance-confirmation.notif');
+
+
 
 const uuidv4 = require('uuid/v4');
 
@@ -432,6 +434,10 @@ module.exports = {
         try{
 
             let resp = await eventService.confirmEventAttendance( eventId, userId, status.toUpperCase() );
+            if( status.toUpperCase() === "YES"){
+
+                eventAttendanceConfirmationNotification( userId, resp.userId._id, eventId);
+            } 
             
             return res.status(200).json({
                 success: true,

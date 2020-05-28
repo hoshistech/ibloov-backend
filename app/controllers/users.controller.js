@@ -185,8 +185,15 @@ module.exports = {
         const acceptee = req.params.userId;
 
         try {
-            await createFollowRequest(requestee, acceptee );
 
+            const status = await userService.isFollowingStatus( requestee, acceptee );
+
+            //only send request if status is false.
+            if( status === "false"){
+
+                await createFollowRequest( requestee, acceptee );
+            }
+            
             return res.status(200).json({
 
                 success: true,
