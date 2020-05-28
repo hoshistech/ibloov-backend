@@ -96,7 +96,7 @@ module.exports = {
      */
     updateEventSet: async (eventId, setData) => {
 
-        return await Event.findByIdAndUpdate( { _id: eventId } , { '$addToSet': setData}, { runValidators: true , new: true} );
+        return await Event.findByIdAndUpdate( { _id: eventId } , { '$addToSet': setData }, { runValidators: true , new: true } );
     },
 
 
