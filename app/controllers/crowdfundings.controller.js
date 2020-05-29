@@ -162,7 +162,7 @@ module.exports = {
 
         try {
 
-            let resp = await crowdfundingService.pledge(crowdfundingId, pledge, userId);
+            let resp = await crowdfundingService.pledge( crowdfundingId, pledge, userId );
 
             return res.status(200).json({
                 success: true,
@@ -171,6 +171,12 @@ module.exports = {
             });
 
         } catch ( err ) {
+
+            /**
+             * Todo - log failed pledges
+             * why? pledges are saved only after the user successfully pays
+             * if there is a problem during commiting the pledge, then some extra measures have to be put in place to make sure it is later saved
+             */
             
             return res.status(400).json({
                 success: false,

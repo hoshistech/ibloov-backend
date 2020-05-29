@@ -20,10 +20,6 @@ module.exports = {
         try{
 
             const merchantAccountId = getMerchantId(currency);
-
-            console.log("merchantAccount")
-            console.log(merchantAccountId);
-
             return await gateway.checkout(amount, nonceFromTheClient, merchantAccountId );
 
         } catch( err ) {
@@ -106,15 +102,18 @@ module.exports = {
      * Logs every payment on the platform
      * @param response Object the reponse of the payment,
      * @param userId  String the _id of the user carrying out the transactions
-     * @param channel String the channel the medium of payment - creditcard, applepay, paypal etc.
-     * @param platform String the platform of request mobile or web usually.
+     * @param platform String the platform from which the request was made ( mobile or web usually ).
+     * @param resource String the resource that is being paid for
+     * @param resourceId String the _id of the resource being paid for.
      * 
      */
-    logPayment: async ( paymentResponse, userId, platform ) => {
+    logPayment: async ( paymentResponse, userId, platform, resource, resourceId ) => {
 
         const newPayment = { 
 
             userId,
+            resource,
+            resourceId,
             amount: paymentResponse.transaction.amount,
             currency: paymentResponse.transaction.currencyIsoCode,
             paymentRef: paymentResponse.transaction.id,
@@ -123,6 +122,7 @@ module.exports = {
             response: paymentResponse
 
         }
+
         let payment = new Payment( newPayment );
         return await payment.save();
     }

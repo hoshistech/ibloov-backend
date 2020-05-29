@@ -65,8 +65,6 @@ module.exports = {
         return await Wishlist.findByIdAndUpdate( wishlistId, updateData, { runValidators: true, new: true})
         .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName google')
         .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName fullName google')
-
-       
     },
 
 

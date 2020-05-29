@@ -102,12 +102,15 @@ module.exports = {
      * allows a user to renege on a pledge.
      * @param crowdfundingId integer - the unique id of the crowdfuding model
      * @param userId integer - the unique ID of the user
+     * 
+     * Note: This should not be allowed, because pledges are saved after payment.
+     * Todo - look into a refund settlement module.
      */
     unPledge: async( crowdfundingId, pledgeId ) => {
         
-        let update = await CrowdFunding.findByIdAndUpdate( crowdfundingId, { $pull: { 'donors':  { "_id": pledgeId }  } }, 
-        { new: true} );
-        return update
+        // let update = await CrowdFunding.findByIdAndUpdate( crowdfundingId, { $pull: { 'donors':  { "_id": pledgeId }  } }, 
+        // { new: true} );
+        // return update
     },
 
 

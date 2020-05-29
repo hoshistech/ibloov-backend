@@ -320,10 +320,9 @@ module.exports = {
 
         let wishlistId = req.params.wishlistId;
         let itemId = req.body.itemId;
-        let userId = "5e74a056a1d062242108b216";
+        let userId = req.authuser._id;
         //addHistory( wishlistId, "WISHLIST_ITEM_UNPLEDGE");
 
-        
         try {
             let result = await wishlistService.unPledge(wishlistId, itemId, userId);
 

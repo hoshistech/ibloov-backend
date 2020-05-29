@@ -17,8 +17,20 @@ var PaymentSchema = new Schema({
     },
 
 
+    resourceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
+    },
+
+    resource: {
+        type: String,
+        required: true
+    },
+
+
     currency: {
-        type: String
+        type: String,
+        required: true
     },
 
     paymentRef: {
@@ -35,9 +47,10 @@ var PaymentSchema = new Schema({
     },
 
     response: {
-        type: mongoose.Mixed
+        type: mongoose.Mixed 
     }
-})
+
+}, { timestamps: true,  versionKey: false } )
 
 let Payments = mongoose.model('payments', PaymentSchema );
 

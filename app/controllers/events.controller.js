@@ -130,15 +130,13 @@ module.exports = {
                 coordinates: [ geoCode[0].longitude, geoCode[0].latitude ]
             }
 
-            //process invites to get match in the db
-           // process coordinators to het match in the db
-
-            event.invitees = await processInvitees(event);
+           event.invitees = await processContacts(event.invitees);
+           event.coordinators = await processContacts(event.coordinators);
             
             let result = await eventService.createEvent(event);
             //await process invites
             createEventInviteBulkRequest( result );
-            createEventCoordinatorBulkRequest(result);
+            createEventCoordinatorBulkRequest( result );
             
             //sendAccountConfirmationNotification();
             res.status(201).send({
@@ -656,20 +654,22 @@ module.exports = {
 }
 
 
-const processInvitees = async ( event ) => {
+const processContacts = async ( contacts ) => {
 
-    return Promise.all(  event.invitees.map( async invitee => {
+    if( ! contacts || contacts.length < 1  ) return;
 
-        if( ! invitee.userId ){
+    return Promise.all(  contacts.map( async contact => {
+
+        if( ! contact.userId ){
 
             let query;
 
-            if( invitee.email ){
-                query = { email: invitee.email };
+            if( contact.email ){
+                query = { email: contact.email };
             }
-            else if( invitee.telephone ){
+            else if( contact.telephone ){
 
-                let phoneNumber = invitee.telephone.replace(/\s/g, "");
+                let phoneNumber = contact.telephone.replace(/\s/g, "");
                 query = { phoneNumber };
             }
 
@@ -678,13 +678,11 @@ const processInvitees = async ( event ) => {
                 let user = await userService.getUser( query );
 
                 if( user ){
-                    invitee["userId"] = user._id;
+                    contact["userId"] = user._id;
                 }
-            }
-            
+            } 
         }
 
-        return invitee;
-
+        return contact;
     }))
 }

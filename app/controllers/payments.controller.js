@@ -4,7 +4,7 @@ module.exports = {
 
     checkout: async (req, res) => {
 
-        let { nonceFromTheClient, amount, currency } = req.body;
+        const { nonceFromTheClient, amount, currency, resource, resourceId } = req.body;
 
         console.log("nonceFromTheClient, amount, currency");
         console.log(nonceFromTheClient);
@@ -27,10 +27,10 @@ module.exports = {
             const platform = req.authplatform
             const userId = req.authuser._id;
 
-            paymentService.logPayment( resp, userId, platform )
+            //log payment
+            paymentService.logPayment( resp, userId, platform, resource, resourceId );
             
             /**
-             * Todo log payment
              * Todo send receipt.
              */
 
@@ -43,6 +43,10 @@ module.exports = {
         } catch ( err ) {
 
             console.log( err )
+
+            /**
+             * Todo - it is super important to log failed payments.
+             */
             
             return res.status(400).json({
                 success: false,
