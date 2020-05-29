@@ -67,6 +67,15 @@ module.exports = {
 
                 requests.push( followRequest);
             }
+            else if( acceptee.email ){
+
+                //send an email
+            }
+            else if( acceptee.telephone ){
+
+                //send a text;
+                //maybe for premium users only
+            }
         })
 
         if( requests.length > 0 ){

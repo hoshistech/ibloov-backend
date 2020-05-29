@@ -1,10 +1,15 @@
+const uuidv4 = require('uuid/v4');
+
+//services
 const eventService = require('@services/event.service');
 const userService = require('@services/user.service');
+
 
 //requests 
 const { createEventInviteBulkRequest } = require('@user-request/event-invite.request');
 const { createEventCoordinatorBulkRequest } = require('@user-request/event-coordinator.request');
 
+//providers
 const { geocode } = require("@providers/location/node-geocoder.provider")
 
 
@@ -12,9 +17,6 @@ const { geocode } = require("@providers/location/node-geocoder.provider")
 const { eventLikedNotification } = require('@info-notif/event-like.notif');
 const { eventAttendanceConfirmationNotification } = require('@info-notif/event-attendance-confirmation.notif');
 
-
-
-const uuidv4 = require('uuid/v4');
 
 //helpers
 const { getOptions, getMatch } = require('@helpers/request.helper');
@@ -132,8 +134,13 @@ module.exports = {
                 coordinates: [ geoCode[0].longitude, geoCode[0].latitude ]
             }
 
+            //process invites to get match in the db
+           // process coordinators to het match in the db
+
+            event.invitees = await processInvitees(event);
             
             let result = await eventService.createEvent(event);
+            //await process invites
             createEventInviteBulkRequest( result );
             createEventCoordinatorBulkRequest(result);
             
@@ -201,7 +208,7 @@ module.exports = {
 
                 return Promise.all(  event.invitees.map( async invitee => {
 
-                    if( invitee.userId._id){
+                    if( invitee.userId ){
 
                         let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
                         invitee["isFollowing"] = isFollowingStatus;
@@ -650,4 +657,38 @@ module.exports = {
             });
         }
     }
+}
+
+
+const processInvitees = async ( event ) => {
+
+    return Promise.all(  event.invitees.map( async invitee => {
+
+        if( ! invitee.userId ){
+
+            let query;
+
+            if( invitee.email ){
+                query = { email: invitee.email };
+            }
+            else if( invitee.telephone ){
+
+                let phoneNumber = invitee.telephone.replace(/\s/g, "");
+                query = { phoneNumber };
+            }
+
+            if( query ){
+
+                let user = await userService.getUser( query );
+
+                if( user ){
+                    invitee["userId"] = user._id;
+                }
+            }
+            
+        }
+
+        return invitee;
+
+    }))
 }

@@ -115,8 +115,25 @@ exports.validate = (method) => {
 
             return [
 
-                param('crowdfundingId').custom(value => {
-                    return itExists(value);
+                param('crowdfundingId')
+                .exists().withMessage("Expected param 'crowdfundingId' not provided")
+                .custom( value => {
+                    return itExists( value );
+                }),
+
+
+                param('pledgeId')
+                .exists().withMessage("Expected param 'pledgeId' not provided")
+                .custom( async ( value, { req, loc, path } ) => {
+
+                    const crowdfund = await crowdfundService.all({ _id: req.params.crowdfundingId, "donors._id": value });
+
+                    if( crowdfund.length < 1 ){
+
+                        return Promise.reject('Donation not found!');
+                    }
+
+                    return true;
                 }),
             ]
         }
@@ -152,6 +169,7 @@ exports.validate = (method) => {
         }
     }
 }
+
 
 const itExists = function (value) {
 

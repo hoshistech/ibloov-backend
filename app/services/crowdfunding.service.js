@@ -78,7 +78,7 @@ module.exports = {
 
 
     /**
-     * allows a user to pledge a certain amount to a crowdfuning campaign
+     * allows a user to pledge a certain amount to a crowdfuning campaign 
      * if user has pleadged before, it updates the pledge, else, it adds the pledge to the set.
      * @param crowdfundingId integer - id of the crowdFunding model to be updated.
      * @param amount Number - amount to be pledged.
@@ -103,9 +103,9 @@ module.exports = {
      * @param crowdfundingId integer - the unique id of the crowdfuding model
      * @param userId integer - the unique ID of the user
      */
-    unPledge: async(crowdfundingId, userId) => {
+    unPledge: async( crowdfundingId, pledgeId ) => {
         
-        let update = await CrowdFunding.findByIdAndUpdate( crowdfundingId, { $pull: { 'donors':  { "userId": userId }  } }, 
+        let update = await CrowdFunding.findByIdAndUpdate( crowdfundingId, { $pull: { 'donors':  { "_id": pledgeId }  } }, 
         { new: true} );
         return update
     },

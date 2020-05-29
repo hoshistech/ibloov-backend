@@ -186,15 +186,16 @@ module.exports = {
      */
     unpledge: async (req, res) => { 
 
-        let crowdfundingId = req.params.crowdfundingId;
-        let userId = req.authuser._id;
+        const crowdfundingId = req.params.crowdfundingId;
+        const pledgeId = req.params.pledgeId;
 
         try {
             
-            let resp = await crowdfundingService.unPledge(crowdfundingId, userId);
+            let resp = await crowdfundingService.unPledge(crowdfundingId, pledgeId);
+
             return res.status(200).json({
                 success: true,
-                message: "Pledge has been added successfully.",
+                message: "Pledge has been removed successfully.",
                 data: resp
             });
 

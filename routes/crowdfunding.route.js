@@ -21,7 +21,7 @@ router.delete('/:crowdfundingId', [ checkAuth, validate("deleteCrowdfund"), isVa
 
 router.patch('/pledge/:crowdfundingId', [ checkAuth, validate("crowdfundPledge"), isValidRequest ], CrowdFundingController.pledge );
 
-router.patch('/unpledge/:crowdfundingId', [ checkAuth, validate("crowdfundUnpledge"), isValidRequest ], CrowdFundingController.unpledge );
+router.patch('/unpledge/:crowdfundingId/:pledgeId', [ checkAuth, validate("crowdfundUnpledge"), isValidRequest ], CrowdFundingController.unpledge );
 
 router.patch('/invite/add/:crowdfundingId', [ checkAuth, validate("addInvite"), isValidRequest ], CrowdFundingController.addInvites ); 
 

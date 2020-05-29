@@ -34,7 +34,7 @@ exports.validate = (method) => {
 
         body('name')
         .exists().withMessage("Expected body param 'name' not found!")
-        .custom( async ( name, {req, loc, path } ) => {
+        .custom( async ( name, { req, loc, path } ) => {
 
             return await groupService.all({ name, userId: req.authuser._id}).then( groups => {
 

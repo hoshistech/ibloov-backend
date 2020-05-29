@@ -25,8 +25,6 @@ router.delete('/:eventId',  [ checkAuth, validate("deleteEvent"), isValidRequest
 
 router.get('/code/generate', EventController.generateEventCode );
 
-//router.get('/code/:eventCode', EventController.generateEventCode );
-
 router.get('/invitelink', EventController.inviteLink );
 
 router.get('/:eventId', [ checkAuth, validate("viewEvent"), isValidRequest ], EventController.view );
@@ -46,7 +44,5 @@ router.patch('/notifications/mute/:eventId', [ checkAuth, validate("muteEventNot
 router.patch('/invite/add/:eventId', [ checkAuth, validate("addInvite"), isValidRequest ], EventController.addInvites ); 
 
 router.patch('/invite/remove/:eventId', [ checkAuth, validate("removeInvite"), isValidRequest ], EventController.removeInvites );
-
-
 
 module.exports = router; 
