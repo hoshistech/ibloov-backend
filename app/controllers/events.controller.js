@@ -30,10 +30,6 @@ module.exports = {
      */ 
     index: async (req, res) => {
 
-
-        console.log("req.useragent");
-        console.log(req.useragent);
-
         let filter = getMatch(req);
         let options = getOptions(req);
         filter["deletedAt"] = null; 
