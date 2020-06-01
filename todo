@@ -1,0 +1,22 @@
+List of pending tasks to get to 
+
+- log transaction after successful payment
+
+- create a ticket after succesful payment for events
+
+- Receipt generation and email notification after successful payment 
+
+- notification of failed payments
+
+- request and notification modules rework 
+
+- suggested events API - this should be based on liked, attending, following events of friends of the user  
+
+- Generate internal payment ref for successful payments
+
+- process invites at the event creation - crosscheck phonenumbers and emails with the db to get possible match 
+and update the invite object.
+
+- Save logins and devices.
+
+- 2FA
