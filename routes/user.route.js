@@ -27,6 +27,8 @@ router.get('/crowdfunds/:userId?', [ checkAuth, validate("userCrowdfunds"), isVa
 
 router.get('/tickets/:userId?', [ checkAuth, validate("userTickets"), isValidRequest ], UserController.tickets );
 
+router.get('/friends/:userId?', [ checkAuth, validate("userFriends"), isValidRequest ], UserController.friends );
+
 router.get('/details',  [ checkAuth ], UserController.getUserByToken );
 
 router.get('/following/:userId?',  [ checkAuth ], UserController.getFollowing ); 

@@ -218,7 +218,7 @@ module.exports = {
 
     /**
      * adds new invitees to the event invitees
-     * @TODO - only the creator or admins of an event should be able to do this
+     * Todo - only the creator or admins of an event should be able to do this
      */
     addInvites: async ( req, res) => {
 
@@ -256,7 +256,7 @@ module.exports = {
 
     /**
      * removes an invite from the list of invites for an event
-     * @TODO - only the creator or admins of an event should be able to do this
+     * Todo - only the creator or admins of an event should be able to do this
      */
     removeInvites: async ( req, res) => {
 

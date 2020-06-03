@@ -17,7 +17,7 @@ router.get('/', [ checkAuthOptional ], EventController.index ) ;
 
 router.post('/create', middleWareGroup, EventController.create );
 
-router.get('/live', [ checkAuth ], EventController.live );
+router.get('/live', [ checkAuthOptional ], EventController.live );
 
 router.patch('/:eventId', [ checkAuth, validate("updateEvent"), isValidRequest ], EventController.update );
 
@@ -27,7 +27,7 @@ router.get('/code/generate', EventController.generateEventCode );
 
 router.get('/invitelink', EventController.inviteLink );
 
-router.get('/:eventId', [ checkAuth, validate("viewEvent"), isValidRequest ], EventController.view );
+router.get('/:eventId', [ checkAuthOptional, validate("viewEvent"), isValidRequest ], EventController.view );
 
 router.patch('/follow/:eventId', [ checkAuth, validate("followEvent"), isValidRequest ], EventController.follow );
 

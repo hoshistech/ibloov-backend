@@ -36,7 +36,7 @@ module.exports = {
      * creates a new influencer
      * @param influencerData object
      * 
-     * @TODO prevent verifiedAt and isVerified to be populated at creation
+     * Todo prevent verifiedAt and isVerified to be populated at creation
      */
     createInfluencer: async (influencerData ) =>{
 
@@ -188,7 +188,7 @@ module.exports = {
      * Verify an influencer 
      * @param influencerId String
      * 
-     * @TODO - add 'verifiedBy' to the schema and the update object
+     * Todo - add 'verifiedBy' to the schema and the update object
      */
     verifyInfluencer: async (influencerId) => {
 

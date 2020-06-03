@@ -4,7 +4,6 @@ const uuidv4 = require('uuid/v4');
 const eventService = require('@services/event.service');
 const userService = require('@services/user.service');
 
-
 //requests 
 const { createEventInviteBulkRequest } = require('@user-request/event-invite.request');
 const { createEventCoordinatorBulkRequest } = require('@user-request/event-coordinator.request');
@@ -12,11 +11,9 @@ const { createEventCoordinatorBulkRequest } = require('@user-request/event-coord
 //providers
 const { geocode } = require("@providers/location/node-geocoder.provider")
 
-
 //notifs
 const { eventLikedNotification } = require('@info-notif/event-like.notif');
 const { eventAttendanceConfirmationNotification } = require('@info-notif/event-attendance-confirmation.notif');
-
 
 //helpers
 const { getOptions, getMatch } = require('@helpers/request.helper');
@@ -26,7 +23,8 @@ const pagination = require('@helpers/pagination.helper');
 module.exports = {
 
     /**
-     * get events
+     * @RESTCONTROLLER
+     * get all events
      */ 
     index: async (req, res) => {
 
@@ -42,7 +40,7 @@ module.exports = {
             //let pg = await eventService.paginatedQuery(filter);
             //console.log(  pagination( pg,  options.limit) ); 
 
-            //revisit this
+            //revisit this 
 
             if( authUser ){
 
@@ -53,9 +51,11 @@ module.exports = {
                         let isFollowing = await eventService.isFollowingEvent( event._id, authUser);
                         event["isFollowing"] = isFollowing; 
                         
-                        let invitees = event.invitees;
+                        let invitees = event.invitees || [];
+                        let coordinators = (event.coordinators) ? ( event.coordinators.filter( coordinator =>  coordinator.accepted === "YES" ) ) : [];
 
-                        const checkBlooverstFollowingStatus = async () => {
+                        //this simply checks the following status betweeen the authuser and each of the invitees
+                        const checkBlooversFollowingStatus = async () => {
 
                             return Promise.all( invitees.map( async invitee => {
 
@@ -68,9 +68,29 @@ module.exports = {
                                 return invitee;
                             }))
                         }
+
+                        //this simply checks the following status betweeen the authuser and each of the hosts
+                        const checkCoordinatorsFollowingStatus = async () => {
+
+                            return Promise.all( coordinators.map( async coordinator => {
+
+                                if( coordinator.userId ){
+            
+                                    let isFollowingStatus = await userService.isFollowingStatus( authUser,  coordinator.userId._id);
+                                    coordinator.isFollowing = isFollowingStatus;    
+                                }
+    
+                                return coordinator;
+                                
+                            }))
+                        }
                         
-                        let processedInvitees = await checkBlooverstFollowingStatus();
-                        event['invitees'] = processedInvitees
+                        let processedInvitees = await checkBlooversFollowingStatus();
+                        let processedCoordinators = await checkCoordinatorsFollowingStatus();
+
+                        event['invitees'] = processedInvitees;
+                        event['coordinators'] = processedCoordinators;
+
                         return event;
                     }))
                 }
@@ -101,6 +121,8 @@ module.exports = {
             });
         }
         catch( err ){
+
+            console.log(err);
 
             res.status(400).send({
                 success: false,
@@ -192,29 +214,54 @@ module.exports = {
     view: async (req, res) => {
 
         let eventId = req.params.eventId;
-        const authUser = req.authuser._id;
+        
 
         try {
+
+            const authUser = req.authuser ? req.authuser._id : null;
+
             let event = await eventService.viewEvent(eventId);
-            event["isFollowing"] = await eventService.isFollowingEvent( eventId, authUser);
 
-            const checkBlooverstFollowingStatus = async () => {
+            if( authUser ){
 
-                return Promise.all(  event.invitees.map( async invitee => {
+                event["isFollowing"] = await eventService.isFollowingEvent( eventId, authUser);
 
-                    if( invitee.userId ){
+                let coordinators = (event.coordinators) ? ( event.coordinators.filter( coordinator =>  coordinator.accepted === "YES" ) ) : [];
 
-                        let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
-                        invitee["isFollowing"] = isFollowingStatus;
-                    }
+                const checkBlooversFollowingStatus = async () => {
 
-                    return invitee;
+                    return Promise.all(  event.invitees.map( async invitee => {
+
+                        if( invitee.userId ){
+
+                            let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
+                            invitee["isFollowing"] = isFollowingStatus;
+                        }
+
+                        return invitee;
+        
+                    }))
+                }
+
+                const checkCoordinatorsFollowingStatus = async () => {
+
+                    return Promise.all( coordinators.map( async coordinator => {
+
+                        if( coordinator.userId ){
     
-                }))
+                            let isFollowingStatus = await userService.isFollowingStatus( authUser,  coordinator.userId._id);
+                            coordinator.isFollowing = isFollowingStatus;    
+                        }
+
+                        return coordinator;
+                        
+                    }))
+                }
+
+                event["invitees"] = await checkBlooversFollowingStatus();
+                event["coordinators"] = await checkCoordinatorsFollowingStatus();
             }
-
-            event["invitees"] = await checkBlooverstFollowingStatus();
-
+            
             return res.status(200).json({
                 success: true,
                 message: "Event retreived successfully.",
@@ -385,6 +432,12 @@ module.exports = {
     },
 
 
+    /**
+     * @RESTCONTROLLER
+     * @authlevel authenticated
+     * 
+     * endpoint to toggle the following statu of a user against the currently authenticated user. 
+     */
     toggleFollow: async( req, res) => {
 
         let eventId = req.params.eventId;
@@ -426,8 +479,11 @@ module.exports = {
         }
     }, 
 
+
     /**
      * @RESTCONTROLLER
+     * @authlevel authenticated
+     * 
      * sets the status of a user's attendance for an event based on the user's response
      */
     confirmAttendance: async (req, res) => {
@@ -469,47 +525,89 @@ module.exports = {
         let options = getOptions(req); 
         let resp = {};
 
-        const authUser = req.authuser._id;
-
         try{
+
+            const authUser = req.authuser ? req.authuser._id : null;
+
             let events = await eventService.liveEvents( filter, options );
 
-            const checkBlooverstFollowingStatus = async () => {
+            if( authUser ){
 
-                return Promise.all( events.map( async event => {
+                const processEvent = async () => {
 
-                    let isFollowing = await eventService.isFollowingEvent( event._id, authUser);
-                    event["isFollowing"] = isFollowing;
-                    
-                    let invitees = event.invitees;
+                    return Promise.all( events.map( async event => {
 
-                    Promise.all( invitees.map( async invitee => {
+                        let isFollowing = await eventService.isFollowingEvent( event._id, authUser);
+                        event["isFollowing"] = isFollowing; 
+                        
+                        let invitees = event.invitees || [];
+                        let coordinators = (event.coordinators) ? ( event.coordinators.filter( coordinator =>  coordinator.accepted === "YES" ) ) : [];
 
-                        if( invitee.userId ){
+                        //this simply checks the following status betweeen the authuser and each of the invitees
+                        const checkBlooversFollowingStatus = async () => {
+
+                            return Promise.all( invitees.map( async invitee => {
+
+                                if( invitee.userId ){
+            
+                                    let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
+                                    invitee.isFollowing = isFollowingStatus;    
+                                }
     
-                            let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
-                            invitee["isFollowing"] = isFollowingStatus;
+                                return invitee;
+                            }))
                         }
 
-                        return invitee;
+                        //this simply checks the following status betweeen the authuser and each of the hosts
+                        const checkCoordinatorsFollowingStatus = async () => {
+
+                            return Promise.all( coordinators.map( async coordinator => {
+
+                                if( coordinator.userId ){
+            
+                                    let isFollowingStatus = await userService.isFollowingStatus( authUser,  coordinator.userId._id);
+                                    coordinator.isFollowing = isFollowingStatus;    
+                                }
+    
+                                return coordinator;
+                                
+                            }))
+                        }
+                        
+                        let processedInvitees = await checkBlooversFollowingStatus();
+                        let processedCoordinators = await checkCoordinatorsFollowingStatus();
+
+                        event['invitees'] = processedInvitees;
+                        event['coordinators'] = processedCoordinators;
+
+                        return event;
                     }))
+                }
+    
+                events = await processEvent();
 
-                    return event;
-                }))
+                let likedEvents = await eventService.likedByUser( authUser );
+
+                likedEvents = likedEvents.reduce( ( acc, event) => {
+                    acc.push(event._id);
+                    return acc; 
+                }, [] )
+
+                resp["events"] = events;
+                resp["likedEvents"] = likedEvents;
+
+                return res.status(200).send({
+                    success: true,
+                    message: "events retreived succesfully",
+                    data: resp
+                });
             }
-
-            events = await checkBlooverstFollowingStatus();
-
-            let result =  await checkBlooverstFollowingStatus();
-            let likedEvents = await eventService.likedByUser( req.authuser._id );
-
-            resp["events"] = result;
-            resp["likedEvents"] = likedEvents;
+            
             
             return res.status(200).json({
                 success: true,
                 message: "Live events retreived successfully!.",
-                data: resp
+                data: events
             });
         }
         catch( err ){
@@ -562,7 +660,7 @@ module.exports = {
 
     /**
      * removes an invite from the list of invites for an event
-     * @TODO - only the creator or admins of an event should be able to do this
+     * Todo - only the creator or admins of an event should be able to do this
      */
     removeInvites: async ( req, res) => {
 

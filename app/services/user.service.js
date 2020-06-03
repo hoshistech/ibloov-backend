@@ -51,7 +51,7 @@ module.exports = {
      * returns a single instance of a user
      * @param userId String
      */
-    viewUser: async (userId) => {
+    viewUser: async ( userId ) => {
 
         let user = await User.findById(userId)
         .populate('followers.userId', '_id authMethod avatar bio local.firstName local.lastName email fullName phoneNumber');
@@ -230,12 +230,15 @@ module.exports = {
     getUserFollowing: async ( userId ) => {
 
         return await User.find( { "followers.userId": userId } )
-        .select("_id authMethod local.firstName local.lastName email avatar fullName");
+        .select("_id authMethod local.firstName local.lastName email avatar fullName phoneNumber");
     },
 
 
     /**
      * follow a user 
+     * 
+     * @param requesteeId
+     * @param accepteeId
      */
     followUser: async( requesteeId, accepteeId ) => {
 
@@ -315,5 +318,27 @@ module.exports = {
             return "false";
         }
         
+    },
+
+
+    /**
+     * get platform contacts
+     * @param userId
+     * 
+     * @return String either of "true", "false" or "pending" 
+     */
+    getPlatformContacts: async( userId ) => {
+
+        const platformContacts = {};
+        const user = await module.exports.viewUser( userId );
+
+        const followers = user.followers;
+        const following = await module.exports.getUserFollowing( userId );
+
+        platformContacts["followers"] = followers;
+        platformContacts["following"] = following;
+        platformContacts["all"] = [...followers, ...following];
+
+        return platformContacts;
     }
 }

@@ -1,4 +1,7 @@
-const { body, param } = require('express-validator')
+const {
+  body,
+  param
+} = require('express-validator')
 const userService = require('@services/user.service');
 
 
@@ -12,7 +15,7 @@ exports.validate = (method) => {
      */
     case 'createUser': {
 
-      return [ 
+      return [
 
         body('firstName')
         .exists().withMessage("Required property 'firstName' not found."),
@@ -23,11 +26,13 @@ exports.validate = (method) => {
         body('email')
         .exists().withMessage("Required property 'email' not found.")
         .isEmail().withMessage("invalid email property provided")
-        .custom( (value) => {
+        .custom((value) => {
 
-          return userService.getUser({ email: value}).then( user => {
-    
-            if ( user ) {
+          return userService.getUser({
+            email: value
+          }).then(user => {
+
+            if (user) {
               return Promise.reject('This email already exists!');
             }
           });
@@ -42,7 +47,7 @@ exports.validate = (method) => {
         // .custom( (value) => {
 
         //   return userService.getUser({ phoneNumber: value}).then( user => {
-    
+
         //     if ( user ) {
         //       return Promise.reject('This phoneNumber already exists!');
         //     }
@@ -51,185 +56,204 @@ exports.validate = (method) => {
 
         body('password')
         .exists().withMessage("Required body property 'password' not found.")
-       
-      ]   
+
+      ]
     }
 
     case 'updateUser': {
 
-      return [ 
+      return [
 
         param('userId')
         .exists().withMessage("Required parameter 'userId' not found.")
-        .custom( (value) => {
+        .custom((value) => {
           return itExists(value);
-        })     
-      ]   
+        })
+      ]
     }
 
     case 'viewUser': {
 
-      return [ 
+      return [
 
         param('userId')
         .exists().withMessage("Required parameter 'userId' not found.")
-        .custom( (value) => {
+        .custom((value) => {
           return itExists(value);
-        })     
-      ]   
+        })
+      ]
     }
 
     case 'deleteUser': {
 
-      return [ 
+      return [
 
         param('userId')
         .exists().withMessage("Required parameter 'userId' not found.")
-        .custom( (value) => {
+        .custom((value) => {
           return itExists(value);
-        })     
-      ]   
+        })
+      ]
     }
 
     case 'userEvents': {
 
-      return [ 
+      return [
 
         param('userId')
         .optional()
-        .custom( (value) => {
-          if( value ) return itExists(value);
-        })     
-      ]   
+        .custom((value) => {
+          if (value) return itExists(value);
+        })
+      ]
     }
 
     case 'userWishlists': {
 
-      return [ 
+      return [
 
         param('userId')
         .optional()
-        .custom( (value) => {
-          if( value ) return itExists(value);
-        })     
-      ]   
+        .custom((value) => {
+          if (value) return itExists(value);
+        })
+      ]
     }
 
     case 'userCrowdfunds': {
 
-      return [ 
+      return [
 
         param('userId')
         .optional()
-        .custom( (value) => {
+        .custom((value) => {
 
-          if( value ) return itExists(value);
-          
-        })     
-      ]   
+          if (value) return itExists(value);
+
+        })
+      ]
     }
 
     case 'userTickets': {
 
-      return [ 
+      return [
 
         param('userId')
         .optional()
-        .custom( (value) => {
+        .custom((value) => {
 
-          if( value ) return itExists(value);
-          
-        })     
-      ]   
+          if (value) return itExists(value);
+
+        })
+      ]
     }
 
     case 'sendTelephoneVerifcationCode': {
 
-      return [ 
+      return [
 
         param('userId')
         .exists().withMessage("Required parameter, 'userId' not found.")
-        .custom( (value) => {
+        .custom((value) => {
           return itExists(value);
         })
 
-      ]   
-    } 
-    
+      ]
+    }
+
     case 'verifyTelephoneVerifcationCode': {
 
-      return [ 
+      return [
 
         param('userId')
         .exists().withMessage("Required parameter, 'userId' not found.")
-        .custom( (value) => {
+        .custom((value) => {
           return itExists(value);
         }),
 
         param('code')
         .exists().withMessage("Required parameter, 'code' not found.")
 
-      ]   
+      ]
     }
 
     case 'unfollowUser': {
 
-      return [ 
+      return [
 
         param('userId')
-        .custom( (value) => {
-          if( value ) return itExists(value);
-        })     
-      ]   
+        .custom((value) => {
+          if (value) return itExists(value);
+        })
+      ]
     }
 
     case 'followUser': {
 
-      return [ 
+      return [
 
         param('userId')
-        .custom( (value, { req, loc, path}) => {
+        .custom((value, {
+          req,
+          loc,
+          path
+        }) => {
 
-          if ( value == req.authuser._id.toString() ){
+          if (value == req.authuser._id.toString()) {
             return Promise.reject('unable to process this request. Target user same as auth user');
           }
 
-          if( value ) return itExists(value);
+          if (value) return itExists(value);
 
-        })     
-      ]   
+        })
+      ]
     }
 
     case 'acceptFollowRequest': {
 
-      return [ 
+      return [
 
         param('userId')
-        .custom( (value) => {
-          if( value ) return itExists(value);
-        })     
-      ]   
+        .custom((value) => {
+          if (value) return itExists(value);
+        })
+      ]
     }
 
     case 'toggleFollowUser': {
 
       return [
-         
-         param('userId').custom( value => {
-            return itExists(value);
-          }),
+
+        param('userId').custom(value => {
+          return itExists(value);
+        }),
       ]
-   }
+    }
+
+    case 'userFriends': {
+
+      return [
+
+        param('userId').custom( value => {
+
+          if( value ) return itExists(value);
+
+          return true;
+          
+        }),
+      ]
+    }
+
+
   }
 }
 
-const itExists = function( value ){
+const itExists = function (value) {
 
-  return userService.viewUser(value).then( user => {
-    
-     if ( ! user ) {
-       return Promise.reject('user not found!');
-     }
-   });
+  return userService.viewUser(value).then(user => {
+
+    if (!user) {
+      return Promise.reject('user not found!');
+    }
+  });
 }
-

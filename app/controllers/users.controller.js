@@ -497,6 +497,7 @@ module.exports = {
         }
     },
 
+
     getFollowing: async ( req, res ) => {
 
         const userId = req.params.userId || req.authuser._id;
@@ -544,6 +545,7 @@ module.exports = {
             });
         }
     },
+
 
     followStatus: async (req, res) => {
 
@@ -641,6 +643,33 @@ module.exports = {
             });
         }
     },
+
+
+    friends: async( req, res) => {
+
+        try {
+            
+            const userId = req.authuser._id;
+
+            const contacts = await userService.getPlatformContacts( userId );
+
+            return res.status(200).json({
+                success: true,
+                message: "Operation successful.",
+                data: contacts
+
+            });
+        } catch ( err ) {
+
+            return res.status(400).json({
+
+                success: false,
+                message: "There was an error performing this operation",
+                data: err.toString()
+            });
+            
+        }
+    }
 
     
 }
