@@ -1,4 +1,5 @@
 const categoryService = require("@services/category.service");
+const { paginatedQuery } = require("@services/event.service");
 const uuidv4 = require('uuid/v4');
 
 
@@ -7,22 +8,36 @@ module.exports = {
     
     index: async (req, res) => {
         
-        let scope = req.params.scope || null;
+        const scope = req.params.scope || null;
 
         try{
             let categories = await categoryService.all( {scope} );
+
+            const getCategoryCount = async () => {
+
+                return Promise.all( categories.map( async category => {
+
+                    let scopes = await paginatedQuery({ "category": category.name ,  "deletedAt": null });
+                    category["count"] = scopes.length;
+
+                    return category;
+                }))
+            }
+
+            categories = await getCategoryCount();
 
             return res.status(200).send({
                 success: true,
                 message: "Categories retreived successfully",
                 data: categories
             });
+            
         } catch( err ) {
             
             return res.status(400).send({
                 success: false,
                 message: "error retreiving list of catrgories",
-                data: categories
+                data: err.toString()
             });
 
         }

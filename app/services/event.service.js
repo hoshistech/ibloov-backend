@@ -52,7 +52,7 @@ module.exports = {
 
         let event = new Event(eventData);
         event.qrCode = await QRCode.toDataURL( eventData.uuid );
-        event.coordinators.push({ userId: eventData.userId }); 
+        event.coordinators.push({ userId: eventData.userId, accepted: "YES" }); 
         return await event.save();
     },
 
@@ -442,8 +442,8 @@ module.exports = {
      */
     liveEvents: async(filter, options) => {
 
-        let beforeNow = moment().subtract( 24, 'h').toDate();
-        let AfterNow =  moment().add( 24, 'h').toDate();
+        let beforeNow = moment().subtract( 72, 'h').toDate();
+        let AfterNow =  moment().add( 72, 'h').toDate();
 
         filter["startDate"] = { $lte: AfterNow, $gte: beforeNow }
         filter["deletedAt"] = null;
@@ -460,27 +460,9 @@ module.exports = {
      */
     byLocation: async ( long, lat, radius ) => {
 
-        // Event.aggregate(
-        //     [
-        //         { "$geoNear": {
-        //             "near": {
-        //                 "type": "Point",
-        //                 "coordinates": [ `<${long}>`,`<${lat}>`]
-        //             },
-        //             "distanceField": "distance",
-        //             "spherical": true,
-        //             "maxDistance": radius
-        //         }}
-        //     ],
-        //     function(err,results) {
-
-        //         if(err) throw (err);
-
-        //         return results;
-        //     }
-        // )
 
         let events = await Event.find({
+
             location: {
               $near: {
                 $maxDistance: 3000,
@@ -491,6 +473,8 @@ module.exports = {
               }
             }
           });
+
+          return events;
 
     },
 

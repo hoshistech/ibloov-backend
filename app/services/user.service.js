@@ -230,7 +230,7 @@ module.exports = {
     getUserFollowing: async ( userId ) => {
 
         return await User.find( { "followers.userId": userId } )
-        .select("_id authMethod local.firstName local.lastName email avatar fullName phoneNumber");
+        .select("_id authMethod bio local.firstName local.lastName email avatar fullName phoneNumber");
     },
 
 
@@ -331,14 +331,27 @@ module.exports = {
 
         const platformContacts = {};
         const user = await module.exports.viewUser( userId );
-
-        const followers = user.followers;
+       
+        let followers = user.followers;
         const following = await module.exports.getUserFollowing( userId );
+
+        followers = followers.reduce( (acc, follower) => {
+
+            acc.push(follower.userId);
+
+            return acc;
+
+        }, [])
 
         platformContacts["followers"] = followers;
         platformContacts["following"] = following;
-        platformContacts["all"] = [...followers, ...following];
 
+        let all = [ ...followers, ...following ]; 
+        
+        const arrayUniqueByKey = [ ...new Map( all.map( item => [item["_id"].toString(), item ] ) ).values() ];
+
+        platformContacts["all"] = arrayUniqueByKey;
+        
         return platformContacts;
     }
 }

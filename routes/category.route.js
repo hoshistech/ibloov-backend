@@ -6,4 +6,4 @@ router.get('/:scope?', CategoryController.index);
 
 router.post('/create', CategoryController.create);
 
-module.exports = router;
+module.exports = router; 

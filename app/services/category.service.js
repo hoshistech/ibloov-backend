@@ -11,9 +11,9 @@ module.exports = {
      */
     all: async ( query = {}, options = {} ) =>{
 
-        //const {limit, sort} =  options;
         query["deletedAt"] = null;
-        let categories = await Category.find(query);
+        let categories = await Category.find(query)
+        .lean()
         return categories;
     },
 

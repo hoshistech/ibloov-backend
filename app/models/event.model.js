@@ -200,10 +200,16 @@ var EventSchema = new Schema({
     },
 
     location: {
+
         address: {
             type: String,
             required: true
         },
+
+        city: {
+            type: String
+        },
+
         type: { 
             type: String,
             default: "Point"
@@ -349,12 +355,6 @@ var EventSchema = new Schema({
         default: false
     },
 
-    // allowNoifications: {
-    //     type: Boolean,
-    //     enum: [true, false],
-    //     default: true
-    // },
-
     allowedPaymentChannels: {
         type: Array,
         required: false,
@@ -367,7 +367,6 @@ var EventSchema = new Schema({
     qrCode: {
         type: String
     }
-
 
 }, {timestamps: true,  versionKey: false, toJSON: { virtuals: true } } );
 

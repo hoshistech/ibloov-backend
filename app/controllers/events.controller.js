@@ -149,6 +149,7 @@ module.exports = {
 
             event.location = {
                 address: geoCode[0].formattedAddress,
+                city: geoCode[0].city,
                 coordinates: [ geoCode[0].longitude, geoCode[0].latitude ]
             }
 
