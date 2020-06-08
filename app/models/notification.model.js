@@ -42,6 +42,11 @@ var NotificationSchema = new Schema({
         ref: "events"
     },
 
+    crowdfundId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "crowdfunds"
+    },
+
     recepient: {
         type: mongoose.Mixed,
         requried: true

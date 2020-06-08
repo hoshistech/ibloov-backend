@@ -4,10 +4,11 @@ module.exports = {
 
   upload: async (req, res) => {
 
-    upload(req, res, ( err ) => {
+    upload( req, res, ( err ) => {
 
       if ( err ) {
-        return res.status(200).send({
+
+        return res.status(400).send({
           
           success: false,
           message: "error performing this operation.",

@@ -8,17 +8,17 @@ module.exports = {
 
         let options = {};
 
+        options["page"] = req.query.page ? ( parseInt(req.query.page)) : 1;
         options["sortBy"] = req.query.sortBy || "createdAt";
         options["orderBy"] = req.query.orderBy ? ((req.query.orderBy === 'desc') ? -1 : 1 ) : -1
         options["limit"] =  req.query.limit ? ( ( parseInt(req.query.limit) > maxLimit ) ? maxLimit : parseInt(req.query.limit) ) : minLimit;
-        options["skip"] = req.query.skip ? parseInt(req.query.skip) : 0;
-
+        options["skip"] = (options.page * options.limit) - options.limit ;
         return options;
     },
 
     getMatch: ( req ) => {
 
-        let match = (({ sortBy, orderBy, skip, limit, ...o }) => o)(req.query) 
+        let match = (({ sortBy, orderBy, skip, limit, page, ...o }) => o)(req.query) 
 
         if( match["category"]){
             match["category"] = match.category.toLowerCase();

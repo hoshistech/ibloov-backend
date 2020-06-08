@@ -27,6 +27,8 @@ router.get('/code/generate', EventController.generateEventCode );
 
 router.get('/invitelink', EventController.inviteLink );
 
+router.get('/blooving/cities', EventController.bloovingCities );
+
 router.get('/:eventId', [ checkAuthOptional, validate("viewEvent"), isValidRequest ], EventController.view );
 
 router.patch('/follow/:eventId', [ checkAuth, validate("followEvent"), isValidRequest ], EventController.follow );

@@ -7,6 +7,12 @@ module.exports = {
 
     "model": Event,
 
+    allCount: async ( query ) => {
+        
+        return Event.find(query).countDocuments();
+    },
+
+
     /**
      * returns all events given certain parameters
      * @param query object 
@@ -32,6 +38,8 @@ module.exports = {
         .populate('wishlistId', '_id name')
         .populate('crowdfundingId', '_id name')
         .lean()
+
+        console.log("here")
 
         return events;
     },
@@ -526,6 +534,19 @@ module.exports = {
 
         return await module.exports.confirmEventCoordinator( eventId, rejecteeId, "NO");
 
+    },
+
+
+    bloovingCities: async() => {
+
+        const result = await Event.aggregate([{
+            $group: {
+              _id: "$location.city",
+              count: { $sum: 1}
+            }
+          }])
+
+        return result;
     },
 
     /**

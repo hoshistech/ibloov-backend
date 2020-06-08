@@ -63,6 +63,7 @@ var app = express();
 
 var bugsnagMiddleware = Bugsnag.getPlugin('express');
 
+
 //getting useragent in node
 var useragent = require('express-useragent');
 app.use(useragent.express());

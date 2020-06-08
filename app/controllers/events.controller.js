@@ -17,7 +17,7 @@ const { eventAttendanceConfirmationNotification } = require('@info-notif/event-a
 
 //helpers
 const { getOptions, getMatch } = require('@helpers/request.helper');
-const pagination = require('@helpers/pagination.helper');
+const pagination = require('@helpers/pagination.helper'); 
 
 
 module.exports = {
@@ -34,11 +34,13 @@ module.exports = {
         let resp = {};
     
         try{
-            let events = await eventService.all(filter, options);
-            let authUser = req.authuser ? req.authuser._id : null;
 
-            //let pg = await eventService.paginatedQuery(filter);
-            //console.log(  pagination( pg,  options.limit) ); 
+            let [ events, eventCount ] = await Promise.all([
+                eventService.all(filter, options),
+                eventService.allCount(filter)
+              ]);
+              
+            let authUser = req.authuser ? req.authuser._id : null;
 
             //revisit this 
 
@@ -117,7 +119,8 @@ module.exports = {
             return res.status(200).send({
                 success: true,
                 message: "events retreived succesfully",
-                data: events
+                data: events,
+                pagination: pagination( eventCount, options.page, options.limit, "event" )
             });
         }
         catch( err ){
@@ -742,7 +745,29 @@ module.exports = {
             
         } catch ( err ) {
             
+            return res.status(400).json({
+
+                success: false,
+                message: "There was an error performing this operation.",
+                data: err.toString()
+            });
+        }
+    },
+
+    bloovingCities: async( req, res) => {
+
+        try {
+            let resp = await eventService.bloovingCities();
             return res.status(200).json({
+
+                success: true,
+                message: "Operation successful",
+                data: resp
+            });
+            
+        } catch ( err ) {
+            
+            return res.status(400).json({
 
                 success: false,
                 message: "There was an error performing this operation.",

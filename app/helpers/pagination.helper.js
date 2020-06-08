@@ -1,44 +1,54 @@
-module.exports = function(response, limit){
+module.exports = function( responseLenght, page, limit, resource ){
 
-    const responseLenght = response.length;
 
-    console.log("responseLenght")
-    console.log(responseLenght)
+    let pages = Math.floor( responseLenght / limit );
 
-    const pages = Math.floor( responseLenght / limit );
+    const hasLastPage = responseLenght % limit;
+    if( hasLastPage ) pages ++;
 
-    console.log("pages")
-    console.log(pages)
+    const minPage = ( pages > 0 ) ? 1 : 0;
+    const maxPage = pages;
 
-    const lastpage = responseLenght % limit;
+    if( minPage < 0) return {}
 
-    console.log("lastpage")
-    console.log(lastpage)
     
-    const reqeuestUrl = "http://localhost:4000/v1/event";
+    const prev_page = ( page == 1 ) ? null : ( ( page > maxPage ) ? maxPage : ( page - 1 ) );
+    const next_page = ( (page + 1 ) > maxPage ) ? null : ( page + 1);
+    const total = responseLenght;
+    const per_page =  limit;
+    const from = minPage;
+    const to = maxPage;
 
-    let allPages = [];
+    const pagination = {
 
-    let currentSkip = 0
+        first_page_url: formatUrl( limit, minPage, resource ),
+        from,
+        last_page: maxPage,
+        last_page_url: formatUrl( limit, maxPage, resource ),
+        next_page_url: formatUrl( limit, next_page, resource ),
+        per_page,
+        prev_page_url: formatUrl( limit, prev_page, resource),
+        to,
+        total
 
-    for( let i = 0; i < pages; i++){
-
-        
-        let url = `${reqeuestUrl}?limit=${limit}&skip=${currentSkip}`;
-        allPages.push(url);
-
-        currentSkip += limit;
     }
 
-    if( lastpage ){
-
-        let offset = ( Math.floor(responseLenght / limit) * limit );
-        let url = `${reqeuestUrl}?limit=${limit}&skip=${offset}`;
-
-        allPages.push( url);
-    };
-
-    return allPages;
+    return pagination;
 
 
+}
+
+
+const formatUrl = (limit, page, resource ) => {
+
+    if( page  == null ) return null;
+
+    /**
+     * Todo get the baseurl from the request object
+     * var hostname = req.headers.host;
+     * 
+     * Todo - query objects should be added to pagination links
+     */
+    const reqeuestUrl = process.env.BASE_URL || "http://localhost:4000";
+    return `${reqeuestUrl}/v1/${ resource }?limit=${ limit }&page=${ page }`;
 }
