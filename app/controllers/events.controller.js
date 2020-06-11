@@ -530,6 +530,9 @@ module.exports = {
         let options = getOptions(req); 
         let resp = {};
 
+        let count = 0;
+        let oversight = {}
+
         try{
 
             let [ events, eventCount ] = await Promise.all([
@@ -541,6 +544,8 @@ module.exports = {
 
             if( authUser ){
 
+                let tracker = {};
+
                 const processEvent = async () => {
 
                     return Promise.all( events.map( async event => {
@@ -550,48 +555,126 @@ module.exports = {
                         
                         let invitees = event.invitees || [];
                         let coordinators = (event.coordinators) ? ( event.coordinators.filter( coordinator =>  coordinator.accepted === "YES" ) ) : [];
-
-                        //this simply checks the following status betweeen the authuser and each of the invitees
-                        const checkBlooversFollowingStatus = async () => {
-
-                            return Promise.all( invitees.map( async invitee => {
-
-                                if( invitee.userId ){
-            
-                                    let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
-                                    invitee.isFollowing = isFollowingStatus;    
-                                }
-    
-                                return invitee;
-                            }))
-                        }
-
+                    
                         //this simply checks the following status betweeen the authuser and each of the hosts
                         const checkCoordinatorsFollowingStatus = async () => {
-
+                    
+                            // console.log("" );
+                            // console.log("************* start coordinator check ***************" );
+                            // console.log("" );
+                    
+                    
                             return Promise.all( coordinators.map( async coordinator => {
-
+                    
                                 if( coordinator.userId ){
-            
-                                    let isFollowingStatus = await userService.isFollowingStatus( authUser,  coordinator.userId._id);
+                                    
+                                    let currentCoordinatorAsString = coordinator.userId._id.toString();
+                                    letTrackerValue = tracker[ currentCoordinatorAsString ];
+                                    let isFollowingStatus;
+                    
+                                    //console.log("bf-", currentCoordinatorAsString, letTrackerValue);
+                    
+                                    //let isFollowingStatus = await userService.isFollowingStatus( authUser,  coordinator.userId._id);
+                                    //let isFollowingStatus = letTrackerValue  ||  await userService.isFollowingStatus( authUser,  coordinator.userId._id);
+                    
+                                    if( ! letTrackerValue){
+
+                                        //console.log("Value not set, therefor it is ", letTrackerValue, "need for API call for ",  currentCoordinatorAsString )
+                                        isFollowingStatus = await userService.isFollowingStatus( authUser,  coordinator.userId._id);
+                    
+                                        tracker[ currentCoordinatorAsString ] =  isFollowingStatus ;
+                                        //console.log("in-", currentCoordinatorAsString, tracker[ currentCoordinatorAsString ]);
+                    
+                                        count++;
+                                        let ovscont = oversight[currentCoordinatorAsString] ? (oversight[currentCoordinatorAsString] + 1) : 1 
+                                        oversight[currentCoordinatorAsString] = ovscont
+                                        
+                                    } else {
+                                        //console.log("Value already set as", letTrackerValue, "no need for API call ", currentCoordinatorAsString )
+                                        isFollowingStatus = letTrackerValue;
+                                    }
+                    
+                                    //console.log("af-", currentCoordinatorAsString, isFollowingStatus);
+                    
                                     coordinator.isFollowing = isFollowingStatus;    
+                    
+                                    // if( ! letTrackerValue  ){
+                                    //     tracker[ currentCoordinatorAsString ] =  isFollowingStatus ;
+                                    //     console.log("in-", currentCoordinatorAsString, tracker[ currentCoordinatorAsString ]);
+                    
+                                    //     //console.log("here-1", currentCoordinatorAsString)
+                                    // }
                                 }
-    
+                    
                                 return coordinator;
                                 
                             }))
                         }
-                        
-                        let processedInvitees = await checkBlooversFollowingStatus();
-                        let processedCoordinators = await checkCoordinatorsFollowingStatus();
+                    
+                        //this simply checks the following status betweeen the authuser and each of the invitees
+                        const checkBlooversFollowingStatus = async () => {
+                    
+                            // console.log("" );
+                            // console.log("************* start bloovers check ***************" );
+                            // console.log("" );
+                    
+                            return Promise.all( invitees.map( async invitee => {
+                    
+                                if( invitee.userId ){
+                                    
+                                    let currentInviteeAsString = invitee.userId._id.toString();
+                                    let letTrackerValue = tracker[ currentInviteeAsString ];
+                                    let isFollowingStatus;
 
+                                    //console.log("bf+", currentInviteeAsString, letTrackerValue);
+                    
+                                    if( ! letTrackerValue){
+                    
+                                        //console.log("Value not set, therefor it is ", letTrackerValue, "need for API call for ",  currentInviteeAsString )
+                                        isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
+                    
+                                        tracker[ currentInviteeAsString ] = isFollowingStatus;
+                                        //console.log("in+", currentInviteeAsString, tracker[ currentInviteeAsString ]);
+                    
+                                        count++;
+                                        let ovscont = oversight[currentInviteeAsString] ? (oversight[currentInviteeAsString] + 1) : 1 
+                                        oversight[currentInviteeAsString] = ovscont
+                    
+                                    } else {
+                                        //console.log("Value already set as", letTrackerValue, "no need for API call for", currentInviteeAsString )
+                                        isFollowingStatus = letTrackerValue;
+                                    }
+                    
+                                    //console.log("af+", currentInviteeAsString, isFollowingStatus);
+                    
+                                    //let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
+                                    invitee.isFollowing = isFollowingStatus; 
+                    
+                                    // if( ! letTrackerValue ){
+                                    //     tracker[ currentInviteeAsString ] = isFollowingStatus;
+                                    // console.log("in+", currentInviteeAsString, tracker[ currentInviteeAsString ]);
+                    
+                                    //     //console.log("here", currentInviteeAsString)
+                                    // }
+                    
+                                    //console.log(tracker)
+                                    
+                                }
+                    
+                                return invitee;
+                            }))
+                        }
+                    
+                        let processedCoordinators = await checkCoordinatorsFollowingStatus();
+                        let processedInvitees = await checkBlooversFollowingStatus();
+                        
                         event['invitees'] = processedInvitees;
                         event['coordinators'] = processedCoordinators;
-
+                    
                         return event;
                     }))
                 }
-    
+
                 events = await processEvent();
 
                 let likedEvents = await eventService.likedByUser( authUser );
@@ -604,20 +687,31 @@ module.exports = {
                 resp["events"] = events;
                 resp["likedEvents"] = likedEvents;
 
+                console.log(" ")
+                console.log("count is ")
+                console.log(count)
+
+                console.log(" ")
+                console.log("oversight is ")
+                console.log(oversight);
+
                 return res.status(200).send({
                     success: true,
                     message: "events retreived succesfully",
                     data: resp,
                     pagination: pagination( eventCount, options, filter, "event/live" )
                 });
+
             }
-            
+
+
             return res.status(200).json({
                 success: true,
                 message: "Live events retreived successfully!.",
                 data: events,
                 pagination: pagination( eventCount, options, filter, "event/live" )
             });
+
         }
         catch( err ){
             return res.status(400).json({

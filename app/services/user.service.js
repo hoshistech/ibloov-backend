@@ -286,6 +286,8 @@ module.exports = {
      */
     isFollowingStatus: async( userId, isFollowingUserId ) => {
 
+        //console.log( "userservice called for ", isFollowingUserId.toString() )
+
         const resp = await module.exports.isFollowingUser( userId, isFollowingUserId );
 
         if( resp ){
@@ -299,7 +301,7 @@ module.exports = {
              */
             let hasFollowRequest = await viewRequest( userId, isFollowingUserId, "follow-request" );
 
-            if( hasFollowRequest){
+            if( hasFollowRequest ){
 
                 let status = hasFollowRequest.accepted;
 
