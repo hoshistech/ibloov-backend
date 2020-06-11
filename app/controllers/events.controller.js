@@ -38,7 +38,7 @@ module.exports = {
             let [ events, eventCount ] = await Promise.all([
                 eventService.all(filter, options),
                 eventService.allCount(filter)
-              ]);
+            ]);
               
             let authUser = req.authuser ? req.authuser._id : null;
 
@@ -112,7 +112,8 @@ module.exports = {
                 return res.status(200).send({
                     success: true,
                     message: "events retreived succesfully",
-                    data: resp
+                    data: resp,
+                    pagination: pagination( eventCount, options, filter, "event" )
                 });
             }
 
@@ -120,7 +121,7 @@ module.exports = {
                 success: true,
                 message: "events retreived succesfully",
                 data: events,
-                pagination: pagination( eventCount, options.page, options.limit, "event" )
+                pagination: pagination( eventCount, options, filter, "event" )
             });
         }
         catch( err ){
@@ -531,9 +532,12 @@ module.exports = {
 
         try{
 
-            const authUser = req.authuser ? req.authuser._id : null;
+            let [ events, eventCount ] = await Promise.all([
+                eventService.liveEvents(filter, options),
+                eventService.allCount(filter)
+            ]);
 
-            let events = await eventService.liveEvents( filter, options );
+            const authUser = req.authuser ? req.authuser._id : null;
 
             if( authUser ){
 
@@ -603,22 +607,25 @@ module.exports = {
                 return res.status(200).send({
                     success: true,
                     message: "events retreived succesfully",
-                    data: resp
+                    data: resp,
+                    pagination: pagination( eventCount, options, filter, "event/live" )
                 });
             }
-            
             
             return res.status(200).json({
                 success: true,
                 message: "Live events retreived successfully!.",
-                data: events
+                data: events,
+                pagination: pagination( eventCount, options, filter, "event/live" )
             });
         }
         catch( err ){
             return res.status(400).json({
+
                 success: false,
                 message: "Error performing this operation.",
                 data: err.toString()
+
             });
         }
     },
@@ -693,6 +700,7 @@ module.exports = {
     },
 
 
+
     toggleLike: async( req, res) => {
 
         let eventId = req.params.eventId;
@@ -753,6 +761,8 @@ module.exports = {
             });
         }
     },
+
+
 
     bloovingCities: async( req, res) => {
 

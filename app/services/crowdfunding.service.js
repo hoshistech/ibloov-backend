@@ -5,6 +5,12 @@ module.exports = {
 
     "model": CrowdFunding,
 
+
+    allCount: async ( query ) => {
+        
+        return CrowdFunding.find(query).countDocuments();
+    },
+
     /**
      * returns all crowdFunds
      * @param query object 

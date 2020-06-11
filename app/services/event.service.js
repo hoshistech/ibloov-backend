@@ -37,9 +37,7 @@ module.exports = {
         .populate('coordinators.userId', '_id avatar authMethod local.firstName local.lastName email fullName')
         .populate('wishlistId', '_id name')
         .populate('crowdfundingId', '_id name')
-        .lean()
-
-        console.log("here")
+        .lean();
 
         return events;
     },
@@ -450,8 +448,8 @@ module.exports = {
      */
     liveEvents: async(filter, options) => {
 
-        let beforeNow = moment().subtract( 72, 'h').toDate();
-        let AfterNow =  moment().add( 72, 'h').toDate();
+        let beforeNow = moment().subtract( 4, 'd').toDate();
+        let AfterNow =  moment().add( 4, 'd').toDate();
 
         filter["startDate"] = { $lte: AfterNow, $gte: beforeNow }
         filter["deletedAt"] = null;
@@ -542,9 +540,9 @@ module.exports = {
         const result = await Event.aggregate([{
             $group: {
               _id: "$location.city",
-              count: { $sum: 1}
+              count: { $sum: 1 }
             }
-          }])
+          }]).sort({ count: -1 })
 
         return result;
     },

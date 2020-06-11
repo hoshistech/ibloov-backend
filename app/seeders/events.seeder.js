@@ -1,28 +1,32 @@
 const faker = require('faker');
 const moment = require("moment");
 
+//providers
+const { geocode } = require("@providers/location/node-geocoder.provider")
+
 const { randomInt } = require("@helpers/number.helper");
 const eventCategory = ["party", "birthday", "cooperate", "wedding", "houseparty", "sport", "movies"];
 const currencies = ["NGN", "USD", "GBP", "CAD"];
 
-const locations = [ { address: "lagos, `Nigeria" }, 
-                        {address: "abuja, `Nigeria"}, 
+const locations = [ { address: "259 Etim Iyang Crescent, Vi. Lagos." }, 
+                        {address: "2 Popoola Banjoko Street, Gbagada."}, 
+                        {address: "11, Association avenue, Shangisha. Magodod"}, 
                         { address: "paris, Italy"},
-                        { address: "Johannesburg, SouthAfrica"},
-                        { address: "123B southPark, Miwe. Malawi"},
-                        { address: "5th Avenuw, Ringroad. Newyork. US"},
-                        { address: "kante road, Accra. Ghana"},
-                        { address: "121 Worcester Rd, Framingham MA 1701"},
-                        { address: "337 Russell St, Hadley MA 1035"},
-                        { address: "262 Swansea Mall Dr, Swansea MA 2777"},
+                        { address: "30 Mobolaji Bank Anthony Way, Maryland 021189, Ikeja"},
+                        { address: "Via Stella, 22, 41121 Modena MO, Italy"},
+                        { address: "Piazza Risorgimento, 4, 12051 Alba CN, Italy"},
+                        { address: "Parc des Buttes Chaumont, 2 avenue des Cascades, 75019 Paris"},
+                        { address: "30 Rue René Boulanger, 75010 Paris"},
+                        { address: "17 Calvert Avenue, E2 7JP"},
+                        { address: "332 Bethnal Green Rd, E2 0AG"},
                         { address: "297 Grant Avenue, Auburn NY 13021"},
-                        { address: "30 Catskill, Catskill NY 12414"},
+                        { address: "9 Caledonian Rd, London N1 9DX"},
                         { address: "180 North King Street, Northhampton MA 1060"},
                         { address: "777 Brockton Avenue, Abington MA 2351"},
                         { address: "1537 Hwy 231 South, Ozark AL 36360"},
-                        { address: "165 Vaughan Ln, Pell City AL 35125"},
+                        { address: "Tokyo, Meguro, Mita 1-13-3 Yebisu Garden Place"},
                         { address: "7855 Moffett Rd, Semmes AL 36575"},
-                        { address: "1420 Us 231 South, Troy AL 36081"},
+                        { address: "Tokyo, Shibuya, Ebisu 1-7-4"},
                         { address: "8650 Madison Blvd, Madison AL 35758"},
                         { address: "2453 2Nd Avenue East, Oneonta AL 35121  205-625-647"}
                      ]
@@ -37,7 +41,7 @@ const { createEventInviteBulkRequest } = require('@user-request/event-invite.req
 
 const seedEvents = async (req, res) => {
 
-    const eventCount = parseInt( req.query.eventCount ) || randomInt(50, 100);
+    const eventCount = parseInt( req.query.eventCount ) || randomInt(150, 300);
     
     const users = await all();
 
@@ -48,6 +52,15 @@ const seedEvents = async (req, res) => {
         event.userId = users[ randomInt(0, users.length -1 )]._id;
         event.invitees = getInvitees(users, event.userId);
         event.followers = getFollowers(users);
+
+        let geoCode = await geocode( event.address );
+
+        event.location = {
+            address: geoCode[0].formattedAddress,
+            city: geoCode[0].city,
+            coordinates: [ geoCode[0].longitude, geoCode[0].latitude ]
+        }
+
         let newEvent =  await createEvent(event);
         createEventInviteBulkRequest( newEvent );
     }
@@ -116,7 +129,7 @@ const eventFactory =  () => {
         name: `${faker.lorem.word()}${randomInt(1110,9999)}`,
         category: eventCategory[ randomInt( 0, eventCategory.length - 1) ],
         description: `${faker.lorem.paragraph() }`,
-        location: locations[ randomInt( 0, locations.length - 1) ],
+        address: locations[ randomInt( 0, locations.length - 1) ],
         uuid: faker.random.uuid(),
         startDate: moment().add( randomInt( 0, 7), 'd').toDate() ,
         isPrivate,
@@ -127,6 +140,9 @@ const eventFactory =  () => {
         createdAt: new Date,
         updatedAt: new Date,
         hashTags: [`#${faker.lorem.word()}`, `#${faker.lorem.word()}`],
+        images: [
+            { url: "https://picsum.photos/200/300" }
+        ]
     }
 
     return event;

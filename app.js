@@ -15,7 +15,8 @@ var BugsnagPluginExpress = require('@bugsnag/plugin-express');
 
 Bugsnag.start({
   apiKey: '7986ae2c393aaf09fa8a72c36e8f0661',
-  plugins: [BugsnagPluginExpress]
+  plugins: [BugsnagPluginExpress],
+  //enabledReleaseStages: [ 'production', 'staging', "development" ]
 })
 
 //moment

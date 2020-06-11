@@ -1,5 +1,5 @@
 const maxLimit = 100;
-const minLimit = 10;
+const minLimit = 20;
 
 module.exports = {
 

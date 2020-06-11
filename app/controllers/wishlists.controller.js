@@ -1,7 +1,12 @@
-const wishlistService = require('@services/wishlist.service');
 const uuidv4 = require('uuid/v4');
-const { getOptions, getMatch } = require('@helpers/request.helper');
 
+//services
+const wishlistService = require('@services/wishlist.service');
+
+
+//helpers
+const { getOptions, getMatch } = require('@helpers/request.helper');
+const pagination = require('@helpers/pagination.helper'); 
 
 module.exports = {
 
@@ -12,12 +17,17 @@ module.exports = {
         filter["deletedAt"] = null;
 
         try{
-            let wishlists = await wishlistService.all( filter, options );
+            let [ wishlists, wishlistCount ] = await Promise.all([
+                wishlistService.all(filter, options),
+                wishlistService.allCount(filter)
+            ]);
+
             res.status(200).send({
 
                 success: true,
                 message: "Wishlist retreived succesfully",
-                data: wishlists
+                data: wishlists,
+                pagination: pagination( wishlistCount, options, filter, "wishlist" )
             });
         }
         catch( err ){
@@ -48,12 +58,13 @@ module.exports = {
                 data: result
             });
         }
-        catch(e){
+        catch( err ){
 
             res.status(400).send({
+
                 success: false,
                 message: "Error performing this operation",
-                data: e.toString()
+                data: err.toString()
             });
         }
     },

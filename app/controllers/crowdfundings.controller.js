@@ -1,6 +1,14 @@
-const crowdfundingService = require('@services/crowdfunding.service');
 const uuidv4 = require('uuid/v4');
+const pagination = require('@helpers/pagination.helper'); 
+
+//services
+const crowdfundingService = require('@services/crowdfunding.service');
+
+//helpers
 const { getOptions, getMatch } = require('@helpers/request.helper');
+
+//notifs
+const { crowdfundPledgeNotification } = require("@info-notif/crowdfund-pledge.notif");
 
 module.exports = {
 
@@ -16,12 +24,17 @@ module.exports = {
         filter["deletedAt"] = null;
 
         try{
-            
-            let crowdFundings = await crowdfundingService.all( filter, options );
-            res.status(200).send({
+
+            let [ crowdFundings, crowdfundCount ] = await Promise.all([
+                crowdfundingService.all(filter, options),
+                crowdfundingService.allCount(filter)
+              ]);
+
+            return res.status(200).send({
                 success: true,
                 message: "crowdFundings retreived succesfully",
-                data: crowdFundings
+                data: crowdFundings,
+                pagination: pagination( crowdfundCount, options, filter, "crowdfunding" )
             });
         }
         catch( err ){
@@ -35,6 +48,7 @@ module.exports = {
         
     },
 
+
     /**
      * creates a new crowdFunding instance.
      * @authLevel - authenticated
@@ -47,7 +61,7 @@ module.exports = {
 
         try{
             let resp = await crowdfundingService.createCrowdFunding(crowdFunding);
-            res.status(201).send({
+            return res.status(201).send({
                 success: true,
                 message: "CrowdFunding created successfully",
                 data: resp
@@ -62,6 +76,7 @@ module.exports = {
             });
         }
     },
+
 
     /**
      * update a single crowdFunding model instance
@@ -94,6 +109,7 @@ module.exports = {
         }
     },
 
+
     /**
      * returns data of a single crowdFunding instance
      * @authLevel - authenticated | isCrowdFundingCreator | isPublicCrowdFunding
@@ -121,6 +137,7 @@ module.exports = {
             });
         }
     },
+
 
     /**
      * softDeletes a single crowdFunding instance.
@@ -150,6 +167,7 @@ module.exports = {
         }
     },
 
+
     /**
      * adds a new pledge to a single crowdFunding instance.
      * @authLevel - authenticated | isPledgeOwner
@@ -162,7 +180,13 @@ module.exports = {
 
         try {
 
+            /**
+             * Todo - check that there is a log of the payment before committing it here 
+             * or better still, send a notification (or a query log ) if no log of the payment was found.
+             */
             let resp = await crowdfundingService.pledge( crowdfundingId, pledge, userId );
+
+            crowdfundPledgeNotification( userId, resp.userId, resp  );
 
             return res.status(200).json({
                 success: true,
@@ -174,7 +198,7 @@ module.exports = {
 
             /**
              * Todo - log failed pledges
-             * why? pledges are saved only after the user successfully pays
+             * why? pledges are saved only after the user successfully donates
              * if there is a problem during commiting the pledge, then some extra measures have to be put in place to make sure it is later saved
              */
             
@@ -185,6 +209,7 @@ module.exports = {
             });
         }
     },
+
 
     /**
      * removes a single pledge object from a single crowdFunding instance.
@@ -253,6 +278,7 @@ module.exports = {
             });
         }
     },
+
 
     /**
      * removes an invite from the list of invites for an event

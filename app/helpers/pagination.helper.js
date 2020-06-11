@@ -1,5 +1,10 @@
-module.exports = function( responseLenght, page, limit, resource ){
+const querystring = require('querystring');
 
+module.exports = function( responseLenght, options, filter, resource ){
+
+
+    let limit = options.limit;
+    let page = options.page;
 
     let pages = Math.floor( responseLenght / limit );
 
@@ -21,13 +26,13 @@ module.exports = function( responseLenght, page, limit, resource ){
 
     const pagination = {
 
-        first_page_url: formatUrl( limit, minPage, resource ),
+        first_page_url: formatUrl( limit, filter, minPage, resource ),
         from,
         last_page: maxPage,
-        last_page_url: formatUrl( limit, maxPage, resource ),
-        next_page_url: formatUrl( limit, next_page, resource ),
+        last_page_url: formatUrl( limit, filter, maxPage, resource ),
+        next_page_url: formatUrl( limit, filter, next_page, resource ),
         per_page,
-        prev_page_url: formatUrl( limit, prev_page, resource),
+        prev_page_url: formatUrl( limit, filter, prev_page, resource),
         to,
         total
 
@@ -39,16 +44,23 @@ module.exports = function( responseLenght, page, limit, resource ){
 }
 
 
-const formatUrl = (limit, page, resource ) => {
+const formatUrl = (limit, filter, page, resource ) => {
 
     if( page  == null ) return null;
 
     /**
      * Todo get the baseurl from the request object
      * var hostname = req.headers.host;
-     * 
-     * Todo - query objects should be added to pagination links
      */
     const reqeuestUrl = process.env.BASE_URL || "http://localhost:4000";
-    return `${reqeuestUrl}/v1/${ resource }?limit=${ limit }&page=${ page }`;
+
+    filter = (({ startDate, deletedAt, ...o }) => o )(filter) 
+
+    /**
+     * Todo - look into this, could be potentially error prone
+     */
+    let queryString = querystring.stringify(filter);
+    let appendQueryString = queryString ? `&${queryString}`: "";
+
+    return `${reqeuestUrl}/v1/${ resource }?limit=${ limit }&page=${ page }${appendQueryString}`;
 }
