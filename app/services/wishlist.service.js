@@ -5,6 +5,12 @@ module.exports = {
 
     "model": Wishlist,
 
+
+    allCount: async ( query ) => {
+        
+        return Wishlist.find(query).countDocuments();
+    },
+
     /**
      * returns all wishlists
      * @param query object 
@@ -15,7 +21,7 @@ module.exports = {
         let sort = {};
         options = options || setDefaultOptions();
          
-        const {limit, skip, sortBy, orderBy } = options;
+        const { limit, skip, sortBy, orderBy } = options;
         sort[ sortBy ] = orderBy;
           
         let wishlists = await Wishlist.find(query)
