@@ -26,6 +26,7 @@ module.exports = function( responseLenght, options, filter, resource ){
 
     const pagination = {
 
+        current_page: page,
         first_page_url: formatUrl( limit, filter, minPage, resource ),
         from,
         last_page: maxPage,
