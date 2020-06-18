@@ -52,5 +52,25 @@ exports.validate = (method) => {
 
        ]   
     }
+
+    case 'stripeToken': {
+
+      return [ 
+ 
+         body('amount')
+         .exists().withMessage("expected body param 'amount' not provided"),
+         
+
+         body('currency')
+         .exists().withMessage("expected body param 'currency' value not provided.")
+         .custom( value => {
+ 
+           if( ! validateCurrencyCode( value ) ) return Promise.reject("Invalid currency code provided.");
+ 
+           return true;
+         })
+ 
+        ]   
+     }
   }
 }
