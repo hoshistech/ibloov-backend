@@ -12,4 +12,6 @@ router.post('/checkout', [ checkAuth, validate("paymentCheckout"), isValidReques
 
 router.get('/braintree/generate/client_token', [ checkAuth ], PaymentController.generate_client_token);
 
+router.post('/stripe/token', [ checkAuth ], PaymentController.stipePaymentIntent);
+
 module.exports = router;

@@ -512,6 +512,10 @@ module.exports = {
             });
         }
         catch( err ){
+
+            /**
+             * Todo if event is paid, and there is a failure, alert admin to this failiure
+             */
             return res.status(400).json({
                 success: false,
                 message: "Error performing this operation.",
@@ -687,13 +691,13 @@ module.exports = {
                 resp["events"] = events;
                 resp["likedEvents"] = likedEvents;
 
-                console.log(" ")
-                console.log("count is ")
-                console.log(count)
+                // console.log(" ")
+                // console.log("count is ")
+                // console.log(count)
 
-                console.log(" ")
-                console.log("oversight is ")
-                console.log(oversight);
+                // console.log(" ")
+                // console.log("oversight is ")
+                // console.log(oversight);
 
                 return res.status(200).send({
                     success: true,

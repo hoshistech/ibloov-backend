@@ -1,5 +1,7 @@
 const gateway = require("@services/payment-gateways/braintree.gateway");
 
+const stripeGateway = require("@providers/payment/stripe");
+
 //model
 const Payment = require("@models/payment.model");
 
@@ -21,6 +23,31 @@ module.exports = {
 
             const merchantAccountId = getMerchantId(currency);
             return await gateway.checkout(amount, nonceFromTheClient, merchantAccountId );
+
+        } catch( err ) {
+            
+            throw err;
+        }
+    },
+
+
+    checkoutStripe: async ( amount, currency, authuser ) => {
+
+        try{
+
+            return await stripeGateway.checkout(amount, currency, authuser.email );
+
+        } catch( err ) {
+            
+            throw err;
+        }
+    },
+
+    stripePaymentIntent: async ( amount, currency ) => {
+
+        try{
+
+            return await stripeGateway.paymentIntent( amount, currency );
 
         } catch( err ) {
             

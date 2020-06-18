@@ -70,12 +70,36 @@ module.exports = {
                 data: token
             });
 
-        } catch(e) {
+        } catch( err ) {
 
             res.status(400).send({
                 success: true,
                 message: "Error occured while trying to generate this token.",
-                data: e.toString()
+                data: err.toString()
+            })
+        }
+    },
+
+    stipePaymentIntent: async(req, res) => {
+
+        try {
+            
+            const amount = req.body.amount * 100 ;
+            const currency = req.body.currency;
+            const resp = await paymentService.stripePaymentIntent(amount, currency );
+
+            return res.status(200).send({
+                success: true,
+                message: "Operation successful",
+                data: resp.client_secret
+            });
+
+        } catch ( err ) {
+
+            res.status(400).send({
+                success: true,
+                message: "Error occured while trying to generate this token.",
+                data: err.toString()
             })
         }
     }
