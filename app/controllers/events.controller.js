@@ -121,7 +121,7 @@ module.exports = {
                 success: true,
                 message: "events retreived succesfully",
                 data: events,
-                pagination: pagination( eventCount, options, filter, "event" )
+                pagination: pagination( eventCount, options, filter, req.originalUrl )
             });
         }
         catch( err ){
@@ -552,7 +552,7 @@ module.exports = {
 
                 const processEvent = async () => {
 
-                    return Promise.all( events.map( async event => {
+                    return Promise.all( events.map( async event => { 
 
                         let isFollowing = await eventService.isFollowingEvent( event._id, authUser);
                         event["isFollowing"] = isFollowing; 
@@ -703,7 +703,7 @@ module.exports = {
                     success: true,
                     message: "events retreived succesfully",
                     data: resp,
-                    pagination: pagination( eventCount, options, filter, "event/live" )
+                    pagination: pagination( eventCount, options, filter, req.originalUrl )
                 });
 
             }
@@ -713,7 +713,7 @@ module.exports = {
                 success: true,
                 message: "Live events retreived successfully!.",
                 data: events,
-                pagination: pagination( eventCount, options, filter, "event/live" )
+                pagination: pagination( eventCount, options, filter, req.originalUrl )
             });
 
         }

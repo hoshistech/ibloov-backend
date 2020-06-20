@@ -27,7 +27,7 @@ module.exports = {
                 success: true,
                 message: "Wishlist retreived succesfully",
                 data: wishlists,
-                pagination: pagination( wishlistCount, options, filter, "wishlist" )
+                pagination: pagination( wishlistCount, options, filter, req.originalUrl )
             });
         }
         catch( err ){

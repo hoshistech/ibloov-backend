@@ -15,6 +15,31 @@ var donor = new Schema({
         required: true
     },
 
+    updatedAt: {
+        type: Date,
+        default: Date.now
+    }
+
+}, { timestamps: true, _id : false })
+
+var transaction = new Schema({
+
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: true
+    },
+
+    pledge: {
+        type: Number,
+        required: true
+    },
+
+    transactionId: {
+        type: String,
+        unique: true
+    },
+
     date: {
         type: Date,
         default: Date.now()
@@ -137,6 +162,11 @@ var CrowdFundingSchema = new Schema({
         default: []
     },
 
+    transactions: {
+        type: [ transaction ],
+        default: []
+    },
+
     invitees: {
         type: [ crowdfundInvite ],
         required: false,
@@ -191,8 +221,10 @@ CrowdFundingSchema.index( { "name": 1, "userId": 1 }, {unique: true} );
 CrowdFundingSchema.virtual('totalDonated').get(function () {
 
     donations = this.donors;
-    return donations.reduce(( total, donation) => donation.pledge + total, 0)
+    return donations.reduce(( total, donation) => donation.pledge + total, 0);
+
 });
+
 
 let CrowdfundingSchema = mongoose.model('crowdfunds', CrowdFundingSchema);
 

@@ -3,6 +3,7 @@ const pagination = require('@helpers/pagination.helper');
 
 //services
 const crowdfundingService = require('@services/crowdfunding.service');
+const userService = require('@services/user.service');
 
 //helpers
 const { getOptions, getMatch } = require('@helpers/request.helper');
@@ -30,11 +31,87 @@ module.exports = {
                 crowdfundingService.allCount(filter)
               ]);
 
+            let tracker = {};
+            let authuser = req.authuser._id;
+
+            const processEvent = async () => {
+
+                return Promise.all( crowdFundings.map( async crowdfund => { 
+                    
+                    let invitees = crowdfund.invitees || [];
+                    let donors = crowdfund.donors || [];
+                
+                    const checkBackersFollowingStatus = async () => {
+                
+                        return Promise.all( donors.map( async donor => {
+                
+                            if( donor.userId ){
+                                
+                                let currentDonorAsString = donor.userId._id.toString();
+                                letTrackerValue = tracker[ currentDonorAsString ];
+                                let isFollowingStatus;
+                
+                                if( ! letTrackerValue ){
+
+                                    isFollowingStatus = await userService.isFollowingStatus( authuser,  donor.userId._id);
+                                    tracker[ currentDonorAsString ] =  isFollowingStatus ;
+                                    
+                                } else {
+                                    isFollowingStatus = letTrackerValue;
+                                }
+                
+                                donor.isFollowing = isFollowingStatus; 
+                            }
+                
+                            return donor;
+                            
+                        }))
+                    }
+
+                    const checkBlooversFollowingStatus = async () => {
+                
+                        return Promise.all( invitees.map( async invitee => {
+                
+                            if( invitee.userId ){
+                                
+                                let currentInviteeAsString = invitee.userId._id.toString();
+                                let letTrackerValue = tracker[ currentInviteeAsString ];
+                                let isFollowingStatus;
+                
+                                if( ! letTrackerValue ){
+
+                                    isFollowingStatus = await userService.isFollowingStatus( authuser,  invitee.userId._id );
+                                    tracker[ currentInviteeAsString ] = isFollowingStatus;
+                
+                                } else {
+                                    
+                                    isFollowingStatus = letTrackerValue;
+                                }
+
+                                invitee.isFollowing = isFollowingStatus;
+                            }
+                
+                            return invitee;
+                        }))
+                    }
+                
+                    let processedDonors = await checkBackersFollowingStatus();
+                    let processedInvitees = await checkBlooversFollowingStatus();
+                    
+                    crowdfund['invitees'] = processedInvitees;
+                    crowdfund['donors'] = processedDonors;
+                
+                    return crowdfund;
+                }))
+            }
+
+            crowdFundings = await processEvent();
+
             return res.status(200).send({
                 success: true,
                 message: "crowdFundings retreived succesfully",
                 data: crowdFundings,
-                pagination: pagination( crowdfundCount, options, filter, "crowdfunding" )
+                pagination: pagination( crowdfundCount, options, filter, req.originalUrl )
             });
         }
         catch( err ){
@@ -121,6 +198,40 @@ module.exports = {
 
         try {
             let crowdFunding = await crowdfundingService.viewCrowdFunding(crowdfundingId);
+            let authUser = req.authuser._id;
+
+            const checkBlooversFollowingStatus = async () => {
+
+                return Promise.all(  crowdFunding.invitees.map( async invitee => {
+
+                    if( invitee.userId ){
+
+                        let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
+                        invitee["isFollowing"] = isFollowingStatus;
+                    }
+
+                    return invitee;
+                }))
+            }
+
+            const checkDonorsFollowingStatus = async () => {
+
+                return Promise.all( crowdFunding.donors.map( async donor => {
+
+                    if( donor.userId ){
+
+                        let isFollowingStatus = await userService.isFollowingStatus( authUser,  donor.userId._id);
+                        donor.isFollowing = isFollowingStatus;    
+                    }
+
+                    return donor;
+                    
+                }))
+            }
+
+            crowdFunding["invitees"] = await checkBlooversFollowingStatus();
+            crowdFunding["donors"] = await checkDonorsFollowingStatus();
+            
 
             return res.status(200).json({
                 success: true,
@@ -195,6 +306,8 @@ module.exports = {
             });
 
         } catch ( err ) {
+
+            console.log(err)
 
             /**
              * Todo - log failed pledges

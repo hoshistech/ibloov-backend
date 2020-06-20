@@ -63,5 +63,5 @@ const formatUrl = (limit, filter, page, resource ) => {
     let queryString = querystring.stringify(filter);
     let appendQueryString = queryString ? `&${queryString}`: "";
 
-    return `${reqeuestUrl}/v1/${ resource }?limit=${ limit }&page=${ page }${appendQueryString}`;
+    return `${reqeuestUrl}${ resource }?limit=${ limit }&page=${ page }${appendQueryString}`;
 }

@@ -1,7 +1,7 @@
 const { body } = require('express-validator');
 const { validateCurrencyCode } = require("@helpers/currency.helper");
 
-const { allowedPaymentResources, isValidResource } = require("@config/paymentresources.config");
+const { allowedPaymentResources, isValidResource } = require("@config/payableresources.config");
 
 exports.validate = (method) => {
 

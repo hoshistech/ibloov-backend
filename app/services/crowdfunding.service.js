@@ -1,5 +1,9 @@
 const CrowdFunding = require('@models/crowdFunding.model');
+
+
+//helpers
 const { setDefaultOptions  } = require('@helpers/request.helper');
+const { randomInt } = require("@helpers/number.helper");
 
 module.exports = {
 
@@ -29,7 +33,8 @@ module.exports = {
         .limit(limit)
         .skip(skip)
         .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName')
-        .populate('donors.userId', '_id avatar authMethod local.firstName local.lastName fullName');
+        .populate('donors.userId', '_id avatar authMethod local.firstName local.lastName fullName')
+        .lean();
 
         return crowdFunding;
     },
@@ -85,23 +90,51 @@ module.exports = {
 
     /**
      * allows a user to pledge a certain amount to a crowdfuning campaign 
-     * if user has pleadged before, it updates the pledge, else, it adds the pledge to the set.
+     * if user has pledged before, it updates the pledge, else, it adds the pledge to the set.
      * @param crowdfundingId integer - id of the crowdFunding model to be updated.
      * @param amount Number - amount to be pledged.
      * 
      */
     pledge: async (crowdfundingId, amount, userId) => {
 
+        const crowdfudingExists = await CrowdFunding.findOne( { _id: crowdfundingId, "donors.userId": userId });
+
+        /**
+         * Todo - check that there is a record of the payment log here, preferrably using the paymentid
+         */
+
+        const transaction = { 
+            
+            pledge: amount,
+            userId,
+            transactionId: `CF-${randomInt(111111111, 999999999)}`
+        }
+
+        if( ! crowdfudingExists ){
+
             const donor = { 
             
                 pledge: amount,
-                userId
+                userId,
+                updatedAt: Date.now()
             }
 
             return await CrowdFunding.findByIdAndUpdate( crowdfundingId , 
-                { '$addToSet': { 'donors': donor } }, 
+                { $addToSet : { 'transactions' : transaction,  'donors': donor  } },
                 { runValidators: true, new: true }  );
-        
+        } 
+        else {
+
+            let res =  await CrowdFunding.findOneAndUpdate( { _id: crowdfundingId, "donors.userId": userId }, 
+            { 
+                $addToSet : { 'transactions' : transaction }, 
+                $inc: { 'donors.$.pledge': amount  }, 
+                $set: { "donors.$.updatedAt": Date.now() }  
+            }, 
+            { runValidators: true, new: true } );
+
+            return res;
+        }
     },
 
     /**

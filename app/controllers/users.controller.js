@@ -16,6 +16,7 @@ const { createFollowRequest } = require("@user-request/follow.request");
 
 //helpers
 const { getOptions, getMatch } = require('@helpers/request.helper');
+const pagination = require('@helpers/pagination.helper'); 
 
 
 module.exports = {
@@ -247,17 +248,104 @@ module.exports = {
 
     events: async (req, res) => {
 
+        console.log(req);
+
+        let filter = getMatch(req);
+        let options = getOptions(req); 
+
         let userId = req.params.userId || req.authuser._id;
         
         try{
-            let events = await eventService.all({userId});
 
-            return res.status(200).json({
+            let [ events, eventCount ] = await Promise.all([
+                eventService.all({ userId } ),
+                eventService.allCount( { userId } )
+            ]);
 
-                success: true,
-                message: "User's events retreived successfully.",
-                data: events
-            });
+            let tracker = {};
+
+                const processEvent = async () => {
+
+                    return Promise.all( events.map( async event => { 
+                        
+                        let invitees = event.invitees || [];
+
+                        //show only coordinators that have accepted
+                        let coordinators = (event.coordinators) ? ( event.coordinators.filter( coordinator =>  coordinator.accepted === "YES" ) ) : [];
+                    
+                        const checkCoordinatorsFollowingStatus = async () => {
+                    
+                            return Promise.all( coordinators.map( async coordinator => {
+                    
+                                if( coordinator.userId ){
+                                    
+                                    let currentCoordinatorAsString = coordinator.userId._id.toString();
+                                    letTrackerValue = tracker[ currentCoordinatorAsString ];
+                                    let isFollowingStatus;
+                    
+                                    if( ! letTrackerValue ){
+
+                                        isFollowingStatus = await userService.isFollowingStatus( userId,  coordinator.userId._id);
+                                        tracker[ currentCoordinatorAsString ] =  isFollowingStatus ;
+                                        
+                                    } else {
+                                        isFollowingStatus = letTrackerValue;
+                                    }
+                    
+                                    coordinator.isFollowing = isFollowingStatus; 
+                                }
+                    
+                                return coordinator;
+                                
+                            }))
+                        }
+
+                        const checkBlooversFollowingStatus = async () => {
+                    
+                            return Promise.all( invitees.map( async invitee => {
+                    
+                                if( invitee.userId ){
+                                    
+                                    let currentInviteeAsString = invitee.userId._id.toString();
+                                    let letTrackerValue = tracker[ currentInviteeAsString ];
+                                    let isFollowingStatus;
+                    
+                                    if( ! letTrackerValue ){
+
+                                        isFollowingStatus = await userService.isFollowingStatus( userId,  invitee.userId._id );
+                                        tracker[ currentInviteeAsString ] = isFollowingStatus;
+                    
+                                    } else {
+                                        
+                                        isFollowingStatus = letTrackerValue;
+                                    }
+
+                                    invitee.isFollowing = isFollowingStatus;
+                                }
+                    
+                                return invitee;
+                            }))
+                        }
+                    
+                        let processedCoordinators = await checkCoordinatorsFollowingStatus();
+                        let processedInvitees = await checkBlooversFollowingStatus();
+                        
+                        event['invitees'] = processedInvitees;
+                        event['coordinators'] = processedCoordinators;
+                    
+                        return event;
+                    }))
+                }
+
+                events = await processEvent();
+
+                return res.status(200).send({
+
+                    success: true,
+                    message: "User's events retreived successfully.",
+                    data: events,
+                    pagination: pagination( eventCount, options, filter, req.originalUrl )
+                });
         }
         catch( err ){
 
