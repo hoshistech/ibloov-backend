@@ -6,7 +6,7 @@ module.exports = {
 
         try {
             let resp = await provider.geocode("2, popoola banjoko street, Soluyi. Gbagada.");
-            console.log(resp)
+            //console.log(resp)
             return res.send(resp.data);
 
         } catch (error) {

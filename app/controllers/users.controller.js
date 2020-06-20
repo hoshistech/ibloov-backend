@@ -248,7 +248,7 @@ module.exports = {
 
     events: async (req, res) => {
 
-        console.log(req);
+        //console.log(req);
 
         let filter = getMatch(req);
         let options = getOptions(req); 
