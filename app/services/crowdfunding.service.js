@@ -34,7 +34,7 @@ module.exports = {
         .skip(skip)
         .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName')
         .populate('donors.userId', '_id avatar authMethod local.firstName local.lastName fullName')
-        .lean();
+        .lean({ virtuals: true });
 
         return crowdFunding;
     },
@@ -60,7 +60,8 @@ module.exports = {
 
         return await CrowdFunding.findById(crowdfundingId)
         .populate('userId', '_id avatar authMethod local.firstName local.lastName fullName')
-        .populate('donors.userId', '_id avatar authMethod local.firstName local.lastName fullName');
+        .populate('donors.userId', '_id avatar authMethod local.firstName local.lastName fullName')
+        .lean({ virtuals: true });
     },
 
 

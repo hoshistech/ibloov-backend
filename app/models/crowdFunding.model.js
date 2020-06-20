@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
 var Schema = mongoose.Schema;
 
@@ -225,7 +226,9 @@ CrowdFundingSchema.virtual('totalDonated').get(function () {
 
 });
 
+CrowdFundingSchema.plugin(mongooseLeanVirtuals);
 
-let CrowdfundingSchema = mongoose.model('crowdfunds', CrowdFundingSchema);
 
-module.exports = CrowdfundingSchema;
+let Crowdfunding = mongoose.model('crowdfunds', CrowdFundingSchema);
+
+module.exports = Crowdfunding;
