@@ -3,6 +3,10 @@ const bcrypt = require('bcryptjs');
 
 var Schema = mongoose.Schema;
 
+
+/**
+ * user followers would be here.
+ */
 var follower = new Schema({
 
     userId: {
@@ -18,6 +22,10 @@ var follower = new Schema({
 
 }, { _id: false })
 
+
+/**
+ * User's blocked by a user would be in this array.
+ */
 var blockedUser = new Schema({
 
     userId: {
@@ -33,18 +41,165 @@ var blockedUser = new Schema({
 
 }, { _id: false })
 
-var setting = new Schema({
+
+/**
+ * user settings that have to do with notifications
+ */
+// var notificationSetting = new Schema({
+
+//     email: {
+
+//         myEvents:{
+//             type: Boolean,
+//             default: true
+//         },
+
+//         FriendActivities: {
+//             type: Boolean,
+//             default: true
+//         },
+
+//         eventInvites: {
+//             type: Boolean,
+//             default: true
+//         },
+
+//         wishlistRequests: {
+//             type: Boolean,
+//             default: true
+//         },
+
+//         fundmeRequests: {
+//             type: Boolean,
+//             default: true
+//         },
+
+//         friendRequests: {
+//             type: Boolean,
+//             default: true
+//         },
+
+//         appUpdates:{
+
+//             type: Boolean,
+//             default: true
+//         }
+
+//     },
+
+//     pushNotifications: {
+
+//         myEvents:{
+//             type: Boolean,
+//             default: true
+//         },
+
+//         FriendActivities: {
+//             type: Boolean,
+//             default: true
+//         },
+
+//         eventInvites: {
+//             type: Boolean,
+//             default: true
+//         },
+
+//         wishlistRequests: {
+//             type: Boolean,
+//             default: true
+//         },
+
+//         fundmeRequests: {
+//             type: Boolean,
+//             default: true
+//         },
+
+//         friendRequests: {
+//             type: Boolean,
+//             default: true
+//         },
+
+//         appUpdates:{
+
+//             type: Boolean,
+//             default: true
+//         }
+
+//     }
+
+// }, { _id: false })
+
+/**
+ * user settings that have to do with reminders
+ */
+// var remimderSetting = new Schema({
+
+//         upcomingEvents:{
+//             type: Boolean,
+//             default: true
+//         },
+
+//         FriendBirthdays: {
+//             type: Boolean,
+//             default: true
+//         }
+
+
+// }, { _id: false })
+
+
+/**
+ * user main settings object.
+ */
+// var setting = new Schema({
+
+//     currency: {
+//         type: String
+//     },
+
+//     timeZone: {
+//         type: String
+//     },
+
+//     country: {
+//         type: String
+//     },
+
+//     notifications: {
+//         type: notificationSetting,
+//     },
+
+//     reminders: {
+//         type: remimderSetting
+//     }
+
+// }, { _id: false })
+
+
+/**
+ * user payout
+ */
+var payout = new Schema({
 
     currency: {
         type: String
     },
 
-    timeZone: {
+    bankName: {
         type: String
     },
 
-    country: {
+    accountNumber: {
         type: String
+    },
+
+    accoutName: {
+        type: String
+    },
+
+    cashout: {
+        type: String,
+        enum: ["WEEKLY", "MONTHLY", "DAILY"]
     }
 
 }, { _id: false })
@@ -154,7 +309,6 @@ var UserSchema = new Schema({
         default: []
     },
 
-
     type: {
         type: String,
         enum:["user", "admin"],
@@ -185,7 +339,121 @@ var UserSchema = new Schema({
     },
 
     settings: {
-        type: setting
+
+        currency: {
+            type: String,
+            default: null
+        },
+    
+        timeZone: {
+            type: String,
+            default: null
+        },
+    
+        country: {
+            type: String,
+            default: null
+        },
+
+        notification: {
+
+            email: {
+
+                myEvents:{
+                    type: Boolean,
+                    default: true
+                },
+        
+                FriendActivities: {
+                    type: Boolean,
+                    default: true
+                },
+        
+                eventInvites: {
+                    type: Boolean,
+                    default: true
+                },
+        
+                wishlistRequests: {
+                    type: Boolean,
+                    default: true
+                },
+        
+                fundmeRequests: {
+                    type: Boolean,
+                    default: true
+                },
+    
+                friendRequests: {
+                    type: Boolean,
+                    default: true
+                },
+        
+                appUpdates:{
+        
+                    type: Boolean,
+                    default: true
+                }
+            },
+
+            pushNotifications: {
+
+                myEvents:{
+                    type: Boolean,
+                    default: true
+                },
+        
+                FriendActivities: {
+                    type: Boolean,
+                    default: true
+                },
+        
+                eventInvites: {
+                    type: Boolean,
+                    default: true
+                },
+        
+                wishlistRequests: {
+                    type: Boolean,
+                    default: true
+                },
+        
+                fundmeRequests: {
+                    type: Boolean,
+                    default: true
+                },
+        
+                friendRequests: {
+                    type: Boolean,
+                    default: true
+                },
+        
+                appUpdates:{
+        
+                    type: Boolean,
+                    default: true
+                }
+        
+            }
+        },
+
+        reminders: {
+
+            upcomingEvents:{
+                type: Boolean,
+                default: true
+            },
+    
+            FriendBirthdays: {
+                type: Boolean,
+                default: true
+            }
+        }
+    },
+
+    payout: {
+        type: payout,
+        default: {}
     }
     
 }, { timestamps: true,  versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true } } );
