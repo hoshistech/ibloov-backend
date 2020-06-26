@@ -13,5 +13,14 @@ module.exports = {
             // receipt_email,
             metadata: { integration_check: 'accept_a_payment'},
         });
+    },
+
+    /**
+     * captures Stripe payment.
+     * 
+     */
+    capturePayment: async( paymentId ) => {
+
+        return await stripe.paymentIntents.capture(paymentId);
     }
 }

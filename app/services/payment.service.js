@@ -55,6 +55,18 @@ module.exports = {
         }
     },
 
+    stripePaymentCapture: async ( amount, currency ) => {
+
+        try{
+
+            return await stripeGateway.capturePayment( amount, currency );
+
+        } catch( err ) {
+            
+            throw err;
+        }
+    },
+
 
     // //
 

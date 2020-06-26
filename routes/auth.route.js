@@ -17,7 +17,7 @@ router.get("/google/authurl", googleAuthController.googleAuthUrl );
 
 
 
-router.get("/google",  passport.authenticate('google', { scope: ["profile", "email"] }) );
+router.get("/google",  passport.authenticate('google', { scope: ["profile", "email"] }), authController.signUser );
 
 router.get('/google/callback', passport.authenticate('google'), authController.signUser);
 

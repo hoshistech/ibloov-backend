@@ -73,7 +73,8 @@ module.exports = {
         } catch( err ) {
 
             res.status(400).send({
-                success: true,
+
+                success: false,
                 message: "Error occured while trying to generate this token.",
                 data: err.toString()
             })
@@ -97,7 +98,33 @@ module.exports = {
         } catch ( err ) {
 
             res.status(400).send({
+
+                success: false,
+                message: "Error occured while trying to generate this token.",
+                data: err.toString()
+            })
+        }
+    },
+
+    capturePayment: async( req, res) => {
+
+        
+        try {
+            
+            const paymentId = req.body.paymentId;
+            const resp = await paymentService.stripePaymentCapture( paymentId );
+
+            return res.status(200).send({
+
                 success: true,
+                message: "Operation successful",
+                data: resp
+            });
+
+        } catch ( err ) {
+
+            res.status(400).send({
+                success: false,
                 message: "Error occured while trying to generate this token.",
                 data: err.toString()
             })
