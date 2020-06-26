@@ -464,7 +464,6 @@ UserSchema.methods.isValidPassword = async function( password ){
     try {
 
         const storedpassword = this.local.password || "";
-
         return await bcrypt.compare( password, storedpassword );
         
     } catch ( err ) {

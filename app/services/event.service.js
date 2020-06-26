@@ -7,9 +7,36 @@ module.exports = {
 
     "model": Event,
 
-    allCount: async ( query ) => {
+    /**
+     * Todo - this is not a scalable approach - research another way to do this
+     */
+    allCount: async ( query, userId ) => {
+
+        let qw = {};
+        let m = {};
+
+        if( userId ){
+
+            qw["$or"] = [
+
+                { isPrivate: false },
+                { "coordinators.userId": userId },
+                { $and: [
+                    { isPrivate: true },
+                    {  "invitees.userId": userId }
+                ]}
+            ]
+        } else {
+
+            qw["$or"] = [
+
+                { isPrivate: false }
+            ]
+        }
+
+        m["$and"] = [ query, qw ];
         
-        return Event.find(query).countDocuments();
+        return Event.find(m).countDocuments();
     },
 
 
@@ -18,15 +45,47 @@ module.exports = {
      * @param query object 
      * @param options object
      */
-    all: async ( query, options ) => {
+    all: async ( query, options, userId ) => {
 
         let sort = {};
         options = options || setDefaultOptions();
 
+        let qw = {};
+        let m = {};
+
+        if( userId ){
+
+            /**
+             * return only events that satisfy one the following
+             * public events
+             * events where the user is a coordinator
+             * private events where the user is on the invite list
+             */
+            qw["$or"] = [
+
+                { isPrivate: false },
+                { "coordinators.userId": userId },
+                { $and: [
+                    { isPrivate: true },
+                    {  "invitees.userId": userId }
+                ]}
+            ]
+        } else {
+
+            qw["$or"] = [
+
+                { isPrivate: false }
+            ]
+        }
+
+        m["$and"] = [ query, qw  ];
+
+        console.log({ m});
+
         const { limit, skip, sortBy, orderBy } = options;
         sort[ sortBy ] = orderBy;
         
-        let events = await Event.find(query)
+        let events = await Event.find(m)
         .sort(sort)
         .limit(limit)
         .skip(skip)
@@ -40,6 +99,8 @@ module.exports = {
         .lean();
 
         return events;
+
+
     },
 
 
@@ -300,6 +361,11 @@ module.exports = {
      * Generates the invite link for an event
      * @param eventId String
      * 
+     * Todo - make the invite link composed/derived instead of fixed
+     * e.g store just the invite code and then when it is needed, it should be composed
+     * base_url + path + eventcode
+     * better done at the frontend.
+     * 
      */
     generateInviteLink: async() => {
 
@@ -446,7 +512,7 @@ module.exports = {
      * 
      * @return Event Array.
      */
-    liveEvents: async(filter, options) => {
+    liveEvents: async(filter, options, userId) => {
 
         let beforeNow = moment().subtract( 4, 'd').toDate();
         let AfterNow =  moment().add( 4, 'd').toDate();
@@ -454,7 +520,7 @@ module.exports = {
         filter["startDate"] = { $lte: AfterNow, $gte: beforeNow }
         filter["deletedAt"] = null;
 
-       return module.exports.all(filter, options);
+       return module.exports.all(filter, options, userId);
     },
 
 
@@ -466,22 +532,23 @@ module.exports = {
      */
     byLocation: async ( long, lat, radius ) => {
 
+        let beforeNow = moment().subtract( 4, 'd').toDate();
+        let AfterNow =  moment().add( 4, 'd').toDate();
 
         let events = await Event.find({
 
-            location: {
+            "location": {
               $near: {
                 $maxDistance: 3000,
                 $geometry: {
                   type: "Point",
-                  coordinates: [lat, lang]
+                  coordinates: [ 3.386480, 6.557354 ]
                 }
               }
             }
           });
 
           return events;
-
     },
 
 

@@ -533,22 +533,25 @@ module.exports = {
         let filter = getMatch(req);
         let options = getOptions(req); 
         let resp = {};
+        count = 0;
 
-        let count = 0;
         let oversight = {}
 
         try{
 
+            const authUser = req.authuser ? req.authuser._id : null;
+
             let [ events, eventCount ] = await Promise.all([
-                eventService.liveEvents(filter, options),
-                eventService.allCount(filter)
+                eventService.liveEvents(filter, options, authUser ),
+                eventService.allCount(filter, authUser)
             ]);
 
-            const authUser = req.authuser ? req.authuser._id : null;
+            
 
             if( authUser ){
 
                 let tracker = {};
+
 
                 const processEvent = async () => {
 
@@ -866,6 +869,7 @@ module.exports = {
 
         try {
             let resp = await eventService.bloovingCities();
+            //let resp = await eventService.byLocation();
             return res.status(200).json({
 
                 success: true,
