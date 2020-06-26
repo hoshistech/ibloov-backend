@@ -31,24 +31,23 @@ module.exports = {
         let filter = getMatch(req);
         let options = getOptions(req);
         filter["deletedAt"] = null; 
-        let resp = {};
     
         try{
-
-            let [ events, eventCount ] = await Promise.all([
-                eventService.all(filter, options),
-                eventService.allCount(filter)
-            ]);
               
             let authUser = req.authuser ? req.authuser._id : null;
 
-            //revisit this 
+            let [ events, eventCount ] = await Promise.all([
+                eventService.all( filter, options, authUser ),
+                eventService.allCount( filter, authUser )
+            ]);
 
             if( authUser ){
 
                 const processEvent = async () => {
 
-                    return Promise.all( events.map( async event => {
+                    const userPlatformContacts = await userService.getPlatformContacts( authUser );
+
+                    return Promise.all( events.map( async event => { 
 
                         let isFollowing = await eventService.isFollowingEvent( event._id, authUser);
                         event["isFollowing"] = isFollowing; 
@@ -56,55 +55,68 @@ module.exports = {
                         let invitees = event.invitees || [];
                         let coordinators = (event.coordinators) ? ( event.coordinators.filter( coordinator =>  coordinator.accepted === "YES" ) ) : [];
 
+                        let userFollowing = userPlatformContacts.following;
+                    
+                        //this simply checks the following status betweeen the authuser and each of the hosts
+                        const checkCoordinatorsFollowingStatus = async () => {
+                    
+                    
+                            return Promise.all( coordinators.map( async coordinator => {
+                    
+                                if( coordinator.userId ){
+                                    
+                                    //convert the value to string, makes it easier for comparisons since some of the values come as objects
+                                    let currentCoordinatorAsString = coordinator.userId._id.toString();
+
+                                    //check if the coordinator is in the authuser's following list
+                                    let isFollowingFromFollowingArray = userFollowing.filter( following => following._id.toString() == currentCoordinatorAsString );
+
+                                    //set the value of the tracker value to "true" if the use exists in the following array
+                                    //if not check the tracker array.
+                                    coordinator.isFollowing = isFollowingFromFollowingArray.length > 0 ? "true" : "false";                      
+                                }
+                                return coordinator;  
+                            }))
+                        }
+                    
                         //this simply checks the following status betweeen the authuser and each of the invitees
                         const checkBlooversFollowingStatus = async () => {
-
+                    
                             return Promise.all( invitees.map( async invitee => {
-
+                    
                                 if( invitee.userId ){
-            
-                                    let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
-                                    invitee.isFollowing = isFollowingStatus;    
+                                    
+                                    let currentInviteeAsString = invitee.userId._id.toString();
+
+                                    let isFollowingFromFollowingArray = userFollowing.filter( following => following._id.toString() == currentInviteeAsString );
+
+                                    invitee.isFollowing = isFollowingFromFollowingArray.length > 0 ? "true" : "false";
                                 }
-    
+                    
                                 return invitee;
                             }))
                         }
-
-                        //this simply checks the following status betweeen the authuser and each of the hosts
-                        const checkCoordinatorsFollowingStatus = async () => {
-
-                            return Promise.all( coordinators.map( async coordinator => {
-
-                                if( coordinator.userId ){
-            
-                                    let isFollowingStatus = await userService.isFollowingStatus( authUser,  coordinator.userId._id);
-                                    coordinator.isFollowing = isFollowingStatus;    
-                                }
-    
-                                return coordinator;
-                                
-                            }))
-                        }
-                        
-                        let processedInvitees = await checkBlooversFollowingStatus();
+                    
                         let processedCoordinators = await checkCoordinatorsFollowingStatus();
-
+                        let processedInvitees = await checkBlooversFollowingStatus();
+                        
                         event['invitees'] = processedInvitees;
                         event['coordinators'] = processedCoordinators;
-
+                    
                         return event;
                     }))
                 }
-    
+
                 events = await processEvent();
 
                 let likedEvents = await eventService.likedByUser( authUser );
 
-                likedEvents = likedEvents.reduce( ( acc, event) => {
+                likedEvents = likedEvents.reduce( ( acc, event) => { 
                     acc.push(event._id);
                     return acc; 
                 }, [] )
+
+                let resp = {};
 
                 resp["events"] = events;
                 resp["likedEvents"] = likedEvents;
@@ -113,8 +125,9 @@ module.exports = {
                     success: true,
                     message: "events retreived succesfully",
                     data: resp,
-                    pagination: pagination( eventCount, options, filter, "event" )
+                    pagination: pagination( eventCount, options, filter, req.originalUrl )
                 });
+
             }
 
             return res.status(200).send({
@@ -154,6 +167,8 @@ module.exports = {
             event.location = {
                 address: geoCode[0].formattedAddress,
                 city: geoCode[0].city,
+                country: geoCode[0].country,
+                countryCode: geoCode[0].countryCode,
                 coordinates: [ geoCode[0].longitude, geoCode[0].latitude ]
             }
 
@@ -229,8 +244,10 @@ module.exports = {
 
             if( authUser ){
 
-                event["isFollowing"] = await eventService.isFollowingEvent( eventId, authUser);
+                const userPlatformContacts = await userService.getPlatformContacts( authUser );
+                const userFollowing = userPlatformContacts.following;
 
+                event["isFollowing"] = await eventService.isFollowingEvent( eventId, authUser);
                 let coordinators = (event.coordinators) ? ( event.coordinators.filter( coordinator =>  coordinator.accepted === "YES" ) ) : [];
 
                 const checkBlooversFollowingStatus = async () => {
@@ -239,8 +256,9 @@ module.exports = {
 
                         if( invitee.userId ){
 
-                            let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
-                            invitee["isFollowing"] = isFollowingStatus;
+                            let currentInviteeAsString = invitee.userId._id.toString();
+                            let isFollowingFromFollowingArray = userFollowing.filter( following => following._id.toString() == currentInviteeAsString );
+                            invitee["isFollowing"] = isFollowingFromFollowingArray.length > 0 ? "true" : "false"; 
                         }
 
                         return invitee;
@@ -253,9 +271,10 @@ module.exports = {
                     return Promise.all( coordinators.map( async coordinator => {
 
                         if( coordinator.userId ){
-    
-                            let isFollowingStatus = await userService.isFollowingStatus( authUser,  coordinator.userId._id);
-                            coordinator.isFollowing = isFollowingStatus;    
+
+                            let currentCoordinatorAsString = coordinator.userId._id.toString();
+                            let isFollowingFromFollowingArray = userFollowing.filter( following => following._id.toString() == currentCoordinatorAsString );
+                            coordinator["isFollowing"] = isFollowingFromFollowingArray.length > 0 ? "true" : "false";    
                         }
 
                         return coordinator;
@@ -532,10 +551,8 @@ module.exports = {
 
         let filter = getMatch(req);
         let options = getOptions(req); 
-        let resp = {};
+        let resp = {}; 
         count = 0;
-
-        let oversight = {}
 
         try{
 
@@ -546,14 +563,11 @@ module.exports = {
                 eventService.allCount(filter, authUser)
             ]);
 
-            
-
             if( authUser ){
 
-                let tracker = {};
-
-
                 const processEvent = async () => {
+
+                    const userPlatformContacts = await userService.getPlatformContacts( authUser );
 
                     return Promise.all( events.map( async event => { 
 
@@ -562,110 +576,43 @@ module.exports = {
                         
                         let invitees = event.invitees || [];
                         let coordinators = (event.coordinators) ? ( event.coordinators.filter( coordinator =>  coordinator.accepted === "YES" ) ) : [];
+
+                        let userFollowing = userPlatformContacts.following;
                     
                         //this simply checks the following status betweeen the authuser and each of the hosts
                         const checkCoordinatorsFollowingStatus = async () => {
-                    
-                            // console.log("" );
-                            // console.log("************* start coordinator check ***************" );
-                            // console.log("" );
                     
                     
                             return Promise.all( coordinators.map( async coordinator => {
                     
                                 if( coordinator.userId ){
                                     
+                                    //convert the value to string, makes it easier for comparisons since some of the values come as objects
                                     let currentCoordinatorAsString = coordinator.userId._id.toString();
-                                    letTrackerValue = tracker[ currentCoordinatorAsString ];
-                                    let isFollowingStatus;
-                    
-                                    //console.log("bf-", currentCoordinatorAsString, letTrackerValue);
-                    
-                                    //let isFollowingStatus = await userService.isFollowingStatus( authUser,  coordinator.userId._id);
-                                    //let isFollowingStatus = letTrackerValue  ||  await userService.isFollowingStatus( authUser,  coordinator.userId._id);
-                    
-                                    if( ! letTrackerValue){
 
-                                        //console.log("Value not set, therefor it is ", letTrackerValue, "need for API call for ",  currentCoordinatorAsString )
-                                        isFollowingStatus = await userService.isFollowingStatus( authUser,  coordinator.userId._id);
-                    
-                                        tracker[ currentCoordinatorAsString ] =  isFollowingStatus ;
-                                        //console.log("in-", currentCoordinatorAsString, tracker[ currentCoordinatorAsString ]);
-                    
-                                        count++;
-                                        let ovscont = oversight[currentCoordinatorAsString] ? (oversight[currentCoordinatorAsString] + 1) : 1 
-                                        oversight[currentCoordinatorAsString] = ovscont
-                                        
-                                    } else {
-                                        //console.log("Value already set as", letTrackerValue, "no need for API call ", currentCoordinatorAsString )
-                                        isFollowingStatus = letTrackerValue;
-                                    }
-                    
-                                    //console.log("af-", currentCoordinatorAsString, isFollowingStatus);
-                    
-                                    coordinator.isFollowing = isFollowingStatus;    
-                    
-                                    // if( ! letTrackerValue  ){
-                                    //     tracker[ currentCoordinatorAsString ] =  isFollowingStatus ;
-                                    //     console.log("in-", currentCoordinatorAsString, tracker[ currentCoordinatorAsString ]);
-                    
-                                    //     //console.log("here-1", currentCoordinatorAsString)
-                                    // }
+                                    //check if the coordinator is in the authuser's following list
+                                    let isFollowingFromFollowingArray = userFollowing.filter( following => following._id.toString() == currentCoordinatorAsString );
+
+                                    //set the value of the tracker value to "true" if the use exists in the following array
+                                    //if not check the tracker array.
+                                    coordinator.isFollowing = isFollowingFromFollowingArray.length > 0 ? "true" : "false";                      
                                 }
-                    
-                                return coordinator;
-                                
+                                return coordinator;  
                             }))
                         }
                     
                         //this simply checks the following status betweeen the authuser and each of the invitees
                         const checkBlooversFollowingStatus = async () => {
                     
-                            // console.log("" );
-                            // console.log("************* start bloovers check ***************" );
-                            // console.log("" );
-                    
                             return Promise.all( invitees.map( async invitee => {
                     
                                 if( invitee.userId ){
                                     
                                     let currentInviteeAsString = invitee.userId._id.toString();
-                                    let letTrackerValue = tracker[ currentInviteeAsString ];
-                                    let isFollowingStatus;
 
-                                    //console.log("bf+", currentInviteeAsString, letTrackerValue);
-                    
-                                    if( ! letTrackerValue){
-                    
-                                        //console.log("Value not set, therefor it is ", letTrackerValue, "need for API call for ",  currentInviteeAsString )
-                                        isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
-                    
-                                        tracker[ currentInviteeAsString ] = isFollowingStatus;
-                                        //console.log("in+", currentInviteeAsString, tracker[ currentInviteeAsString ]);
-                    
-                                        count++;
-                                        let ovscont = oversight[currentInviteeAsString] ? (oversight[currentInviteeAsString] + 1) : 1 
-                                        oversight[currentInviteeAsString] = ovscont
-                    
-                                    } else {
-                                        //console.log("Value already set as", letTrackerValue, "no need for API call for", currentInviteeAsString )
-                                        isFollowingStatus = letTrackerValue;
-                                    }
-                    
-                                    //console.log("af+", currentInviteeAsString, isFollowingStatus);
-                    
-                                    //let isFollowingStatus = await userService.isFollowingStatus( authUser,  invitee.userId._id);
-                                    invitee.isFollowing = isFollowingStatus; 
-                    
-                                    // if( ! letTrackerValue ){
-                                    //     tracker[ currentInviteeAsString ] = isFollowingStatus;
-                                    // console.log("in+", currentInviteeAsString, tracker[ currentInviteeAsString ]);
-                    
-                                    //     //console.log("here", currentInviteeAsString)
-                                    // }
-                    
-                                    //console.log(tracker)
-                                    
+                                    let isFollowingFromFollowingArray = userFollowing.filter( following => following._id.toString() == currentInviteeAsString );
+
+                                    invitee.isFollowing = isFollowingFromFollowingArray.length > 0 ? "true" : "false";
                                 }
                     
                                 return invitee;
@@ -686,21 +633,13 @@ module.exports = {
 
                 let likedEvents = await eventService.likedByUser( authUser );
 
-                likedEvents = likedEvents.reduce( ( acc, event) => {
+                likedEvents = likedEvents.reduce( ( acc, event) => { 
                     acc.push(event._id);
                     return acc; 
                 }, [] )
 
                 resp["events"] = events;
                 resp["likedEvents"] = likedEvents;
-
-                // console.log(" ")
-                // console.log("count is ")
-                // console.log(count)
-
-                // console.log(" ")
-                // console.log("oversight is ")
-                // console.log(oversight);
 
                 return res.status(200).send({
                     success: true,

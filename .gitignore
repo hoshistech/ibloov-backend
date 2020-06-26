@@ -20,3 +20,5 @@ node_modules/
 #todo
 todo
 queries
+
+methods.stale

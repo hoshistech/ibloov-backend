@@ -210,10 +210,19 @@ var EventSchema = new Schema({
             type: String
         },
 
+        country: {
+            type: String
+        }, 
+
+        countryCode: {
+            type: String
+        },
+
         type: { 
             type: String,
             default: "Point"
         },
+
         coordinates: {
             type: [ Number ],
             default: [0, 0]

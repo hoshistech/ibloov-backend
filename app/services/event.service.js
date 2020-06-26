@@ -59,7 +59,7 @@ module.exports = {
              * return only events that satisfy one the following
              * public events
              * events where the user is a coordinator
-             * private events where the user is on the invite list
+             * private events where the user is on the invite list 
              */
             qw["$or"] = [
 
