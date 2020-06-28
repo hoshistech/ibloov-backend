@@ -9,7 +9,7 @@ module.exports = function(passport){
 
     passport.use( new GoogleStrategy( googleAuth,
 
-        async (accessToken, refreshToken, profile, done) => {
+        async ( accessToken, refreshToken, profile, done ) => {
 
             try {
 

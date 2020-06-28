@@ -311,11 +311,11 @@ module.exports = {
     softdelete: async (req, res) => { 
 
         let eventId = req.params.eventId;
-        let eventData = req.body;
+        let userId = req.authuser._id;
 
         try {
             
-            let resp = await eventService.softDeleteEvent(eventId, eventData);
+            let resp = await eventService.softDeleteEvent(eventId, userId);
 
             return res.status(200).json({
                 success: true,
@@ -514,7 +514,7 @@ module.exports = {
 
         const eventId = req.params.eventId;
         const status = req.body.status;
-        const userId = req.authuser._id
+        const userId = req.authuser._id;
 
         try{
 

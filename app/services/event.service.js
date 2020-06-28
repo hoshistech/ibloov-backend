@@ -172,9 +172,9 @@ module.exports = {
      * @param eventId integer
      *
      */
-    softDeleteEvent: async (eventId) => {
+    softDeleteEvent: async (eventId, deletedBy ) => {
 
-        const updateData = { deletedAt: Date.now(), deletedBy: '5e8cb0191ec1f8160def48c1' };
+        const updateData = { deletedAt: Date.now(), deletedBy };
         return await module.exports.updateEvent(eventId, updateData);  
     },
 
@@ -402,6 +402,7 @@ module.exports = {
     confirmEventAttendance: async( eventId, userId, status ) => {
 
         let isInvited = await module.exports.isInvited( eventId, userId );
+        //let event = await Event.findById(eventId);
 
         /**
          * Todo check for paid events
@@ -411,6 +412,17 @@ module.exports = {
         
 
         if( isInvited ){
+
+            // if( event.isPrivate ){
+
+            //     let currentUserInvite = event.invitees.filter( invite => invite.userId.toString() == userId.toString() );
+            //     let currentStatus = currentUserInvite[0].accepted;
+
+            //     if( currentStatus == "YES" && status == "NO"){
+            //         //throw new Error("You can't unbloov for paid event")
+            //     }
+
+            // }
 
             return await Event.findOneAndUpdate( { _id: eventId, "invitees.userId": userId }, { $set : { 'invitees.$.accepted' : status }}, { new:true, runValidators: true } )
             .populate('userId', '_id avatar authMethod local.firstName local.lastName email fullName')
@@ -532,8 +544,8 @@ module.exports = {
      */
     byLocation: async ( long, lat, radius ) => {
 
-        let beforeNow = moment().subtract( 4, 'd').toDate();
-        let AfterNow =  moment().add( 4, 'd').toDate();
+        // let beforeNow = moment().subtract( 4, 'd').toDate();
+        // let AfterNow =  moment().add( 4, 'd').toDate();
 
         let events = await Event.find({
 

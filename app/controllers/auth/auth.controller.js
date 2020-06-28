@@ -25,8 +25,25 @@ module.exports = {
                 message: "error occured while performing this operation.",
                 data: err.toString()
             })
+        }
+    },
+
+    socialRedirect: async (req, res) => {
+
+        try {
+
+            const platform = req.query.platform;
+            const token = await authService.signToken( req.user, platform ); 
+            return res.redirect(`${process.env.FRONTEND_BASE_URL}/social/${token}`)
             
+        } catch ( err ) {
+
+            return res.status(400).json({
+
+                success: true,
+                message: "error occured while performing this operation.",
+                data: err.toString()
+            })
         }
     }
-
 }

@@ -17,7 +17,7 @@ router.get("/google/authurl", googleAuthController.googleAuthUrl );
 
 
 
-router.get("/google",  passport.authenticate('google', { scope: ["profile", "email"] }), authController.signUser );
+router.get("/google",  passport.authenticate('google', { scope: ["profile", "email"] }), authController.socialRedirect );
 
 router.get('/google/callback', passport.authenticate('google'), authController.signUser);
 
@@ -25,6 +25,6 @@ router.post('/local/:platform', validate("isValidPlatform"), isValidRequest, pas
 
 //router.get("/facebook",  passport.authenticate('google', { scope: ["profile"] }) );
 
-router.get("/facebook/callback",  passport.authenticate('facebook'), authController.signUser );
+router.get("/facebook/callback",  passport.authenticate('facebook'), authController.socialRedirect );
 
 module.exports = router; 

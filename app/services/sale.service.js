@@ -71,10 +71,10 @@ module.exports = {
      * @param saleId integer
      *
      */
-    softDeleteSale: async (saleId) => {
+    softDeleteSale: async (saleId, deletedBy) => {
 
-        const updateData = { deletedAt: Date.now(), deletedBy: '5e8cb0191ec1f8160def48c1' };
-        return await module.exports.updateSale(saleId, updateData);  
+        // const updateData = { deletedAt: Date.now(), deletedBy };
+        // return await module.exports.updateSale(saleId, updateData);  
     },
 
 
