@@ -19,7 +19,7 @@ router.get("/google/authurl", googleAuthController.googleAuthUrl );
 
 router.get("/google",  passport.authenticate('google', { scope: ["profile", "email"] }), authController.socialRedirect );
 
-router.get('/google/callback', passport.authenticate('google'), authController.signUser);
+router.get('/google/callback', passport.authenticate('google'), authController.socialRedirect);
 
 router.post('/local/:platform', validate("isValidPlatform"), isValidRequest, passport.authenticate('local'), authController.signUser );
 
