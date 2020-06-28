@@ -25,7 +25,7 @@ module.exports = {
         
         .select("-recepient") //dont send the recepient along with the result
         .populate("requestId", "_id accepted")
-        .populate("sender", "_id avatar authMethod local.firstName local.lastName fullName")
+        .populate("sender", "_id avatar authMethod local.firstName local.lastName google fullName")
         .populate("eventId", "_id name")
         .sort(sort) 
         .limit(limit)
