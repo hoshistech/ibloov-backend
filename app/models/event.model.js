@@ -390,12 +390,6 @@ EventSchema.methods.getNotifiableUsers = function() {
     //return this.events;
 };
 
-EventSchema.virtual('isFollowing').get(function () {
-
-    //
-});
-
-
 EventSchema.index({ "location": "2dsphere" });
 
 let Events = mongoose.model('events', EventSchema);

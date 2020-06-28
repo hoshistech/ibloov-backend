@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
 var Schema = mongoose.Schema;
 
@@ -494,6 +495,8 @@ UserSchema.pre('save',  async function(next){
     }
 })
 
+UserSchema.plugin(mongooseLeanVirtuals);
+
 let Users = mongoose.model('users', UserSchema);
 
-module.exports = Users;
+module.exports = Users; 
