@@ -45,7 +45,6 @@ module.exports = {
         return await Request.findOne( request );
     },
 
-
     /**
      * get the list of follow request for a user
      * 

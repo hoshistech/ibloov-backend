@@ -96,7 +96,7 @@ module.exports = {
         .populate('coordinators.userId', '_id avatar authMethod local.firstName local.lastName google email fullName')
         .populate('wishlistId', '_id name')
         .populate('crowdfundingId', '_id name')
-        .lean();
+        .lean({ virtuals: true });
 
         return events;
 
@@ -138,7 +138,7 @@ module.exports = {
         .populate('coordinators.userId', '_id avatar authMethod local.firstName local.lastName google email fullName')
         .populate('wishlistId', '_id name')
         .populate('crowdfundingId', '_id name')
-        .lean(); //find a way to avoid using .lean() here
+        .lean({ virtuals: true }); //find a way to avoid using .lean() here
     
     },
 
