@@ -34,6 +34,10 @@ module.exports = {
 
             const platform = req.query.platform;
             const token = await authService.signToken( req.user, platform ); 
+
+            console.log("token is ")
+            console.log(token)
+            
             return res.redirect(`${process.env.FRONTEND_BASE_URL}/social/${token}`)
             
         } catch ( err ) {

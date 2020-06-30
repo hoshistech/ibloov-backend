@@ -23,7 +23,7 @@ router.get('/google/callback', passport.authenticate('google'), authController.s
 
 router.post('/local/:platform', validate("isValidPlatform"), isValidRequest, passport.authenticate('local'), authController.signUser );
 
-//router.get("/facebook",  passport.authenticate('google', { scope: ["profile"] }) );
+router.get("/facebook",  passport.authenticate('facebook') );
 
 router.get("/facebook/callback",  passport.authenticate('facebook'), authController.socialRedirect );
 

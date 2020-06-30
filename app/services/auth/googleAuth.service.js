@@ -13,7 +13,8 @@ module.exports = function(passport){
 
             try {
 
-                let user = await userService.getUser( {"google.id": profile.id} )
+                let user = await userService.getUser( {"google.id": profile.id} );
+
                 if( user ) return done(null, user);
 
                 let newUser =  {

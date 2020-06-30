@@ -8,11 +8,18 @@ module.exports = function(passport){
 
     passport.use( new FacebookStrategy( facebookAuth,
 
-        async (accessToken, refreshToken, profile, done) => {
+        async ( accessToken, refreshToken, profile, done) => {
+
+            console.log("profile is")
+            console.log(profile)
 
             try {
 
                 let user = await userService.getUser( {"facebook.id": profile.id} )
+
+                console.log("user")
+                console.log(user)
+
                 if( user ) return done(null, user);
 
                 let newUser =  {
@@ -26,6 +33,10 @@ module.exports = function(passport){
                     }
                 }
                 let createdUser = await userService.createUser( newUser );
+
+                console.log("user")
+                console.log(createdUser)
+
                 return done(null, createdUser);
                 
             } catch (err) {
