@@ -25,6 +25,6 @@ router.post('/local/:platform', validate("isValidPlatform"), isValidRequest, pas
 
 router.get("/facebook",  passport.authenticate('facebook', { scope: ['user_location', 'email', 'user_friends'] } ) );
 
-router.get("/facebook/callback",  passport.authenticate('facebook'), authController.socialRedirect );
+router.get("/facebook/callback",  passport.authenticate('facebook', { scope: ['user_location', 'email', 'user_friends'] }), authController.socialRedirect );
 
 module.exports = router; 
