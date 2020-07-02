@@ -89,7 +89,9 @@ exports.validate = (method) => {
                   
                   if( ! req.body.amount ) return Promise.reject("Body parameter, 'amount' is required for paid events ");
 
-                  if( ! parseFloat(req.body.amount) < 1 ) return Promise.reject("Invalid amount provided.");
+                  if( typeof req.body.amount !== "number" ) return Promise.reject("Invalid body parameter, 'amount' provided. Amount should be a number");
+
+                  if( req.body.amount < 1 ) return Promise.reject("Invalid amount provided.");
                   
                   if( ! req.body.currency ) return Promise.reject("Body parameter, 'currency' is required for paid events "); 
 
