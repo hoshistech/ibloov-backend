@@ -6,7 +6,8 @@ module.exports = {
 
     validateCurrencyCode: ( currencyCode ) => {
 
-        return ( validateCurrencyCode( currencyCode.toUpperCase() )) ? true : false;
+        const codeToUpper = currencyCode.toUpperCase();
+        return validateCurrencyCode( codeToUpper );
     },
 
 

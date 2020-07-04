@@ -86,7 +86,7 @@ module.exports = {
         try {
             
             const amount = req.body.amount * 100 ;
-            const currency = req.body.currency;
+            const currency = req.body.currency ? req.body.currency.toLowerCase() : null;
             const resp = await paymentService.stripePaymentIntent(amount, currency );
 
             return res.status(200).send({

@@ -20,20 +20,38 @@ module.exports = function(passport){
 
                 query["$or"] = [
                     { "facebook.id": profile.id },
-                    { email: profile.email }
+                    { email: profile.emails[0].value }
                 ]
 
-                let user = await userService.getUser( {"facebook.id": profile.id} )
+                let user = await userService.getUser( query )
 
                 console.log("user")
                 console.log(user)
 
                 if( user ) return done(null, user);
 
+                // if( user ){
+
+                //     //update the ise
+                //     if( ! user.facebook.id ){
+
+                //         let update = {
+                //             id: profile.id,
+                //             firstName: profile.name.givenName,
+                //             lastName: profile.name.familyName, 
+                //         }
+
+                //         await userService.updateUser(user._id, { "facebook": update } );
+
+                //     }
+
+                //     return done(null, user);
+                // }
+
                 let newUser =  {
 
                     authMethod: "facebook",
-                    email: profile.email,
+                    email: profile.emails[0].value,
                     facebook: {
                         id: profile.id,
                         firstName: profile.name.givenName,
