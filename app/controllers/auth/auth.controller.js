@@ -32,11 +32,14 @@ module.exports = {
 
         try {
 
+            /**
+             * Todo - fix this 
+             */
             const platform = req.query.platform;
-            const token = await authService.signToken( req.user, platform ); 
+            const token = await authService.signToken( req.user, platform );
 
-            console.log("token is ")
-            console.log(token)
+            console.log("req.user")
+            console.log(req.user);
             
             return res.redirect(`${process.env.FRONTEND_BASE_URL}/social/${token}`)
             

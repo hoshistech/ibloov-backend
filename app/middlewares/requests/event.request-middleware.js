@@ -43,7 +43,7 @@ exports.validate = (method) => {
 
             body("wishlistId")
             .optional()
-            .custom( ( value, {req, loc, path } )=> {
+            .custom( ( value, { req, loc, path } )=> {
 
                if( value ){
 
@@ -81,7 +81,7 @@ exports.validate = (method) => {
 
             body("isPaid")
             .optional()
-            .custom( ( value, { req, loc, path}) => {
+            .custom( ( value, { req, loc, path }) => {
 
                if( typeof value !== 'boolean') return Promise.reject("Invalid 'isPaid' value provided. boolean expected");
 

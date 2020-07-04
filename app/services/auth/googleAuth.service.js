@@ -13,9 +13,32 @@ module.exports = function(passport){
 
             try {
 
-                let user = await userService.getUser( {"google.id": profile.id} );
+                let query = {}
 
-                if( user ) return done(null, user);
+                query["$or"] = [
+                    { "google.id": profile.id },
+                    { email: profile.email }
+                ]
+
+                let user = await userService.getUser( query );
+
+                if( user ){
+
+                    //update the ise
+                    if( ! user.google.id ){
+
+                        let update = {
+                            id: profile.id,
+                            firstName: profile.name.givenName,
+                            lastName: profile.name.familyName, 
+                        }
+
+                        await userService.updateUser(user._id, { "google": update } );
+
+                    }
+
+                    return done(null, user);
+                }
 
                 let newUser =  {
 

@@ -4,8 +4,8 @@ module.exports = {
 
         clientID: process.env.FACEBOOK_APP_ID,
         clientSecret: process.env.FACEBOOK_APP_SECRET,
-        callbackURL: process.env.FACEBOOK_REDIRECT_URL
-        //profileFields: ["email", "name"]
+        callbackURL: process.env.FACEBOOK_REDIRECT_URL,
+        profileFields: ['id', 'displayName', 'link', 'about_me', 'photos', 'emails']
     },
 
     twitter:{

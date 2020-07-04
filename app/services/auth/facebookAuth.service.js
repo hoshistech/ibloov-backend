@@ -4,6 +4,7 @@ const userService = require("@services/user.service");
 
 var { facebookAuth } = require("@config/socialAuth");
 
+
 module.exports = function(passport){
 
     passport.use( new FacebookStrategy( facebookAuth,
@@ -14,6 +15,13 @@ module.exports = function(passport){
             console.log(profile)
 
             try {
+
+                let query = {}
+
+                query["$or"] = [
+                    { "facebook.id": profile.id },
+                    { email: profile.email }
+                ]
 
                 let user = await userService.getUser( {"facebook.id": profile.id} )
 

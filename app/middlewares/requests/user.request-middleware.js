@@ -244,6 +244,18 @@ exports.validate = (method) => {
       ]
     }
 
+    case 'socialUser': {
+
+      return [
+
+        param('scope')
+        .exists().withMessage("Expected param 'scope' not provided"),
+
+        param('id')
+        .exists().withMessage("Expected param 'id' not provided")
+      ]
+    }
+
 
   }
 }

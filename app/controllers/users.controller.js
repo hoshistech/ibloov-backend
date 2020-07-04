@@ -757,6 +757,37 @@ module.exports = {
             });
             
         }
+    },
+
+
+    getSocailUser: async( req, res) => {
+
+        const scope = req.params.scope;
+        const id = req.params.id;
+        const key = `${scope}.id`;
+
+        try {
+
+            const user = await userService.getUser({ [key]: id });
+            return res.status(200).json({
+                
+                success: true,
+                message: "Operation successful.",
+                data: user
+
+            });
+            
+        } catch (error) {
+
+            return res.status(400).json({
+
+                success: false,
+                message: "There was an error performing this operation",
+                data: err.toString()
+            });
+            
+        }
+
     }
 
     

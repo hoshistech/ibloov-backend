@@ -64,6 +64,9 @@ module.exports = {
      */
     getUser: async ( query ) => {
 
+        console.log("query")
+        console.log(query)
+
         let user = await User.findOne(query);
         return user;
     },
