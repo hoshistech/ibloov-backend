@@ -251,8 +251,29 @@ exports.validate = (method) => {
         param('scope')
         .exists().withMessage("Expected param 'scope' not provided"),
 
-        param('id')
-        .exists().withMessage("Expected param 'id' not provided")
+        /**
+         * Todo - add the allowed scopes here e.g - facebook, google, twitter
+         */
+
+        body('id')
+        .exists().withMessage("Expected body param 'id' not provided"),
+
+        body('email')
+        .exists().withMessage("Expected bpdy param 'email' not provided")
+        .isEmail().withMessage("Invalid email provided"),
+
+        body('fullName')
+        .custom(( value, { req, loc, path }) => {
+
+          if ( ! value ) {
+
+            if( ! req.body.firstName || ! req.body.lastName )
+              return Promise.reject("missing parameter. 'fullName' shoud be provided if 'firstName' and 'lastName' are not provided");
+          }
+
+          return true;
+
+        })
       ]
     }
 

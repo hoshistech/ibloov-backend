@@ -64,10 +64,7 @@ module.exports = {
      */
     getUser: async ( query ) => {
 
-        console.log("query")
-        console.log(query)
-
-        let user = await User.findOne(query);
+        let user = await User.findOne(query) ;
         return user;
     },
 
@@ -79,7 +76,7 @@ module.exports = {
      */
     updateUser: async ( userId, updateData ) => {
 
-        return  await User.findByIdAndUpdate( userId, updateData, {new: true}); 
+        return  await User.findByIdAndUpdate( userId, updateData, { new: true  }); 
     },
 
 

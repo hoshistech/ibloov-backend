@@ -763,21 +763,68 @@ module.exports = {
     getSocailUser: async( req, res) => {
 
         const scope = req.params.scope;
-        const id = req.params.id;
-        const key = `${scope}.id`;
+        const scopeField = `${scope}.id`;
+        let foundUser;
+        let query = {};
+        let { id, email, firstName, lastName, fullName } = req.body;
 
         try {
 
-            const user = await userService.getUser({ [key]: id });
+            firstName = firstName || fullName.substr(0, fullName.indexOf(' ') );
+            lastName = lastName ||  fullName.substr(fullName.indexOf(' ') + 1, fullName.length );
+
+            query["$or"] = [
+                { [scopeField]: id },
+                { email }
+            ];
+
+            foundUser = await userService.getUser(query);
+
+            if( foundUser ){
+
+                let scopeInfo = foundUser[ scope ];
+
+                if( ! scopeInfo.id || Object.entries(scopeInfo).length === 0 ){
+
+                    let update = {
+                        id,
+                        firstName,
+                        lastName
+                    }
+
+                    foundUser = await userService.updateUser( foundUser._id, { [scope]: update } );
+                }
+
+            } else {
+
+                const newUser = {
+                    
+                    authMethod: scope,
+                    email,
+                    [scope]: {
+                        id,
+                        firstName,
+                        lastName 
+                    }
+                }
+
+                foundUser =  await userService.createUser( newUser);   
+            }
+
+            let token = await authService.signToken( foundUser, 'mobile');
+            foundUser = foundUser.toObject();
+            foundUser["token"] = token;
+
+
             return res.status(200).json({
                 
                 success: true,
                 message: "Operation successful.",
-                data: user
+                data: foundUser
 
             });
             
-        } catch (error) {
+        } catch ( err ) {
 
             return res.status(400).json({
 
