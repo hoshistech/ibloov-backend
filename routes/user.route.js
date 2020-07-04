@@ -41,7 +41,7 @@ router.get('/requests',  [ checkAuth ], UserController.getRequests );
 
 router.get('/followrequests',  [ checkAuth ], UserController.followRequests ); 
 
-router.post('/social/:scope',  [ checkAuth, validate("socialUser"), isValidRequest ], UserController.getSocailUser ); 
+router.post('/social/:scope',  [ validate("socialUser"), isValidRequest ], UserController.getSocailUser ); 
 
 router.get('/:userId', [ checkAuth, validate("viewUser"), isValidRequest ], UserController.view );
 
