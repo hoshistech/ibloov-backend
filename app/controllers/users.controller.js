@@ -797,6 +797,8 @@ module.exports = {
 
             } else {
 
+                settings = req.body.settings
+
                 const newUser = {
                     
                     authMethod: scope,
@@ -804,8 +806,9 @@ module.exports = {
                     [scope]: {
                         id,
                         firstName,
-                        lastName 
-                    }
+                        lastName,
+                        settings 
+                    },
                 }
 
                 foundUser =  await userService.createUser( newUser);   
