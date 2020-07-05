@@ -64,7 +64,8 @@ module.exports = {
      */
     getUser: async ( query ) => {
 
-        let user = await User.findOne(query) ;
+        let user = await User.findOne(query)
+        .select("-phoneNumber") /** Todo - remove this  */
         return user;
     },
 

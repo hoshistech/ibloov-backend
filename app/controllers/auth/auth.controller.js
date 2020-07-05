@@ -45,7 +45,7 @@ module.exports = {
             
         } catch ( err ) {
 
-            return res.status(400).json({
+            return res.status(400).json({ 
 
                 success: true,
                 message: "error occured while performing this operation.",
