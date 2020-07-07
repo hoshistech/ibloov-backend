@@ -34,14 +34,16 @@ module.exports = {
 
             /**
              * Todo - fix this 
+             * platform from social login should be provided.
              */
             const platform = req.query.platform;
             const token = await authService.signToken( req.user, platform );
+            const socialAuthProvider = req.socialAuthProvider; 
 
-            console.log("req.user")
-            console.log(req.user);
+            console.log("socialAuthProvider legit is    ")
+            console.log(socialAuthProvider);
             
-            return res.redirect(`${process.env.FRONTEND_BASE_URL}/social/${token}`)
+            return res.redirect(`${process.env.FRONTEND_BASE_URL}/social/${socialAuthProvider}/${token}`)
             
         } catch ( err ) {
 

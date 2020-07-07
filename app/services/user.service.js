@@ -84,6 +84,7 @@ module.exports = {
     /**
      * performs a softDelete operation on a single instance of a user model
      * @param userId integer
+     * @param deletedBy String 
      *
      */
     softDeleteUser: async (userId, deletedBy) => {
@@ -102,7 +103,7 @@ module.exports = {
     getFollowingEvents: async (userId) => {
 
         query = {
-
+            "followers.userId": userId
         };
 
         options = {

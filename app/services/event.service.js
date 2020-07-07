@@ -80,7 +80,7 @@ module.exports = {
 
         m["$and"] = [ query, qw  ];
 
-        console.log({ m});
+        console.log({ m });
 
         const { limit, skip, sortBy, orderBy } = options;
         sort[ sortBy ] = orderBy;
