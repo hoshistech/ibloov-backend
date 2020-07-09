@@ -24,7 +24,7 @@ module.exports = function(passport){
 
                 if( user ){
 
-                    //update the ise
+                    //update the user
                     if( ! user.google.id ){
 
                         let update = {

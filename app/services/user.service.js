@@ -32,7 +32,7 @@ module.exports = {
         .sort(sort)
         .limit(limit)
         .skip(skip)
-        .populate('followers.userId', '_id authMethod avatar bio local.firstName local.lastName google email fullName phoneNumber');
+        .populate('followers.userId', '_id authMethod avatar bio local.firstName local.lastName google facebook email fullName phoneNumber');
 
 
         return users;
@@ -54,7 +54,7 @@ module.exports = {
     viewUser: async ( userId ) => {
 
         let user = await User.findById(userId)
-        .populate('followers.userId', '_id authMethod avatar bio local.firstName local.lastName google email fullName phoneNumber');
+        .populate('followers.userId', '_id authMethod avatar bio local.firstName local.lastName google facebook email fullName phoneNumber');
         return user;
     },
 
@@ -232,7 +232,7 @@ module.exports = {
     getUserFollowing: async ( userId ) => {
 
         return await User.find( { "followers.userId": userId } )
-        .select("_id authMethod bio local.firstName local.lastName google email avatar fullName phoneNumber");
+        .select("_id authMethod bio local.firstName local.lastName google facebook email avatar fullName phoneNumber");
     },
 
 

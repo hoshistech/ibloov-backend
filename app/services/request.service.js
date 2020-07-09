@@ -26,8 +26,8 @@ module.exports = {
     viewRequestById: async( requestId ) => {
 
         return await Request.findById( requestId )
-        .populate("requesteeId", "_id avatar authMethod local.firstName local.lastName google fullName")
-        .populate("accepteeId", "_id avatar authMethod local.firstName local.lastName google fullName");
+        .populate("requesteeId", "_id avatar authMethod local.firstName local.lastName google facebook fullName")
+        .populate("accepteeId", "_id avatar authMethod local.firstName local.lastName google facebook fullName");
     },
 
 
@@ -61,8 +61,8 @@ module.exports = {
         if( type ) query["type"] = type;
 
         return await Request.find( query )
-        .populate("requesteeId", "_id avatar authMethod local.firstName local.lastName google fullName")
-        .populate("accepteeId", "_id avatar authMethod local.firstName local.lastName google fullName")
+        .populate("requesteeId", "_id avatar authMethod local.firstName local.lastName google facebook fullName")
+        .populate("accepteeId", "_id avatar authMethod local.firstName local.lastName google facebook fullName")
     },
 
 

@@ -28,8 +28,8 @@ module.exports = {
         .sort(sort)
         .limit(limit)
         .skip(skip)
-        .populate('userId', '_id avatar authMethod local.firstName local.lastName google fullName')
-        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName google fullName')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName')
+        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName')
         
         return wishlists;
     },
@@ -54,8 +54,8 @@ module.exports = {
     viewWishlist: async (wishlistId) => {
 
         return await Wishlist.findById(wishlistId)
-        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName google fullName')
-        .populate('userId', '_id avatar authMethod local.firstName local.lastName google fullName');
+        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName');
         
     }, 
 
@@ -69,8 +69,8 @@ module.exports = {
     updateWishlist: async (wishlistId, updateData) => {
 
         return await Wishlist.findByIdAndUpdate( wishlistId, updateData, { runValidators: true, new: true})
-        .populate('userId', '_id avatar authMethod local.firstName local.lastName google fullName')
-        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName google fullName')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName')
+        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName')
     },
 
 
@@ -104,8 +104,8 @@ module.exports = {
             }, 
             { runValidators: true, new: true }
         )
-        .populate('userId', '_id avatar authMethod local.firstName local.lastName google fullName')
-        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName google fullName')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName')
+        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName')
 
     },
 
@@ -119,8 +119,8 @@ module.exports = {
 
         let update = await Wishlist.findByIdAndUpdate( wishlistId, { $pull: { 'invitees':  { "email": email }  } }, 
         { runValidators: true,  new: true} )
-        .populate('userId', '_id avatar authMethod local.firstName local.lastName google fullName')
-        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName google fullName')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName')
+        .populate('items.pledges.userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName')
 
         return update;
     },

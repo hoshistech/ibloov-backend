@@ -25,28 +25,25 @@ module.exports = function(passport){
 
                 let user = await userService.getUser( query )
 
-                console.log("user")
-                console.log(user)
-
                 if( user ) return done(null, user);
 
-                // if( user ){
+                if( user ){
 
-                //     //update the ise
-                //     if( ! user.facebook.id ){
+                    //update the use
+                    if( ! user.facebook.id || Object.entries(user.facebook).length === 0  ){
 
-                //         let update = {
-                //             id: profile.id,
-                //             firstName: profile.name.givenName,
-                //             lastName: profile.name.familyName, 
-                //         }
+                        let update = {
+                            id: profile.id,
+                            firstName: profile.name.familyName,
+                            lastName: profile.name.givenName  
+                        }
 
-                //         await userService.updateUser(user._id, { "facebook": update } );
+                        await userService.updateUser(user._id, { "facebook": update } );
 
-                //     }
+                    }
 
-                //     return done(null, user);
-                // }
+                    return done(null, user);
+                }
 
                 let newUser =  {
 
@@ -58,10 +55,8 @@ module.exports = function(passport){
                         lastName: profile.name.familyName, 
                     }
                 }
+                
                 let createdUser = await userService.createUser( newUser );
-
-                console.log("user")
-                console.log(createdUser)
 
                 return done(null, createdUser);
                 
