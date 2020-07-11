@@ -38,21 +38,17 @@ exports.validate = (method) => {
           });
         }),
 
-        /**
-         * Todo uncomment this when Afolabi is done testing
-         * 
-         */
-        // body('phoneNumber')
-        // .exists().withMessage("Required body property 'phoneNumber' not found.") 
-        // .custom( (value) => {
+        body('phoneNumber')
+        .exists().withMessage("Required body property 'phoneNumber' not found.") 
+        .custom( (value) => {
 
-        //   return userService.getUser({ phoneNumber: value}).then( user => {
+          return userService.getUser({ phoneNumber: value }).then( user => {
 
-        //     if ( user ) {
-        //       return Promise.reject('This phoneNumber already exists!');
-        //     }
-        //   });
-        // }),
+            if ( user ) {
+              return Promise.reject('This phoneNumber already exists!');
+            }
+          });
+        }),
 
         body('password')
         .exists().withMessage("Required body property 'password' not found.")
