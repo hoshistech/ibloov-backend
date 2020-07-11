@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
+const uuidv4 = require('uuid/v4');
+
 var Schema = mongoose.Schema;
 
 
@@ -255,6 +257,12 @@ var UserSchema = new Schema({
         lastName: String
     },
 
+    uuid: {
+        type: String,
+        unique: true,
+        required: true
+    },
+
     email: {
         type: String,
         required: true,
@@ -276,10 +284,7 @@ var UserSchema = new Schema({
         },
         unique: function(){
 
-            /**
-             * Todo uncomment this when Afolabi is done testing
-             */
-            //this.phoneNumber ? true : false
+            this.phoneNumber ? true : false
         }
     },
 
@@ -488,6 +493,7 @@ UserSchema.pre('save',  async function(next){
         const salt = await bcrypt.genSaltSync(10);
         const hash = await bcrypt.hash(this.local.password, salt);
         this.local.password = hash;
+        this.uuid = uuidv4();
         next()
 
     } catch( err ){
