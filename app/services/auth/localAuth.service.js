@@ -34,12 +34,10 @@ module.exports = function(passport){
 
             try {
 
-                let user = await userService.getUser( { email } );
-
+                let user = await userService.getUser( { email } ); 
                 if( ! user) return done(null, false);
-
+                
                 let isValid = await user.isValidPassword( password )
-
                 if ( ! isValid ) return done( null, false )
                     
                 done(null, user);

@@ -67,7 +67,6 @@ module.exports = {
     getUser: async ( query ) => {
 
         let user = await User.findOne(query)
-        .select("phoneNumber")
         return user;
     },
 
