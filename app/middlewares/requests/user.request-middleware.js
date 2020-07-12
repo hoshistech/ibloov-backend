@@ -254,9 +254,9 @@ exports.validate = (method) => {
         body('id')
         .exists().withMessage("Expected body param 'id' not provided"),
 
-        body('email')
-        .exists().withMessage("Expected bpdy param 'email' not provided")
-        .isEmail().withMessage("Invalid email provided"),
+        // body('email')
+        // .exists().withMessage("Expected bpdy param 'email' not provided")
+        // .isEmail().withMessage("Invalid email provided"),
 
         body('fullName')
         .custom(( value, { req, loc, path }) => {

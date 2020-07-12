@@ -118,9 +118,9 @@ module.exports = {
     createEvent: async ( eventData ) =>{
 
         let event = new Event(eventData);
-        event.qrCode = await QRCode.toDataURL( `event:${eventData.uuid}` );
+        event.qrCode = await QRCode.toDataURL( `event-${eventData.uuid}` );
 
-        let url = await QRCode.toString( `event-${eventData.uuid}` ,{type:'terminal'});
+        let url = await QRCode.toString( `event-${eventData.uuid}`, { type:'terminal' });
         console.log(url); 
 
         event.coordinators.push({ userId: eventData.userId, accepted: "YES" }); 

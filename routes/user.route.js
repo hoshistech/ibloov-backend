@@ -17,6 +17,8 @@ router.post('/mobilenumber/sendverificationcode/:userId', [ validate("sendTeleph
 
 router.post('/follow/:userId', [ checkAuth, validate("followUser"), isValidRequest ], UserController.followUser );
 
+router.post('/social/:scope',  [ validate("socialUser"), isValidRequest ], UserController.getSocailUser ); 
+
 router.get('/mobilenumber/verifycode/:userId/:code', [ validate("verifyTelephoneVerifcationCode"), isValidRequest ], UserController.verifyTelephoneVerifcationCode );
 
 router.get('/wishlists/:userId?', [ checkAuth, validate("userWishlists"), isValidRequest ], UserController.wishlists );
@@ -37,11 +39,9 @@ router.get('/following/status/:userId',  [ checkAuth ], UserController.followSta
 
 router.get('/notifications',  [ checkAuth ], UserController.getNotifications ); 
 
-router.get('/requests',  [ checkAuth ], UserController.getRequests ); 
+router.get('/requests',  [ checkAuth ], UserController.getRequests );  
 
 router.get('/followrequests',  [ checkAuth ], UserController.followRequests ); 
-
-router.post('/social/:scope',  [ validate("socialUser"), isValidRequest ], UserController.getSocailUser ); 
 
 router.get('/:userId', [ checkAuth, validate("viewUser"), isValidRequest ], UserController.view );
 

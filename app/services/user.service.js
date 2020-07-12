@@ -1,6 +1,7 @@
 const User = require('@models/user.model');
 const moment = require("moment");
 const jwt = require("jsonwebtoken");
+const uuidv4 = require('uuid/v4');
 
 //services
 const eventService = require('@services/event.service'); 
@@ -44,6 +45,7 @@ module.exports = {
      */
     createUser: async ( user  ) =>{
         
+        user.uuid = uuidv4();
         return await User.create( user );
     },
 

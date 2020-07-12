@@ -248,8 +248,6 @@ module.exports = {
 
     events: async (req, res) => {
 
-        //console.log(req);
-
         let filter = getMatch(req);
         let options = getOptions(req); 
 
@@ -773,18 +771,27 @@ module.exports = {
             firstName = firstName || fullName.substr(0, fullName.indexOf(' ') );
             lastName = lastName ||  fullName.substr(fullName.indexOf(' ') + 1, fullName.length );
 
-            query["$or"] = [
-                { [scopeField]: id },
-                { email }
-            ];
+            if( id && email ){
+                query["$or"] = [
+                    { [scopeField]: id },
+                    { email }
+                ];
+
+            } else if( id ) {
+
+                query["$or"] = [
+                    { [scopeField]: id }
+                ];
+
+            }
 
             foundUser = await userService.getUser(query);
 
-            if( foundUser ){
+            if( foundUser ){ 
 
                 let scopeInfo = foundUser[ scope ];
 
-                if( ! scopeInfo.id || Object.entries(scopeInfo).length === 0 ){
+                if( ! scopeInfo || ! scopeInfo.id || Object.entries(scopeInfo).length === 0 ){
 
                     let update = {
                         id,
@@ -797,7 +804,7 @@ module.exports = {
 
             } else {
 
-                settings = req.body.settings
+                settings = req.body.settings;
 
                 const newUser = {
                     
@@ -811,7 +818,7 @@ module.exports = {
                     },
                 }
 
-                foundUser =  await userService.createUser( newUser);   
+                foundUser =  await userService.createUser( newUser );   
             }
 
             let token = await authService.signToken( foundUser, 'mobile');

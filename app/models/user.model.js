@@ -3,6 +3,10 @@ const bcrypt = require('bcryptjs');
 const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
 const uuidv4 = require('uuid/v4');
+const QRCode = require('qrcode');
+
+//const Cryptr = require('cryptr');
+//const cryptr = new Cryptr('!bl00v3v3nT@pp');
 
 var Schema = mongoose.Schema;
 
@@ -46,140 +50,6 @@ var blockedUser = new Schema({
 
 
 /**
- * user settings that have to do with notifications
- */
-// var notificationSetting = new Schema({
-
-//     email: {
-
-//         myEvents:{
-//             type: Boolean,
-//             default: true
-//         },
-
-//         FriendActivities: {
-//             type: Boolean,
-//             default: true
-//         },
-
-//         eventInvites: {
-//             type: Boolean,
-//             default: true
-//         },
-
-//         wishlistRequests: {
-//             type: Boolean,
-//             default: true
-//         },
-
-//         fundmeRequests: {
-//             type: Boolean,
-//             default: true
-//         },
-
-//         friendRequests: {
-//             type: Boolean,
-//             default: true
-//         },
-
-//         appUpdates:{
-
-//             type: Boolean,
-//             default: true
-//         }
-
-//     },
-
-//     pushNotifications: {
-
-//         myEvents:{
-//             type: Boolean,
-//             default: true
-//         },
-
-//         FriendActivities: {
-//             type: Boolean,
-//             default: true
-//         },
-
-//         eventInvites: {
-//             type: Boolean,
-//             default: true
-//         },
-
-//         wishlistRequests: {
-//             type: Boolean,
-//             default: true
-//         },
-
-//         fundmeRequests: {
-//             type: Boolean,
-//             default: true
-//         },
-
-//         friendRequests: {
-//             type: Boolean,
-//             default: true
-//         },
-
-//         appUpdates:{
-
-//             type: Boolean,
-//             default: true
-//         }
-
-//     }
-
-// }, { _id: false })
-
-/**
- * user settings that have to do with reminders
- */
-// var remimderSetting = new Schema({
-
-//         upcomingEvents:{
-//             type: Boolean,
-//             default: true
-//         },
-
-//         FriendBirthdays: {
-//             type: Boolean,
-//             default: true
-//         }
-
-
-// }, { _id: false })
-
-
-/**
- * user main settings object.
- */
-// var setting = new Schema({
-
-//     currency: {
-//         type: String
-//     },
-
-//     timeZone: {
-//         type: String
-//     },
-
-//     country: {
-//         type: String
-//     },
-
-//     notifications: {
-//         type: notificationSetting,
-//     },
-
-//     reminders: {
-//         type: remimderSetting
-//     }
-
-// }, { _id: false })
-
-
-/**
  * user payout
  */
 var payout = new Schema({
@@ -214,6 +84,10 @@ var UserSchema = new Schema({
         type: String,
         required: true,
         enum: ['local', 'facebook', 'google', 'twitter']
+    },
+
+    qrCode: {
+        type: String
     },
 
     local: {
@@ -486,17 +360,25 @@ UserSchema.virtual('fullName').get(function () {
 
 
 UserSchema.pre('save',  async function(next){
-    
-    try{
-        if( this.authMethod !== "local") next();
 
-        const salt = await bcrypt.genSaltSync(10);
-        const hash = await bcrypt.hash(this.local.password, salt);
-        this.local.password = hash;
-        this.uuid = uuidv4();
+    try{
+
+        //this.uuid = uuidv4();
+        this.qrCode = await QRCode.toDataURL( `user-${ this.uuid }` );
+        let url = await QRCode.toString( `user-${ this.uuid }`, { type:'terminal' });
+        console.log(url);
+
+        if( this.authMethod == "local" ){
+
+            const salt = await bcrypt.genSaltSync(10);
+            const hash = await bcrypt.hash(this.local.password, salt);
+            this.local.password = hash;
+        }
+
         next()
 
     } catch( err ){
+
         next(err);
     }
 })
