@@ -142,7 +142,26 @@ module.exports = {
         .populate('coordinators.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
         .populate('wishlistId', '_id name')
         .populate('crowdfundingId', '_id name')
-        .lean({ virtuals: true }); //find a way to avoid using .lean() here
+        .lean({ virtuals: true });
+    
+    },
+
+
+    /**
+     * returns event instance(s)
+     * @param eventId String
+     */
+    getEvent: async (query) => {
+
+        return await Event.findOne(query)
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
+        .populate('followers.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
+        //.populate('likes.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
+        .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
+        .populate('coordinators.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
+        //.populate('wishlistId', '_id name')
+        //.populate('crowdfundingId', '_id name')
+        .lean({ virtuals: true });
     
     },
 

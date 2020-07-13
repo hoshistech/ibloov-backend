@@ -5,9 +5,10 @@ module.exports = {
     getQRResource: async(req, res) => {
 
         const qr = req.params.qr;
+        const authuser = req.authuser._id;
 
         try {
-            const resource = await utilityService.getQRResource( qr );
+            const resource = await utilityService.getQRResource( qr, authuser );
             return res.json({
                 success: true,
                 message: "Operation successful",
