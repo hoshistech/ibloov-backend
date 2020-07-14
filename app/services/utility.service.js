@@ -26,7 +26,7 @@ module.exports = {
                     let isFollowingStatus  = await userService.isFollowingStatus( authuser, resource._id );
                     let platformContacts = await userService.getPlatformContacts( resource._id )
                     meta.isFollowingStatus = isFollowingStatus;
-                    meta.eventCount = await eventService.allCount( { userId: resource._id , deletedAt: null } );
+                    meta.eventCount = await eventService.allCount( { userId: resource._id, deletedAt: null } );
                     meta.following = platformContacts.following.length;
                     meta.followers = platformContacts.followers.length;
                 }
@@ -39,8 +39,15 @@ module.exports = {
 
                     if( resource ){
                         meta.isPrivate = resource.isPrivate;
-                        meta.isInvited = resource.invitees.filter( invite => invite.userId._id.toString() === authuser.toString() ).length > 0;
-                        meta.isCoordinator = resource.coordinators.filter( coordinator => coordinator.userId._id.toString() == authuser.toString() ).length > 0;
+
+                        meta.isInvited = resource.invitees.filter( invite => {
+                            if ( invite.userId ) invite.userId._id.toString() === authuser.toString() 
+                        }).length > 0;
+
+                        meta.isCoordinator = resource.coordinators.filter( coordinator => {
+                            if ( coordinator.userId ) coordinator.userId._id.toString() == authuser.toString(); 
+                        }).length > 0
+                        
                         meta.ticketNumber = "EVNT-1909";
                         meta.orderId = "OD-0987654ertkl";
                         meta.canAttend = ( ! meta.isPrivate || meta.isCoordinator || meta.isInvited )

@@ -8,7 +8,7 @@ module.exports = {
         profileFields: ['id', 'displayName', 'link', 'photos', 'emails', 'name']
     },
 
-    twitter:{
+    twitterAuth:{
 
     },
 
@@ -19,7 +19,7 @@ module.exports = {
         callbackURL: process.env.GOOGLE_REDIRECT_URL
     },
 
-    apple: {
+    appleAuth: {
 
 
     }
