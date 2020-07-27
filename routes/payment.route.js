@@ -16,4 +16,6 @@ router.post('/stripe/token', [ checkAuth, validate("stripeToken"), isValidReques
 
 router.post('/stripe/capture', [ checkAuth ], PaymentController.capturePayment);
 
+router.post('/stripe/webhook', [ checkAuth ], PaymentController.webhook);
+
 module.exports = router;

@@ -147,9 +147,6 @@ app.use('/v1/request/', RequestRouter);
 app.use('/v1/utility/', UtilityRouter);
 
 
-
-
-
 //seeders
 app.use('/seeders/event', eventSeederRouter);
 app.use('/seeders/wishlist', wishlistSeederRouter);

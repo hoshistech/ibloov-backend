@@ -552,6 +552,8 @@ module.exports = {
 
         let filter = getMatch(req);
         let options = getOptions(req); 
+        options.sortBy = "startDate";
+
         let resp = {}; 
         count = 0;
 

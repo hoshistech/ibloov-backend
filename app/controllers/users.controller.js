@@ -256,8 +256,8 @@ module.exports = {
         try{
 
             let [ events, eventCount ] = await Promise.all([
-                eventService.all({ userId } ),
-                eventService.allCount( { userId } )
+                eventService.all({ userId, deletedAt: null }, options, userId ),
+                eventService.allCount( { userId, deletedAt: null } )
             ]);
 
             let tracker = {};

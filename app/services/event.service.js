@@ -78,9 +78,7 @@ module.exports = {
             ]
         }
 
-        m["$and"] = [ query, qw  ];
-
-        console.log({ m });
+        m["$and"] = [ query, qw ];
 
         const { limit, skip, sortBy, orderBy } = options;
         sort[ sortBy ] = orderBy;
@@ -555,7 +553,7 @@ module.exports = {
         filter["startDate"] = { $lte: AfterNow, $gte: beforeNow }
         filter["deletedAt"] = null;
 
-       return module.exports.all(filter, options, userId);
+       return module.exports.all( filter, options, userId );
     },
 
 

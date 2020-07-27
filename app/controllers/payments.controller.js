@@ -81,6 +81,7 @@ module.exports = {
         }
     },
 
+
     stipePaymentIntent: async(req, res) => {
 
         try {
@@ -129,5 +130,54 @@ module.exports = {
                 data: err.toString()
             })
         }
+    },
+
+    webhook: async( req, res) => {
+
+        let event;
+
+    try {
+        event = request.body;
+        eventObject = event.data.object;
+
+        // Handle the event
+        switch ( event.type ) {
+            
+            /**
+             * handle the successful payment intent.
+             */
+            case 'payment_intent.succeeded':
+                return await handlePaymentIntentSucceeded(eventObject);
+            break;
+
+            /**
+             * handle the successful attachment of a PaymentMethod.
+             */
+            case 'payment_method.attached':
+                return await handlePaymentMethodAttached(eventObject);
+            break;
+                
+            default:
+                throw new Error("unrecognozed event.");
+        }
+
+    } catch (err) {
+        res.status(400).send({
+            success: false,
+            message: "Error occured while trying to generate this token.",
+            data: err.toString()
+        })
     }
+    }
+}
+
+
+const handlePaymentIntentSucceeded = function( paymentIntent ){
+
+    console.log( paymentIntent );
+}
+
+const handlePaymentMethodAttached = function( paymentMehtod ){
+
+    console.log( paymentMehtod );
 }
