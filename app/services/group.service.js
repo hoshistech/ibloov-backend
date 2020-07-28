@@ -95,8 +95,8 @@ module.exports = {
             }, 
             { runValidators: true, new: true }
         )
-        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName phoneNumber')
-        .populate('contacts.userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName phoneNumber');
+        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber')
+        .populate('contacts.userId', '_id avatar email authMethod local.firstName local.lastName google facebook fullName phoneNumber');
     },
 
     /**
