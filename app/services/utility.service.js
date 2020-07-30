@@ -9,9 +9,6 @@ module.exports = {
 
         const resourceType = qr.substr(0, qr.indexOf('-'));
         const resourceId = qr.substr( qr.indexOf('-') + 1 , qr.length );
-
-        console.log("resourceType, resourceId")
-        console.log(resourceType, resourceId);
  
         let resource;
         let meta = {};
@@ -38,6 +35,8 @@ module.exports = {
                 resource = await eventService.getEvent({ uuid: resourceId, deletedAt: null })
 
                     if( resource ){
+
+                        let isFollowingStatus  = await userService.isFollowingStatus( authuser, resource.userId );
                         meta.isPrivate = resource.isPrivate;
 
                         meta.isInvited = resource.invitees.filter( invite => {
@@ -52,6 +51,7 @@ module.exports = {
                         meta.orderId = "OD-0987654ertkl";
                         meta.canAttend = ( ! meta.isPrivate || meta.isCoordinator || meta.isInvited )
                         meta.attendingStatus = meta.isInvited ? resource.invitees.filter( invite => invite.userId._id.toString() === authuser.toString() )[0].accepted : null;
+                        meta.isFollowingStatus = isFollowingStatus;
                     }
                     
                 break;
