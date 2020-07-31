@@ -3,7 +3,6 @@ const minLimit = 20;
 
 module.exports = {
 
-
     getOptions: (req) => {
 
         let options = {};
