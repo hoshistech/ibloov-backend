@@ -1,2 +1,5 @@
 # ibloov-backend
-Backend for Ibloov.
+ibloov
+
+#Generate API Doc
+`apidoc -i app/controllers -o public/doc`

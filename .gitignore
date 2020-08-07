@@ -1,0 +1,24 @@
+#Environment variables
+.env
+
+# For npm
+node_modules/
+# npm-debug.log
+
+
+# Local workers
+**/addcluster.sh
+.idea
+.vscode
+
+# Local env variables
+**/env.sh
+
+# OSX DS_Store
+**/.DS_Store
+
+#todo
+todo
+queries
+
+methods.stale
