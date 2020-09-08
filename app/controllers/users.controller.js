@@ -190,17 +190,17 @@ module.exports = {
             const status = await userService.isFollowingStatus( requestee, acceptee );
 
             //only send request if status is false.
-            if( status === "false"){
+            //if( status === "false"){
 
                 await createFollowRequest( requestee, acceptee );
-            }
+            //}
             
             return res.status(200).json({
 
                 success: true,
                 message: "Request has been sent succesfully",
             });
-         
+            
         } catch ( err ) {
             
             return res.status(400).json({
