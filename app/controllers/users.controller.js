@@ -127,6 +127,10 @@ module.exports = {
 
         try {
             let user = await userService.viewUser(userId);
+            const connections = await userService.getPlatformContacts(userId);
+
+            user = user.toObject();
+            user["connections"] = connections;
 
             return res.status(200).json({
                 success: true,
