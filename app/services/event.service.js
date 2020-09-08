@@ -78,14 +78,12 @@ module.exports = {
             ]
         }
 
-        console.log("query")
-        console.log(query)
 
         m["$and"] = [ query, qw ];
 
         const { limit, skip, sortBy, orderBy } = options;
         sort[ sortBy ] = orderBy;
-        
+
         let events = await Event.find(m)
         .sort(sort)
         .limit(limit)
@@ -121,8 +119,8 @@ module.exports = {
         let event = new Event(eventData);
         event.qrCode = await QRCode.toDataURL( `event-${eventData.uuid}` );
 
-        let url = await QRCode.toString( `event-${eventData.uuid}`, { type:'terminal' });
-        console.log(url); 
+        //let url = await QRCode.toString( `event-${eventData.uuid}`, { type:'terminal' });
+        //console.log(url); 
 
         event.coordinators.push({ userId: eventData.userId, accepted: "YES" }); 
         return await event.save();
@@ -550,8 +548,8 @@ module.exports = {
      */
     liveEvents: async(filter, options, userId) => {
 
-        let beforeNow = moment().subtract( 4, 'd').toDate();
-        let AfterNow =  moment().add( 4, 'd').toDate();
+        let beforeNow = moment().subtract( 12, 'h').toDate();
+        let AfterNow =  moment().add( 12, 'd').toDate();
 
         filter["startDate"] = { $lte: AfterNow, $gte: beforeNow }
         filter["deletedAt"] = null;
