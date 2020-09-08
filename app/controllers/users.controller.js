@@ -12,6 +12,7 @@ const authService = require("@services/auth.service");
 const notificationService = require("@services/notification.service");
 const requestService = require("@services/request.service");
 
+//requests
 const { createFollowRequest } = require("@user-request/follow.request");
 
 //helpers
@@ -359,16 +360,24 @@ module.exports = {
 
     wishlists: async (req, res) => {
 
+        let filter = getMatch(req);
+        let options = getOptions(req); 
+
         let userId = req.params.userId || req.authuser._id;
         
         try{
-            let wishlists = await wishlistService.all({userId});
+
+            let [ wishlists, wishlistCount ] = await Promise.all([
+                wishlistService.all({ userId, deletedAt: null }, options),
+                wishlistService.allCount( { userId, deletedAt: null } )
+            ]);
 
             return res.status(200).json({
 
                 success: true,
                 message: "Wishlists retreived successfully.",
-                data: wishlists
+                data: wishlists,
+                pagination: pagination( wishlistCount, options, filter, req.originalUrl )
             });
         }
         catch( err ){
@@ -384,16 +393,23 @@ module.exports = {
 
     crowdfunds: async (req, res) => {
 
-        let userId = req.params.userId || req.authuser._id;
+        const filter = getMatch(req);
+        const options = getOptions(req);
+        const userId = req.params.userId || req.authuser._id;
         
         try{
-            let crowdfunds = await crowdfundingService.all({userId});
+
+            let [ crowdfunds, crowdfundCount ] = await Promise.all([
+                crowdfundingService.all({ userId, deletedAt: null }, options),
+                crowdfundingService.allCount( { userId, deletedAt: null } )
+            ]);
 
             return res.status(200).json({
 
                 success: true,
                 message: "Crowdfunds retreived successfully.",
-                data: crowdfunds
+                data: crowdfunds,
+                pagination: pagination( crowdfundCount, options, filter, req.originalUrl )
             });
         }
         catch( err ){
