@@ -58,12 +58,11 @@ module.exports = {
     /**
      * delete a single feedback instance
      * @param feedbackId integer
-     * @param deletedBy String 
+     * @param deletedBy String  
      */
     softDeleteFeedback: async ( feedbackId, deletedBy ) => {
         
         const updateData = { deletedAt: Date.now(), deletedBy };
-        return await module.exports.updateFeedback(feedbackId, updateData)
-        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber');
+        return await module.exports.updateFeedback(feedbackId, updateData);
     }
 }
