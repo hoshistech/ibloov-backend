@@ -85,8 +85,7 @@ module.exports = {
         try {
 
             let resp = await feedbackService.updateFeedback(feedbackId, feedbackData);
-            feedbackService.addFeedbackHistory(feedbackId, "FEEDBSCK_UPDATE", req.authuser._id);
-
+            
             return res.status(200).json({
                 success: true,
                 message: "feedback information has been updated successfully.",
