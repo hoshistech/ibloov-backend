@@ -29,6 +29,11 @@ var FeedbackSchema = new Schema({
         ref: "users"
     },
 
+    resolved: {
+        type: Boolean,
+        default: false
+    },
+
     deletedAt: {
         type: Date,
         default: null
