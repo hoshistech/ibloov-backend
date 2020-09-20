@@ -131,6 +131,18 @@ var UserSchema = new Schema({
         lastName: String
     },
 
+    apple: {
+
+        id: {
+            type: String,
+            required: function(){
+                return this.authMethod == "apple"
+            }
+        },
+        firstName: String, 
+        lastName: String
+    },
+
     uuid: {
         type: String,
         unique: true,
