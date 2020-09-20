@@ -83,7 +83,7 @@ var UserSchema = new Schema({
     authMethod: {
         type: String,
         required: true,
-        enum: ['local', 'facebook', 'google', 'twitter']
+        enum: ['local', 'facebook', 'google', 'twitter', 'apple']
     },
 
     qrCode: {
