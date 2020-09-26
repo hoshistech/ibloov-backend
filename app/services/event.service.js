@@ -88,11 +88,11 @@ module.exports = {
         .sort(sort)
         .limit(limit)
         .skip(skip)
-        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-        .populate('followers.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-        .populate('likes.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-        .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-        .populate('coordinators.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+        .populate('followers.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+        .populate('likes.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+        .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+        .populate('coordinators.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
         .populate('wishlistId', '_id name')
         .populate('crowdfundingId', '_id name')
         .lean({ virtuals: true });
@@ -134,11 +134,11 @@ module.exports = {
     viewEvent: async (eventId) => {
 
         return await Event.findById(eventId)
-        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-        .populate('followers.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-        .populate('likes.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-        .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-        .populate('coordinators.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+        .populate('followers.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+        .populate('likes.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+        .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+        .populate('coordinators.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
         .populate('wishlistId', '_id name')
         .populate('crowdfundingId', '_id name')
         .lean({ virtuals: true });
@@ -153,11 +153,11 @@ module.exports = {
     getEvent: async (query) => {
 
         return await Event.findOne(query)
-        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-        .populate('followers.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-        //.populate('likes.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-        .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-        .populate('coordinators.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+        .populate('followers.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+        //.populate('likes.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+        .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+        .populate('coordinators.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
         //.populate('wishlistId', '_id name')
         //.populate('crowdfundingId', '_id name')
         .lean({ virtuals: true });
@@ -247,7 +247,6 @@ module.exports = {
         let set = { 'controls': control };
 
         return await module.exports.updateEventSet(eventId, set);
-
     },
 
 
@@ -268,7 +267,6 @@ module.exports = {
 
         return await Event.findOneAndUpdate( { _id: eventId } , 
         { '$addToSet': setData }, { runValidators: true , new: true } ).lean();
-
     },
 
     /**
@@ -447,8 +445,8 @@ module.exports = {
             // }
 
             return await Event.findOneAndUpdate( { _id: eventId, "invitees.userId": userId }, { $set : { 'invitees.$.accepted' : status }}, { new:true, runValidators: true } )
-            .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-            .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName');
+            .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+            .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName');
 
         }
         else{
@@ -472,8 +470,8 @@ module.exports = {
                 }, 
                 { runValidators: true, new: true }
             )
-            .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-            .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
+            .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+            .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
 
         }
     },
@@ -497,8 +495,8 @@ module.exports = {
         if( coordinator ){
 
             return await Event.findOneAndUpdate( { _id: eventId, "coordinators.userId": userId }, { $set : { 'coordinators.$.accepted' : status }}, { new:true, runValidators: true } )
-            .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName')
-            .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName google facebook email fullName');
+            .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName')
+            .populate('invitees.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple email fullName');
         }
 
         throw new Error("coordinator not found!");

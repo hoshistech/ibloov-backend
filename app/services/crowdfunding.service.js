@@ -32,8 +32,8 @@ module.exports = {
         .sort(sort)
         .limit(limit)
         .skip(skip)
-        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName')
-        .populate('donors.userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook apple fullName')
+        .populate('donors.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple fullName')
         .lean({ virtuals: true });
 
         return crowdFunding;
@@ -48,7 +48,7 @@ module.exports = {
 
         let crowdFunding = new CrowdFunding(crowdFundingData);
         return await crowdFunding.save()
-        //.populate("userId", "_id avatar authMethod local.firstName local.lastName google facebook fullName");
+        //.populate("userId", "_id avatar authMethod local.firstName local.lastName google facebook apple fullName");
     },
  
 
@@ -59,8 +59,8 @@ module.exports = {
     viewCrowdFunding: async (crowdfundingId) => {
 
         return await CrowdFunding.findById(crowdfundingId)
-        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName')
-        .populate('donors.userId', '_id avatar authMethod local.firstName local.lastName google facebook fullName')
+        .populate('userId', '_id avatar authMethod local.firstName local.lastName google facebook apple fullName')
+        .populate('donors.userId', '_id avatar authMethod local.firstName local.lastName google facebook apple fullName')
         .lean({ virtuals: true });
     },
 
