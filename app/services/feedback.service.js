@@ -14,7 +14,7 @@ module.exports = {
         sort[ sortBy ] = orderBy;
 
         return await Feedback.find( query )
-        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber')
+        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook apple fullName phoneNumber')
         .sort(sort)
         .limit(limit)
         .skip(skip);
@@ -39,7 +39,7 @@ module.exports = {
     viewFeedback: async ( feedbackId ) => {
 
         return await Feedback.findById(feedbackId)
-        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber')
+        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook apple fullName phoneNumber')
     },
 
 
@@ -51,7 +51,7 @@ module.exports = {
     updateFeedback: async (feedbackId, updateData) => {
 
         return await Feedback.findByIdAndUpdate( feedbackId, updateData, {new: true})
-        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber');
+        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook apple fullName phoneNumber');
     },
 
 

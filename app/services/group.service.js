@@ -15,8 +15,8 @@ module.exports = {
         sort[ sortBy ] = orderBy;
 
         return await Group.find( query )
-        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber')
-        .populate('contacts.userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber')
+        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook apple fullName phoneNumber')
+        .populate('contacts.userId', '_id avatar authMethod email local.firstName local.lastName google facebook apple fullName phoneNumber')
         .sort(sort)
         .limit(limit)
         .skip(skip);
@@ -42,8 +42,8 @@ module.exports = {
     viewGroup: async ( groupId ) => {
 
         return await Group.findById(groupId)
-        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber')
-        .populate('contacts.userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber');
+        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook apple fullName phoneNumber')
+        .populate('contacts.userId', '_id avatar authMethod email local.firstName local.lastName google facebook apple fullName phoneNumber');
     },
 
 
@@ -56,8 +56,8 @@ module.exports = {
     updateGroup: async (groupId, updateData) => {
 
         const result = await Group.findByIdAndUpdate( groupId, updateData, {new: true})
-        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber')
-        .populate('contacts.userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber')
+        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook apple fullName phoneNumber')
+        .populate('contacts.userId', '_id avatar authMethod email local.firstName local.lastName google facebook apple fullName phoneNumber')
 
         return result;
     },
@@ -72,8 +72,8 @@ module.exports = {
         
         const updateData = {deletedAt: Date.now(), deletedBy };
         return await module.exports.updateGroup(groupId, updateData)
-        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber')
-        .populate('contacts.userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber');
+        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook apple fullName phoneNumber')
+        .populate('contacts.userId', '_id avatar authMethod email local.firstName local.lastName google facebook apple fullName phoneNumber');
     },
 
 
@@ -95,8 +95,8 @@ module.exports = {
             }, 
             { runValidators: true, new: true }
         )
-        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook fullName phoneNumber')
-        .populate('contacts.userId', '_id avatar email authMethod local.firstName local.lastName google facebook fullName phoneNumber');
+        .populate('userId', '_id avatar authMethod email local.firstName local.lastName google facebook apple fullName phoneNumber')
+        .populate('contacts.userId', '_id avatar email authMethod local.firstName local.lastName google facebook apple fullName phoneNumber');
     },
 
     /**
