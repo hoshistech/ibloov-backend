@@ -103,10 +103,10 @@ module.exports = {
     },
 
 
-    paginatedQuery: async ( query  ) => {
+    paginatedQuery: async ( query, userId ) => {
         
-        let events = await Event.find(query)
-        return events;
+        const options = setDefaultOptions();
+        return await module.exports.liveEvents( query, options, userId );
     },
 
 

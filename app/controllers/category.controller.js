@@ -9,6 +9,7 @@ module.exports = {
     index: async (req, res) => {
         
         const scope = req.params.scope || null;
+        const userId = req.authuser ? req.authuser._id : null;
 
         try{
             let categories = await categoryService.all( {scope} );
@@ -17,8 +18,8 @@ module.exports = {
 
                 return Promise.all( categories.map( async category => {
 
-                    let scopes = await paginatedQuery({ "category": category.name ,  "deletedAt": null });
-                    category["count"] = scopes.length;
+                    let scopes = await paginatedQuery({ "category": prepName(category.name) ,  "deletedAt": null }, userId );
+                    category["count"] = scopes.length; 
 
                     return category;
                 }))
@@ -73,4 +74,12 @@ module.exports = {
     view: () => {
         console.log("viewing a new category")
     }
+}
+
+/**
+ * remove white spaces and convert to lowercase
+ */
+prepName = function( name ){
+
+    return name.toLowerCase().replace(/\s/g, "");
 }
