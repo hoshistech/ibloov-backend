@@ -80,6 +80,6 @@
     "@user-request": "app/services/requests"
   },
   "engines": {
-    "node": ">=14.4.0"
+    "node": "=14.4.0"
   }
 }
