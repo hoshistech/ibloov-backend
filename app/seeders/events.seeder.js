@@ -41,7 +41,7 @@ const { createEventInviteBulkRequest } = require('@user-request/event-invite.req
 
 const seedEvents = async (req, res) => {
 
-    const eventCount = parseInt( req.query.eventCount ) || randomInt(150, 300);
+    const eventCount = parseInt( req.query.eventCount ) || randomInt(10, 50);
     
     const users = await all();
 
@@ -56,9 +56,9 @@ const seedEvents = async (req, res) => {
         let geoCode = await geocode( event.address );
 
         event.location = {
-            address: geoCode[0].formattedAddress,
-            city: geoCode[0].city,
-            coordinates: [ geoCode[0].longitude, geoCode[0].latitude ]
+            address: geoCode[0] ? geoCode[0].formattedAddress: '2 Avenue de la Cascade, 75019 Paris, France',
+            city: geoCode[0] ? geoCode[0].city : "Paris",
+            coordinates: [ geoCode[0] ? geoCode[0].longitude : 2.3862826, geoCode[0] ? geoCode[0].latitude : 48.8799832]
         }
 
         let newEvent =  await createEvent(event);
