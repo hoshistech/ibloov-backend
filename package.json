@@ -78,5 +78,8 @@
     "@request-notif": "app/services/notification/request",
     "@info-notif": "app/services/notification/info",
     "@user-request": "app/services/requests"
+  },
+  "engines": {
+    "node": ">=14.4.0"
   }
 }
