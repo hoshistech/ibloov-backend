@@ -189,6 +189,11 @@ var UserSchema = new Schema({
         default: ""
     },
 
+    gender: {
+        type: String,
+        enum: ["M", "F", "NON_BINARY", "OTHERS", "NOT_SPECIFIED"]
+    },
+
     followers: {
         type: [ follower ],
         required: false,
