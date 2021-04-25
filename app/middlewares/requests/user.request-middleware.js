@@ -1,288 +1,312 @@
 const {
-  body,
-  param
+	body,
+	param
 } = require('express-validator')
 const userService = require('@services/user.service');
+const moment = require('moment');
 
 
 exports.validate = (method) => {
 
-  switch (method) {
+	switch (method) {
+
+		/**
+		 * @requestValidator
+		 * validates the request to create a new user
+		 */
+		case 'createUser': {
 
-    /**
-     * @requestValidator
-     * validates the request to remove an invite from the wishlis invites
-     */
-    case 'createUser': {
+			return [
 
-      return [
+				body('firstName')
+				.exists().withMessage("Required property 'firstName' not found.")
+				.notEmpty().withMessage("firstName cannot be empty")
+				.trim()
+				.bail(),
+
+				body('lastName')
+				.exists().withMessage("Required property 'lastName' not found.")
+				.notEmpty().withMessage("lastName cannot be empty")
+				.trim()
+				.bail(),
 
-        body('firstName')
-        .exists().withMessage("Required property 'firstName' not found."),
+				body('email')
+				.exists().withMessage("Required property 'email' not found.")
+				.isEmail().withMessage("invalid email provided")
+				.notEmpty().withMessage("email cannot be empty")
+				.trim()
+				.custom((value) => {
 
-        body('lastName')
-        .exists().withMessage("Required property 'lastName' not found."),
+					return userService.getUser({
+						email: value
+					}).then(user => {
 
-        body('email')
-        .exists().withMessage("Required property 'email' not found.")
-        .isEmail().withMessage("invalid email property provided")
-        .custom((value) => {
+						if (user) {
+							return Promise.reject('This email already exists!');
+						}
+					});
+				})
+				.bail(),
 
-          return userService.getUser({
-            email: value
-          }).then(user => {
+				body('dob')
+				.exists().withMessage("Required body param 'dob' not provided.").bail()
+				.custom((value) => {
 
-            if (user) {
-              return Promise.reject('This email already exists!');
-            }
-          });
-        }),
+					if (!moment(value).isValid()) throw new Error("Invalid dob provided!")
 
-        body('phoneNumber')
-        .exists().withMessage("Required body property 'phoneNumber' not found.") 
-        .custom( (value) => {
+					if ( moment().isBefore(value)) throw new Error("Invalid dob provided! Date cannot be in the future! ");
 
-          return userService.getUser({ phoneNumber: value }).then( user => {
+					if( moment.duration( moment().diff(value)).asYears() < 16 ) throw new Error("You need to be at least 16 years to sign up")
 
-            if ( user ) {
-              return Promise.reject('This phoneNumber already exists!');
-            }
-          });
-        }),
+					return true
 
-        body('password')
-        .exists().withMessage("Required body property 'password' not found.")
+				}).bail(),
 
-      ]
-    }
+				body('gender')
+				.optional()
+				.isIn(["M", "F", "NON_BINARY", "OTHERS", "NOT_SPECIFIED"]).withMessage("Invalid gender value provided.")
+				.bail(),
+				
 
-    case 'updateUser': {
+				body('password')
+				.exists().withMessage("Required body param 'password' not provided.")
+				.isLength({ min: 8 }).withMessage("password must be at least 8 characters")
+				.matches(/\d/).withMessage("password must contain a number")
 
-      return [
+			]
+		}
 
-        param('userId')
-        .exists().withMessage("Required parameter 'userId' not found.")
-        .custom((value) => {
-          return itExists(value);
-        })
-      ]
-    }
+		case 'updateUser': {
 
-    case 'viewUser': {
+			return [
 
-      return [
+				param('userId')
+				.exists().withMessage("Required parameter 'userId' not found.")
+				.custom((value) => {
+					return itExists(value);
+				})
+			]
+		}
 
-        param('userId')
-        .exists().withMessage("Required parameter 'userId' not found.")
-        .custom((value) => {
-          return itExists(value);
-        })
-      ]
-    }
+		case 'viewUser': {
 
-    case 'deleteUser': {
+			return [
 
-      return [
+				param('userId')
+				.exists().withMessage("Required parameter 'userId' not found.")
+				.custom((value) => {
+					return itExists(value);
+				})
+			]
+		}
 
-        param('userId')
-        .exists().withMessage("Required parameter 'userId' not found.")
-        .custom((value) => {
-          return itExists(value);
-        })
-      ]
-    }
+		case 'deleteUser': {
 
-    case 'userEvents': {
+			return [
 
-      return [
+				param('userId')
+				.exists().withMessage("Required parameter 'userId' not found.")
+				.custom((value) => {
+					return itExists(value);
+				})
+			]
+		}
 
-        param('userId')
-        .optional()
-        .custom((value) => {
-          if (value) return itExists(value);
-        })
-      ]
-    }
+		case 'userEvents': {
 
-    case 'userWishlists': {
+			return [
 
-      return [
+				param('userId')
+				.optional()
+				.custom((value) => {
+					if (value) return itExists(value);
+				})
+			]
+		}
 
-        param('userId')
-        .optional()
-        .custom((value) => {
-          if (value) return itExists(value);
-        })
-      ]
-    }
+		case 'userWishlists': {
 
-    case 'userCrowdfunds': {
+			return [
 
-      return [
+				param('userId')
+				.optional()
+				.custom((value) => {
+					if (value) return itExists(value);
+				})
+			]
+		}
 
-        param('userId')
-        .optional()
-        .custom((value) => {
+		case 'userCrowdfunds': {
 
-          if (value) return itExists(value);
+			return [
 
-        })
-      ]
-    }
+				param('userId')
+				.optional()
+				.custom((value) => {
 
-    case 'userTickets': {
+					if (value) return itExists(value);
 
-      return [
+				})
+			]
+		}
 
-        param('userId')
-        .optional()
-        .custom((value) => {
+		case 'userTickets': {
 
-          if (value) return itExists(value);
+			return [
 
-        })
-      ]
-    }
+				param('userId')
+				.optional()
+				.custom((value) => {
 
-    case 'sendTelephoneVerifcationCode': {
+					if (value) return itExists(value);
 
-      return [
+				})
+			]
+		}
 
-        param('userId')
-        .exists().withMessage("Required parameter, 'userId' not found.")
-        .custom((value) => {
-          return itExists(value);
-        })
+		case 'sendTelephoneVerifcationCode': {
 
-      ]
-    }
+			return [
 
-    case 'verifyTelephoneVerifcationCode': {
+				param('userId')
+				.exists().withMessage("Required parameter, 'userId' not found.")
+				.custom((value) => {
+					return itExists(value);
+				})
 
-      return [
+			]
+		}
 
-        param('userId')
-        .exists().withMessage("Required parameter, 'userId' not found.")
-        .custom((value) => {
-          return itExists(value);
-        }),
+		case 'verifyTelephoneVerifcationCode': {
 
-        param('code')
-        .exists().withMessage("Required parameter, 'code' not found.")
+			return [
 
-      ]
-    }
+				param('userId')
+				.exists().withMessage("Required parameter, 'userId' not found.")
+				.custom((value) => {
+					return itExists(value);
+				}),
 
-    case 'unfollowUser': {
+				param('code')
+				.exists().withMessage("Required parameter, 'code' not found.")
 
-      return [
+			]
+		}
 
-        param('userId')
-        .custom((value) => {
-          if (value) return itExists(value);
-        })
-      ]
-    }
+		case 'unfollowUser': {
 
-    case 'followUser': {
+			return [
 
-      return [
+				param('userId')
+				.custom((value) => {
+					if (value) return itExists(value);
+				})
+			]
+		}
 
-        param('userId')
-        .custom((value, {
-          req,
-          loc,
-          path
-        }) => {
+		case 'followUser': {
 
-          if (value == req.authuser._id.toString()) {
-            return Promise.reject('unable to process this request. Target user same as auth user');
-          }
+			return [
 
-          if (value) return itExists(value);
+				param('userId')
+				.custom((value, {
+					req,
+					loc,
+					path
+				}) => {
 
-        })
-      ]
-    }
+					if (value == req.authuser._id.toString()) {
+						return Promise.reject('unable to process this request. Target user same as auth user');
+					}
 
-    case 'acceptFollowRequest': {
+					if (value) return itExists(value);
 
-      return [
+				})
+			]
+		}
 
-        param('userId')
-        .custom((value) => {
-          if (value) return itExists(value);
-        })
-      ]
-    }
+		case 'acceptFollowRequest': {
 
-    case 'toggleFollowUser': {
+			return [
 
-      return [
+				param('userId')
+				.custom((value) => {
+					if (value) return itExists(value);
+				})
+			]
+		}
 
-        param('userId').custom(value => {
-          return itExists(value);
-        }),
-      ]
-    }
+		case 'toggleFollowUser': {
 
-    case 'userFriends': {
+			return [
 
-      return [
+				param('userId').custom(value => {
+					return itExists(value);
+				}),
+			]
+		}
 
-        param('userId').custom( value => {
+		case 'userFriends': {
 
-          if( value ) return itExists(value);
+			return [
 
-          return true;
-          
-        }),
-      ]
-    }
+				param('userId').custom(value => {
 
-    case 'socialUser': {
+					if (value) return itExists(value);
 
-      return [
+					return true;
 
-        param('scope')
-        .exists().withMessage("Expected param 'scope' not provided"),
+				}),
+			]
+		}
 
-        /**
-         * Todo - add the allowed scopes here e.g - facebook, google, twitter
-         */
+		case 'socialUser': {
 
-        body('id')
-        .exists().withMessage("Expected body param 'id' not provided"),
+			return [
 
-        // body('email')
-        // .exists().withMessage("Expected bpdy param 'email' not provided")
-        // .isEmail().withMessage("Invalid email provided"),
+				param('scope')
+				.exists().withMessage("Expected param 'scope' not provided"),
 
-        body('fullName')
-        .custom(( value, { req, loc, path }) => {
+				/**
+				 * Todo - add the allowed scopes here e.g - facebook, google, twitter
+				 */
 
-          if ( ! value ) {
+				body('id')
+				.exists().withMessage("Expected body param 'id' not provided"),
 
-            if( ! req.body.firstName || ! req.body.lastName )
-              return Promise.reject("missing parameter. 'fullName' shoud be provided if 'firstName' and 'lastName' are not provided");
-          }
+				// body('email')
+				// .exists().withMessage("Expected bpdy param 'email' not provided")
+				// .isEmail().withMessage("Invalid email provided"),
 
-          return true;
+				body('fullName')
+				.custom((value, {
+					req,
+					loc,
+					path
+				}) => {
 
-        })
-      ]
-    }
+					if (!value) {
 
+						if (!req.body.firstName || !req.body.lastName)
+							return Promise.reject("missing parameter. 'fullName' shoud be provided if 'firstName' and 'lastName' are not provided");
+					}
 
-  }
+					return true;
+
+				})
+			]
+		}
+
+
+	}
 }
 
 const itExists = function (value) {
 
-  return userService.viewUser(value).then(user => {
+	return userService.viewUser(value).then(user => {
 
-    if (!user) {
-      return Promise.reject('user not found!');
-    }
-  });
+		if (!user) {
+			return Promise.reject('user not found!');
+		}
+	});
 }

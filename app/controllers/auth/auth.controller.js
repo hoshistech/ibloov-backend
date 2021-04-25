@@ -8,7 +8,7 @@ module.exports = {
 
             const platform = req.params.platform;
 
-            const token = await authService.signToken( req.user, platform ); 
+            const token = await authService.signToken(req.user, platform);
 
             return res.status(200).json({
 
@@ -16,8 +16,8 @@ module.exports = {
                 message: "Operation successful",
                 data: token
             })
-            
-        } catch ( err ) {
+
+        } catch (err) {
 
             return res.status(400).json({
 
@@ -37,17 +37,14 @@ module.exports = {
              * platform from social login should be provided.
              */
             const platform = req.query.platform;
-            const token = await authService.signToken( req.user, platform );
-            const socialAuthProvider = req.socialAuthProvider; 
+            const token = await authService.signToken(req.user, platform);
+            const socialAuthProvider = req.socialAuthProvider;
 
-            console.log("socialAuthProvider legit is    ")
-            console.log(socialAuthProvider);
-            
             return res.redirect(`${process.env.FRONTEND_BASE_URL}/social/${socialAuthProvider}/${token}`)
-            
-        } catch ( err ) {
 
-            return res.status(400).json({ 
+        } catch (err) {
+
+            return res.status(400).json({
 
                 success: true,
                 message: "error occured while performing this operation.",
