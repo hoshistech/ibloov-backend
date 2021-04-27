@@ -12,8 +12,9 @@ module.exports.isValidRequest = (req, res, next) => {
         return res.status(422).send({
             
             success: false,
-            message: "Your request has some validation errors",
-            data: errors.array()
+            message: errors.array()[0].msg,
+            error: errors.array(),
+            data: null
         });
     }
 

@@ -16,15 +16,20 @@ exports.validate = (method) => {
 
          return [
       
-            body('name', 'Invalid email.').exists(),
+            body('name')
+            .exists().withMessage("Required body param 'name' not provided")
+            .notEmpty().withMessage("name cannot be empty"),
 
-            body('category', 'Invalid category provided.').exists(),
+            body('category', 'Invalid category provided.').exists()
+            .notEmpty().withMessage("name cannot be empty"),
 
             body('address', "Required body property, 'address' not provided.")
-            .exists(),
+            .exists()
+            .notEmpty().withMessage("name cannot be empty"),
 
             body('startDate')
             .exists().withMessage('Invalid event start date provided.')
+            .notEmpty().withMessage("name cannot be empty")
             .custom( value => {
                return isValidStartDate( value );
             }),
@@ -169,7 +174,9 @@ exports.validate = (method) => {
 
          return [
             
-            param('eventId').custom( ( value, {req, loc, path } ) => {
+            param('eventId')
+            .notEmpty().withMessage("missing eventId value")
+            .custom( ( value, {req, loc, path } ) => {
                return itExists(value);
              }),
          ]

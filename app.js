@@ -131,6 +131,30 @@ app.use(bodyParser.urlencoded({
   parameterLimit: 50000
 }))
 
+app.use( function(req, res, next) {
+
+  res.handleRequestError = function(error, status = 400 ) {
+
+    req.bugsnag.notify(
+
+      new Error(error),
+      function (event) {
+        //event.addMetadata('product', product)
+      }
+    )
+
+    return res.status(400).json({
+
+      success: false,
+      message: "Operation failed.",
+      error: error.toString(),
+      data: null
+    })
+  };
+
+  next();
+})
+
 app.use('/', indexRouter);
 app.use('/v1/user', UsersRouter);
 app.use('/v1/event', EventRouter);

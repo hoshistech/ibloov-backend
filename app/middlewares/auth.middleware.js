@@ -25,10 +25,12 @@ verifyToken = function( req, res, next ){
     jwt.verify( req.token, process.env.JWT_SECRET_KEY, (err, data) => {
 
         if( err ) {
+
             return res.status(401).json({
                 success: false,
                 message: "unauthorized",
-                data: err.toString()
+                error: err.toString(),
+                data: null
             })
         }
 
@@ -55,7 +57,8 @@ verifyToken = function( req, res, next ){
 
                 success: false,
                 message: "unauthorized",
-                data: err.toString()
+                error: err.toString(),
+                data: null
             })
 
         })  

@@ -139,11 +139,7 @@ module.exports = {
         }
         catch( err ){
 
-            res.status(400).send({
-                success: false,
-                message: "error performing this operation",
-                data: err.toString()
-            });
+            res.handleRequestError(err);
         }
     },
 
@@ -187,14 +183,7 @@ module.exports = {
         }
         catch( err ){
 
-
-            console.log( err )
-            
-            res.status(400).send({
-                success: false,
-                message: "Error performing this operation",
-                data: err.toString()
-            });
+            return res.handleRequestError(err);
         }
     },
 
@@ -220,11 +209,7 @@ module.exports = {
             });
         } catch (e) {
             
-            return res.status(400).json({
-                success: false,
-                message: "Error occured while trying to update this event.",
-                data: e
-            });
+            return res.handleRequestError(err);
         }
     },
 
@@ -295,11 +280,7 @@ module.exports = {
             
         } catch ( err ) {
 
-            return res.status(400).json({
-                success: false,
-                message: "Error occured while performing this operation.",
-                data: err.toString()
-            });
+            return res.handleRequestError(err);
         }
     },
 
@@ -326,11 +307,7 @@ module.exports = {
 
         } catch ( err ) {
             
-            return res.status(400).json({
-                success: false,
-                message: "Error occured while trying to process this event.",
-                data: err.toString()
-            });
+            return res.handleRequestError(err);
         }
     },
 
@@ -376,11 +353,7 @@ module.exports = {
         }
         catch( err ){
 
-            return res.status(400).json({
-                success: false,
-                message: "There was an error performing this operation",
-                data: err.toString()
-            });
+            return res.handleRequestError(err);
         }
     },
 
@@ -412,11 +385,7 @@ module.exports = {
         }
         catch( err ){
 
-            return res.status(400).json({
-                success: false,
-                message: "There was an error performing this operation",
-                data: err.toString()
-            });
+            return res.handleRequestError(err);
         }
         
     },
@@ -447,11 +416,7 @@ module.exports = {
         }
         catch(e){
 
-            return res.status(400).json({
-                success: false,
-                message: "There was an error performing this operation",
-                data: e.toString()
-            });
+            return res.handleRequestError(err);
         }
         
     },
@@ -495,12 +460,7 @@ module.exports = {
         }
         catch( err ){
 
-            return res.status(400).json({
-
-                success: false,
-                message: "There was an error performing this operation",
-                data: err.toString()
-            });
+            return res.handleRequestError(err);
         }
     }, 
 
@@ -536,11 +496,7 @@ module.exports = {
             /**
              * Todo if event is paid, and there is a failure, alert admin to this failiure
              */
-            return res.status(400).json({
-                success: false,
-                message: "Error performing this operation.",
-                data: err.toString()
-            });
+            return res.handleRequestError(err);
         }
     },
 
@@ -664,16 +620,7 @@ module.exports = {
         }
         catch( err ){
 
-            console.log("err");
-            console.log(err);
-
-            return res.status(400).json({
-
-                success: false,
-                message: "Error performing this operation.",
-                data: err.toString()
-
-            });
+            return res.handleRequestError(err);
         }
     },
 
@@ -707,12 +654,7 @@ module.exports = {
             
         } catch (err) {
 
-            return res.status(400).json({
-
-                success: false,
-                message: "Error occured while performing this operation.",
-                data: err.toString() 
-            });
+            return res.handleRequestError(err);
         }
     },
 
@@ -736,12 +678,7 @@ module.exports = {
             
         } catch ( err ) {
 
-            return res.status(400).json({
-
-                success: false,
-                message: "Error occured while performing this operation.",
-                data: err.toString()
-            });
+            return res.handleRequestError(err);
         }
 
     },
@@ -777,12 +714,7 @@ module.exports = {
         }
         catch( err ){
 
-            return res.status(400).json({
-
-                success: false,
-                message: "There was an error performing this operation",
-                data: err.toString()
-            });
+            return res.handleRequestError(err);
         }
     },
 
@@ -800,12 +732,7 @@ module.exports = {
             
         } catch ( err ) {
             
-            return res.status(400).json({
-
-                success: false,
-                message: "There was an error performing this operation.",
-                data: err.toString()
-            });
+            return res.handleRequestError(err);
         }
     },
 
@@ -825,12 +752,7 @@ module.exports = {
             
         } catch ( err ) {
             
-            return res.status(400).json({
-
-                success: false,
-                message: "There was an error performing this operation.",
-                data: err.toString()
-            });
+            return res.handleRequestError(err);
         }
     }
 }

@@ -14,7 +14,7 @@ router.get("/google",  passport.authenticate('google', { scope: ["profile", "ema
 router.get('/google/callback', setSocialAuthProvider("google"), passport.authenticate('google'), authController.socialRedirect);
 
 //local auth
-router.post('/local/:platform', validate("isValidPlatform"), isValidRequest, passport.authenticate('local'), authController.signUser );
+router.post('/local/:platform', validate("isValidPlatform"), isValidRequest, authController.signUser );
 
 //facebook auth (used by only web for now)
 router.get("/facebook", passport.authenticate('facebook', { scope: [['user_about_me', 'email']] }) );

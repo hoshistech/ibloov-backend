@@ -1,30 +1,43 @@
 const authService = require("@services/auth.service");
+const passport = require("passport");
 
 module.exports = {
 
-    signUser: async (req, res) => {
+    signUser: async (req, res, next ) => {
+
 
         try {
 
-            const platform = req.params.platform;
+            passport.authenticate('local', async function(err, user, info) {
 
-            const token = await authService.signToken(req.user, platform);
+                if(! user ){
+                    return res.status(401).json({
 
-            return res.status(200).json({
+                        success: false,
+                        message: "Invalid username/password combination",
+                        error: null,
+                        data: null
 
-                success: true,
-                message: "Operation successful",
-                data: token
-            })
+                    })
+                }
 
+                const platform = req.params.platform;
+                const token = await authService.signToken(user, platform);
+
+                return res.status(200).json({
+
+                    success: true,
+                    message: "Operation successful",
+                    data: token,
+                    error: null
+                })
+                
+            })(req, res, next);
+
+        
         } catch (err) {
 
-            return res.status(400).json({
-
-                success: true,
-                message: "error occured while performing this operation.",
-                data: err.toString()
-            })
+            res.handleRequestError(err);
         }
     },
 
