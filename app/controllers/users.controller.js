@@ -78,14 +78,16 @@ module.exports = {
             return res.status(201).json({
                 success: true,
                 message: "user created successfully",
-                data: resp
+                data: resp,
+                error: null
             });
         } catch ( err ) {
             
             return res.status(400).json({
                 success: false,
                 message: "Error occured while trying to perform this operation",
-                data: err.toString()
+                error: err.toString(),
+                data: null
             });
         }
     },
